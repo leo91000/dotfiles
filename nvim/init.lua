@@ -96,3 +96,29 @@ cmp.setup({
     { name = "buffer" },
   },
 })
+
+-- Treesitter configuration
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { 
+    "rust",
+    "lua",
+    "sql",
+    "bash",
+    "gitignore",
+    "gitattributes",
+    "javascript",
+    "json",
+    "json5",
+    "markdown",
+    "scss",
+    "toml",
+    "tsx",
+    "typescript",
+    "vim",
+    "vue",
+    "yaml",
+  }
+  sync_install = false,
+  auto_install = true,
+}
+
