@@ -117,7 +117,7 @@ require'nvim-treesitter.configs'.setup {
     "vim",
     "vue",
     "yaml",
-  }
+  },
   sync_install = false,
   auto_install = true,
 }
