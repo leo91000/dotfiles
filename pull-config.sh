@@ -1,3 +1,4 @@
+#!/bin/bash
 git pull
 mkdir -p ~/.config/nvim/lua
 cp ./nvim/init.lua ~/.config/nvim/init.lua
