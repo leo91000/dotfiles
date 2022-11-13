@@ -57,6 +57,18 @@ require('packer').startup(function(use)
   
   -- scheme 
   use("arcticicestudio/nord-vim")
+
+  -- Scrollbar
+  use("petertriho/nvim-scrollbar")
+
+  -- Git sign
+  use {
+    'lewis6991/gitsigns.nvim',
+    config = function()
+      require('gitsigns').setup()
+      require("scrollbar.handlers.gitsigns").setup()
+    end
+  }
 end)
 
 -- the first run will install packer and our plugins
@@ -188,3 +200,7 @@ require'nvim-treesitter.configs'.setup {
   auto_install = true,
 }
 
+-- scrollbar setup
+require("scrollbar").setup()
+
+local kopts = {noremap = true, silent = true}
