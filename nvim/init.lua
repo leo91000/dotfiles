@@ -56,7 +56,7 @@ require('packer').startup(function(use)
   use("simrat39/rust-tools.nvim")
   
   -- scheme 
-  use("arcticicestudio/nord-vim")
+  use 'folke/tokyonight.nvim'
 
   -- Scrollbar
   use("petertriho/nvim-scrollbar")
@@ -69,6 +69,11 @@ require('packer').startup(function(use)
       require("scrollbar.handlers.gitsigns").setup()
     end
   }
+
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+  }
 end)
 
 -- the first run will install packer and our plugins
@@ -77,7 +82,7 @@ if packer_bootstrap then
   return
 end
 
-vim.cmd([[ colorscheme nord ]])
+vim.cmd[[colorscheme tokyonight]]
 
 -- Configuration
 vim.wo.relativenumber = true
@@ -202,5 +207,12 @@ require'nvim-treesitter.configs'.setup {
 
 -- scrollbar setup
 require("scrollbar").setup()
+
+-- lualine setup
+require('lualine').setup {
+  options = {
+    theme = 'tokyonight'
+  }
+}
 
 local kopts = {noremap = true, silent = true}
