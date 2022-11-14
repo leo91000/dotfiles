@@ -1,7 +1,8 @@
 #!/bin/bash
 
 mkdir -p nvim
-cp ~/.config/nvim/init.lua ./nvim
+cp ~/.config/nvim/init.lua ./.config/nvim
+cp ~/.config/alacritty/alacritty.yml ./.config/alacritty
 git add .
 git commit -m "feat: Update config"
 git push
