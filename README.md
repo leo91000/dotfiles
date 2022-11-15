@@ -8,3 +8,4 @@ My personnal dotfiles folder to use.
   - Rust analyzer
   - Volar : `npm i -g @volar/vue-language-server`
   - lua-language-server
+  - vscode-eslint-language-server : `npm i -g vscode-langservers-extracted`

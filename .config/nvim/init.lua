@@ -285,3 +285,10 @@ lspconfig.sumneko_lua.setup {
     },
   },
 }
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.ts", "*.tsx", "*.vue", "*.js", "*.jsx" },
+  command = "EslintFixAll"
+})
+
+lspconfig.eslint.setup{}
