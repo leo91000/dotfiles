@@ -75,6 +75,8 @@ require('packer').startup(function(use)
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   }
 
+  use 'f-person/git-blame.nvim'
+
 end)
 
 -- the first run will install packer and our plugins
@@ -105,6 +107,9 @@ vim.o.completeopt = "menuone,noinsert,noselect"
 
 -- Avoid showing extra messages when using completion
 vim.opt.shortmess = vim.opt.shortmess + "c"
+
+-- Disable gitblame on startup
+vim.g["gitblame_enabled"] = 0
 
 local function on_attach(client, buffer)
   -- This callback is called when the LSP is atttached/enabled for this buffer
