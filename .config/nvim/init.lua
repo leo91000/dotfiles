@@ -19,9 +19,9 @@ require('packer').startup(function(use)
   use 'wbthomason/packer.nvim' -- Package manager
   use { 'nvim-lua/plenary.nvim' }
   use { 'nvim-telescope/telescope.nvim', tag = '0.1.0' }
-  use { 
+  use {
     'nvim-treesitter/nvim-treesitter',
-    run = function()	
+    run = function()
       local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
       ts_update()
     end,
@@ -34,7 +34,7 @@ require('packer').startup(function(use)
       require("fidget").setup()
     end
   })
-  
+
   -- Autocompletion framework
   use("hrsh7th/nvim-cmp")
   use({
@@ -48,13 +48,13 @@ require('packer').startup(function(use)
     after = { "hrsh7th/nvim-cmp" },
     requires = { "hrsh7th/nvim-cmp" },
   })
-  
+
   -- Snippet engine
   use('hrsh7th/vim-vsnip')
   -- Adds extra functionality over rust analyzer
   use("rust-lang/rust.vim")
   use("simrat39/rust-tools.nvim")
-  
+
   -- scheme 
   use 'folke/tokyonight.nvim'
 
@@ -74,6 +74,7 @@ require('packer').startup(function(use)
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   }
+
 end)
 
 -- the first run will install packer and our plugins
@@ -141,10 +142,13 @@ local opts = {
           command = "clippy",
         },
       },
+      ["volar"] = {
+      }
     },
   },
 }
 
+vim.g["rustfmt_autosave"] = 1
 require("rust-tools").setup(opts)
 
 local cmp = require("cmp")
@@ -182,7 +186,7 @@ cmp.setup({
 
 -- Treesitter configuration
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = { 
+  ensure_installed = {
     "rust",
     "lua",
     "sql",
@@ -229,3 +233,50 @@ require('lualine').setup {
 }
 
 local kopts = {noremap = true, silent = true}
+
+local lspconfig = require'lspconfig'
+local lspconfig_util = require 'lspconfig.util'
+
+local function get_typescript_server_path(root_dir)
+  local global_ts = '~/.volta/tools/image/packages/typescript/lib'
+  local found_ts = ''
+
+  local function check_dir(path)
+    found_ts =  lspconfig_util.path.join(path, 'node_modules', 'typescript', 'lib')
+    if lspconfig_util.path.exists(found_ts) then
+      return path
+    end
+  end
+
+  if lspconfig_util.search_ancestors(root_dir, check_dir) then
+    return found_ts
+  else
+    return global_ts
+  end
+end
+
+lspconfig.volar.setup{
+  filetypes = {'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json'},
+  on_new_config = function(new_config, new_root_dir)
+    new_config.init_options.typescript.tsdk = get_typescript_server_path(new_root_dir)
+  end,
+}
+
+lspconfig.sumneko_lua.setup {
+  settings = {
+    Lua = {
+      runtime = {
+        version = 'LuaJIT',
+      },
+      diagnostics = {
+        globals = {'vim'},
+      },
+      workspace = {
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      telemetry = {
+        enable = false,
+      },
+    },
+  },
+}
