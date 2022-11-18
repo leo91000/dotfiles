@@ -41,4 +41,7 @@ colors:
   indexed_colors:
     - { index: 16, color: '0xff9e64' }
     - { index: 17, color: '0xdb4b4b' }
-    
+
+key_bindings:
+  - { key: F, mods: Control|Shift, chars: "\x1b[70;5u" }
+  - { key: N, mods: Control|Shift, chars: "\x1b[78;5u" }

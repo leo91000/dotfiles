@@ -324,3 +324,12 @@ vim.keymap.set('v', '<leader>p', '"+p')
 vim.keymap.set('v', '<leader>P', '"+P')
 
 vim.cmd('hi LineNr guibg=#24283b guifg=#ffffff')
+
+local function nvim_map(mode, lhs, rhs, opts_param)
+  local options = {noremap = true}
+  if opts_param then options = vim.tbl_extend('force', options, opts_param) end
+  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+end
+
+nvim_map('n', '<C-S-f>', '<cmd>:Telescope live_grep<cr>')
+nvim_map('n', '<C-S-n>', '<cmd>:Telescope find_files<cr>')
