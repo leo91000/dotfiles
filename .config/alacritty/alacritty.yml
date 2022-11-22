@@ -1,8 +1,8 @@
 font:
   normal:
-    family: FiraCode Nerd Font
+    family: MesloLGS NF
   bold:
-    family: FiraCode Nerd Font
+    family: MesloLGS NF
     style: Bold
   size: 15.0
   offset:
@@ -43,5 +43,5 @@ colors:
     - { index: 17, color: '0xdb4b4b' }
 
 key_bindings:
-  - { key: F, mods: Control|Shift, chars: "\x1b[70;5u" }
-  - { key: N, mods: Control|Shift, chars: "\x1b[78;5u" }
+  - { key: F, mods: Control|Shift, chars: "\\fg" }
+  - { key: N, mods: Control|Shift, chars: "\\ff" }
