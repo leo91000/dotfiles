@@ -76,6 +76,16 @@ require('packer').startup(function(use)
   }
 
   use 'f-person/git-blame.nvim'
+
+  use {
+    "tpope/vim-fugitive",
+    opt = true,
+    cmd = {
+      "G", "Git", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gsplit",
+      "Gread", "Gwrite", "Ggrep", "Glgrep", "Gmove",
+      "Gdelete", "Gremove", "Gbrowse",
+    },
+  }
 end)
 
 -- the first run will install packer and our plugins
@@ -323,6 +333,12 @@ vim.keymap.set('n', '<leader>P', '"+P')
 vim.keymap.set('v', '<leader>p', '"+p')
 vim.keymap.set('v', '<leader>P', '"+P')
 
+-- Vim diagnostic
+vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, kopts)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, kopts)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, kopts)
+vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, kopts)
+
 -- Line number color
 -- vim.cmd('hi LineNr guibg=#24283b guifg=#ffffff')
 
@@ -334,11 +350,12 @@ vim.o.shiftwidth = 4
 vim.o.softtabstop = 4
 vim.o.expandtab = true
 vim.o.autoread = true
-vim.o.nu = true 
+vim.o.nu = true
 vim.o.foldlevelstart = 99
 vim.o.scrolloff = 7
 vim.o.backup = false
 vim.o.writebackup = false
 vim.o.swapfile = false
 
-vim.opt.laststatus = 0
+-- Hide status line
+-- vim.opt.laststatus = 0
