@@ -339,6 +339,10 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, kopts)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, kopts)
 vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, kopts)
 
+-- Center after going up or down
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+
 -- Line number color
 -- vim.cmd('hi LineNr guibg=#24283b guifg=#ffffff')
 
