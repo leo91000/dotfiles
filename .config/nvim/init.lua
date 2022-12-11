@@ -86,6 +86,10 @@ require('packer').startup(function(use)
       "Gdelete", "Gremove", "Gbrowse",
     },
   }
+
+  use {
+    "tpope/vim-eunuch",
+  }
 end)
 
 -- the first run will install packer and our plugins
@@ -347,7 +351,6 @@ vim.keymap.set('n', '<C-d>', '<C-d>zz')
 -- vim.cmd('hi LineNr guibg=#24283b guifg=#ffffff')
 
 vim.o.ma = true
-vim.o.mouse = a
 vim.o.cursorline = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
