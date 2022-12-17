@@ -26,8 +26,8 @@ require('packer').startup(function(use)
       ts_update()
     end,
   }
+  use 'nvim-treesitter/playground'
   use { 'nvim-tree/nvim-web-devicons' }
-  use { 'neovim/nvim-lspconfig' }
   use({
     "j-hui/fidget.nvim",
     config = function()
@@ -90,6 +90,39 @@ require('packer').startup(function(use)
   use {
     "tpope/vim-eunuch",
   }
+
+  use { 'ms-jpq/chadtree', branch = 'chad', run = 'python3 -m chadtree deps' }
+
+  use {
+    'VonHeikemen/lsp-zero.nvim',
+    requires = {
+      -- LSP Support
+      {'neovim/nvim-lspconfig'},
+      {'williamboman/mason.nvim'},
+      {'williamboman/mason-lspconfig.nvim'},
+
+      -- Autocompletion
+      {'hrsh7th/nvim-cmp'},
+      {'hrsh7th/cmp-buffer'},
+      {'hrsh7th/cmp-path'},
+      {'saadparwaiz1/cmp_luasnip'},
+      {'hrsh7th/cmp-nvim-lsp'},
+      {'hrsh7th/cmp-nvim-lua'},
+
+      -- Snippets
+      {'L3MON4D3/LuaSnip'},
+      {'rafamadriz/friendly-snippets'},
+    }
+  }
+
+  use {
+    'gelguy/wilder.nvim',
+    config = function()
+      -- config goes here
+    end,
+  }
+
+  use {'glepnir/dashboard-nvim'}
 end)
 
 -- the first run will install packer and our plugins
@@ -142,7 +175,7 @@ local function on_attach(client, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, bufopts)
   vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
-  vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
+  vim.keymap.set('n', '<S-F6>', vim.lsp.buf.rename, bufopts)
   vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
   vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
   vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
@@ -180,8 +213,6 @@ local opts = {
           command = "clippy",
         },
       },
-      ["volar"] = {
-      }
     },
   },
 }
@@ -189,42 +220,10 @@ local opts = {
 vim.g["rustfmt_autosave"] = 1
 require("rust-tools").setup(opts)
 
-local cmp = require("cmp")
-cmp.setup({
-  preselect = cmp.PreselectMode.None,
-  snippet = {
-    expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body)
-    end,
-  },
-  mapping = {
-    ["<C-p>"] = cmp.mapping.select_prev_item(),
-    ["<C-n>"] = cmp.mapping.select_next_item(),
-    -- Add tab support
-    ["<S-Tab>"] = cmp.mapping.select_prev_item(),
-    ["<Tab>"] = cmp.mapping.select_next_item(),
-    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-    ["<C-f>"] = cmp.mapping.scroll_docs(4),
-    ["<C-Space>"] = cmp.mapping.complete(),
-    ["<C-e>"] = cmp.mapping.close(),
-    ["<CR>"] = cmp.mapping.confirm({
-      behavior = cmp.ConfirmBehavior.Insert,
-      select = true,
-    }),
-  },
-
-  -- Installed sources
-  sources = {
-    { name = "nvim_lsp" },
-    { name = "vsnip" },
-    { name = "path" },
-    { name = "buffer" },
-  },
-})
-
 -- Treesitter configuration
 require'nvim-treesitter.configs'.setup {
   ensure_installed = {
+    "help",
     "rust",
     "lua",
     "sql",
@@ -242,6 +241,7 @@ require'nvim-treesitter.configs'.setup {
     "vim",
     "vue",
     "yaml",
+    "query"
   },
   sync_install = false,
   auto_install = true,
@@ -272,59 +272,10 @@ require('lualine').setup {
 
 local kopts = {noremap = true, silent = true}
 
-local lspconfig = require'lspconfig'
-local lspconfig_util = require 'lspconfig.util'
-
-local function get_typescript_server_path(root_dir)
-  local global_ts = '~/.volta/tools/image/packages/typescript/lib'
-  local found_ts = ''
-
-  local function check_dir(path)
-    found_ts =  lspconfig_util.path.join(path, 'node_modules', 'typescript', 'lib')
-    if lspconfig_util.path.exists(found_ts) then
-      return path
-    end
-  end
-
-  if lspconfig_util.search_ancestors(root_dir, check_dir) then
-    return found_ts
-  else
-    return global_ts
-  end
-end
-
-lspconfig.volar.setup{
-  filetypes = {'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json'},
-  on_new_config = function(new_config, new_root_dir)
-    new_config.init_options.typescript.tsdk = get_typescript_server_path(new_root_dir)
-  end,
-}
-
-lspconfig.sumneko_lua.setup {
-  settings = {
-    Lua = {
-      runtime = {
-        version = 'LuaJIT',
-      },
-      diagnostics = {
-        globals = {'vim'},
-      },
-      workspace = {
-        library = vim.api.nvim_get_runtime_file("", true),
-      },
-      telemetry = {
-        enable = false,
-      },
-    },
-  },
-}
-
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = { "*.ts", "*.tsx", "*.vue", "*.js", "*.jsx" },
   command = "EslintFixAll"
 })
-
-lspconfig.eslint.setup{}
 
 -- Copy to clipboard
 vim.keymap.set('v', '<leader>y', '"+y')
@@ -347,6 +298,13 @@ vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, kopts)
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 
+-- CHAD tree
+vim.keymap.set('n', '<S-F8>', '<cmd>CHADopen<cr>')
+
+-- Motion
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+
 -- Line number color
 -- vim.cmd('hi LineNr guibg=#24283b guifg=#ffffff')
 
@@ -364,5 +322,59 @@ vim.o.backup = false
 vim.o.writebackup = false
 vim.o.swapfile = false
 
--- Hide status line
--- vim.opt.laststatus = 0
+-- Wilder config
+local wilder = require('wilder')
+wilder.setup({modes = {':', '/', '?'}})
+wilder.set_option('renderer', wilder.popupmenu_renderer({
+  pumblend = 20,
+  highlighter = wilder.basic_highlighter(),
+  left = {' ', wilder.popupmenu_devicons()},
+  right = {' ', wilder.popupmenu_scrollbar()},
+}))
+
+-- LSP Config
+local lsp = require('lsp-zero')
+lsp.preset('recommended')
+lsp.ensure_installed({
+    'tsserver',
+    'eslint',
+    'volar',
+    'rust_analyzer',
+    'cssls',
+    'dockerls',
+    'html',
+    'jsonls',
+    'texlab',
+    'sumneko_lua',
+    'pyright',
+    'svelte',
+    'taplo',
+    'tailwindcss',
+    'yamlls'
+})
+lsp.setup()
+
+-- Dashboard
+local db = require('dashboard')
+db.custom_center = {
+  {icon = '  ',
+  desc = 'Recently latest session                 ',
+  shortcut = 'SPC s l',
+  action ='SessionLoad'},
+  {icon = '  ',
+  desc = 'Recently opened files                   ',
+  action =  'DashboardFindHistory',
+  shortcut = 'SPC f h'},
+  {icon = '  ',
+  desc = 'Find  File                     ',
+  action = 'Telescope find_files find_command=rg,--hidden,--files',
+  shortcut = 'CTRL + SHIFT + n'},
+  {icon = '  ',
+  desc ='File Browser                         ',
+  action =  'CHADopen',
+  shortcut = 'SHIFT + F8'},
+  {icon = '  ',
+  desc = 'Find  word                     ',
+  action = 'Telescope live_grep',
+  shortcut = 'CTRL + SHIFT + f'},
+}
