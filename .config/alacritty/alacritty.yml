@@ -9,6 +9,9 @@ font:
     x: 0
     y: 2
 
+window:
+  opacity: 0.95
+
 # TokyoNight Alacritty Colors
 colors:
   # Default colors
