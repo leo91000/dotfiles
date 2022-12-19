@@ -91,8 +91,6 @@ require('packer').startup(function(use)
     "tpope/vim-eunuch",
   }
 
-  use { 'ms-jpq/chadtree', branch = 'chad', run = 'python3 -m chadtree deps' }
-
   use {
     'VonHeikemen/lsp-zero.nvim',
     requires = {
@@ -122,7 +120,9 @@ require('packer').startup(function(use)
     end,
   }
 
-  use {'glepnir/dashboard-nvim'}
+  use {'glepnir/dashboard-nvim', config = function() require('config.dashboard').setup() end}
+
+  use 'preservim/nerdtree'
 end)
 
 -- the first run will install packer and our plugins
@@ -318,7 +318,7 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 
 -- CHAD tree
-vim.keymap.set('n', '<S-F8>', '<cmd>CHADopen<cr>')
+vim.keymap.set('n', '<S-F8>', '<cmd>NERDTree<cr>')
 
 -- Motion
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
