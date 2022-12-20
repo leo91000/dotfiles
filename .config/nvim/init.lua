@@ -83,7 +83,7 @@ require('packer').startup(function(use)
     cmd = {
       "G", "Git", "Gdiffsplit", "Gvdiffsplit", "Gedit", "Gsplit",
       "Gread", "Gwrite", "Ggrep", "Glgrep", "Gmove",
-      "Gdelete", "Gremove", "Gbrowse",
+      "Gdelete", "Gremove", "Gbrowse", "Gclog", "Gblame"
     },
   }
 
@@ -123,6 +123,8 @@ require('packer').startup(function(use)
   use {'glepnir/dashboard-nvim', config = function() require('config.dashboard').setup() end}
 
   use 'preservim/nerdtree'
+
+  use 'epwalsh/obsidian.nvim'
 end)
 
 -- the first run will install packer and our plugins
@@ -253,6 +255,7 @@ require'nvim-treesitter.configs'.setup {
     "json",
     "json5",
     "markdown",
+    "markdown_inline",
     "scss",
     "toml",
     "tsx",
@@ -264,6 +267,10 @@ require'nvim-treesitter.configs'.setup {
   },
   sync_install = false,
   auto_install = true,
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = { "markdown" },
+  },
 }
 
 -- scrollbar setup
@@ -323,6 +330,14 @@ vim.keymap.set('n', '<S-F8>', '<cmd>NERDTree<cr>')
 -- Motion
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+
+-- Git
+vim.keymap.set('n', 'gb', "<cmd>Git blame<cr>")
+vim.keymap.set('n', 'gB', "<cmd>GitBlameToggle<cr>")
+vim.keymap.set('n', 'gk', "<cmd>Git push<cr>")
+vim.keymap.set('n', 'gK', "<cmd>Git pull<cr>")
+vim.keymap.set('n', 'gw', "<cmd>cnext<cr>")
+vim.keymap.set('n', 'gW', "<cmd>cprevious<cr>")
 
 -- Line number color
 -- vim.cmd('hi LineNr guibg=#24283b guifg=#ffffff')
@@ -397,3 +412,11 @@ db.custom_center = {
   action = 'Telescope live_grep',
   shortcut = 'CTRL + SHIFT + f'},
 }
+
+-- Obsidian plugin
+require("obsidian").setup({
+  dir = "~/my-vault",
+  completion = {
+    nvim_cmp = true, -- if using nvim-cmp, otherwise set to false
+  }
+})
