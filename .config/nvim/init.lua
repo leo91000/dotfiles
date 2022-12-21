@@ -75,8 +75,6 @@ require('packer').startup(function(use)
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   }
 
-  use 'f-person/git-blame.nvim'
-
   use {
     "tpope/vim-fugitive",
     opt = true,
@@ -86,6 +84,9 @@ require('packer').startup(function(use)
       "Gdelete", "Gremove", "Gbrowse", "Gclog", "Gblame"
     },
   }
+  use "idanarye/vim-merginal"
+  use "tpope/vim-rhubarb"
+  use "junegunn/gv.vim"
 
   use {
     "tpope/vim-eunuch",
@@ -123,8 +124,6 @@ require('packer').startup(function(use)
   use {'glepnir/dashboard-nvim', config = function() require('config.dashboard').setup() end}
 
   use 'preservim/nerdtree'
-
-  use 'epwalsh/obsidian.nvim'
 end)
 
 -- the first run will install packer and our plugins
@@ -338,6 +337,7 @@ vim.keymap.set('n', 'gk', "<cmd>Git push<cr>")
 vim.keymap.set('n', 'gK', "<cmd>Git pull<cr>")
 vim.keymap.set('n', 'gw', "<cmd>cnext<cr>")
 vim.keymap.set('n', 'gW', "<cmd>cprevious<cr>")
+vim.keymap.set('n', '<leader>gB', '<cmd>MerginalToggle<cr>')
 
 -- Line number color
 -- vim.cmd('hi LineNr guibg=#24283b guifg=#ffffff')
@@ -412,11 +412,3 @@ db.custom_center = {
   action = 'Telescope live_grep',
   shortcut = 'CTRL + SHIFT + f'},
 }
-
--- Obsidian plugin
-require("obsidian").setup({
-  dir = "~/my-vault",
-  completion = {
-    nvim_cmp = true, -- if using nvim-cmp, otherwise set to false
-  }
-})
