@@ -120,10 +120,6 @@ require('packer').startup(function(use)
       -- config goes here
     end,
   }
-
-  use {'glepnir/dashboard-nvim', config = function() require('config.dashboard').setup() end}
-
-  use 'preservim/nerdtree'
 end)
 
 -- the first run will install packer and our plugins
@@ -323,9 +319,6 @@ vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, kopts)
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 
--- CHAD tree
-vim.keymap.set('n', '<S-F8>', '<cmd>NERDTree<cr>')
-
 -- Motion
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
@@ -388,31 +381,6 @@ lsp.ensure_installed({
     'bashls'
 })
 lsp.setup()
-
--- Dashboard
-local db = require('dashboard')
-db.custom_center = {
-  {icon = '  ',
-  desc = 'Recently latest session                 ',
-  shortcut = 'SPC s l',
-  action ='SessionLoad'},
-  {icon = '  ',
-  desc = 'Recently opened files                   ',
-  action =  'DashboardFindHistory',
-  shortcut = 'SPC f h'},
-  {icon = '  ',
-  desc = 'Find  File                     ',
-  action = 'Telescope find_files find_command=rg,--hidden,--files',
-  shortcut = 'CTRL + SHIFT + n'},
-  {icon = '  ',
-  desc ='File Browser                         ',
-  action =  'CHADopen',
-  shortcut = 'SHIFT + F8'},
-  {icon = '  ',
-  desc = 'Find  word                     ',
-  action = 'Telescope live_grep',
-  shortcut = 'CTRL + SHIFT + f'},
-}
 
 -- source all the core config files
 local core_conf_files = {
