@@ -1,0 +1,30 @@
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = {
+    "help",
+    "rust",
+    "lua",
+    "sql",
+    "bash",
+    "gitignore",
+    "gitattributes",
+    "javascript",
+    "json",
+    "json5",
+    "markdown",
+    "markdown_inline",
+    "scss",
+    "toml",
+    "tsx",
+    "typescript",
+    "vim",
+    "vue",
+    "yaml",
+    "query"
+  },
+  sync_install = false,
+  auto_install = true,
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = { "markdown" },
+  },
+}
