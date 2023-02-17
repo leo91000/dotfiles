@@ -12,14 +12,13 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
-  'wbthomason/packer.nvim',
-  'nvim-lua/plenary.nvim',
-  'nvim-telescope/telescope.nvim', tag = '0.1.0',
+  {'nvim-lua/plenary.nvim'},
+  {'nvim-telescope/telescope.nvim'},
   {
     'nvim-treesitter/nvim-treesitter',
     build = ":TSUpdate"
   },
-  'nvim-treesitter/playground',
+  {'nvim-treesitter/playground'},
 
   -- UI 
   { 'nvim-tree/nvim-web-devicons' },
@@ -42,13 +41,13 @@ require('lazy').setup({
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   },
-  'gelguy/wilder.nvim',
+  {'gelguy/wilder.nvim'},
 
   -- GIT
-  "tpope/vim-fugitive",
-  "idanarye/vim-merginal",
-  "tpope/vim-rhubarb",
-  "junegunn/gv.vim",
+  {"tpope/vim-fugitive"},
+  {"idanarye/vim-merginal"},
+  {"tpope/vim-rhubarb"},
+  {"junegunn/gv.vim"},
 
   -- LSP Support
   {'neovim/nvim-lspconfig'},
@@ -67,10 +66,6 @@ require('lazy').setup({
   {'L3MON4D3/LuaSnip'},
   {'rafamadriz/friendly-snippets'},
 
-  -- Rust tools
-  {"rust-lang/rust.vim"},
-  {"simrat39/rust-tools.nvim"},
-
   -- LSP zero preconfiguration
   {
     'VonHeikemen/lsp-zero.nvim',
@@ -88,5 +83,16 @@ require('lazy').setup({
       {'L3MON4D3/LuaSnip'},
       {'rafamadriz/friendly-snippets'},
     }
+  },
+
+  -- Tools
+  {"rust-lang/rust.vim"},
+  {"simrat39/rust-tools.nvim"},
+  {'gpanders/editorconfig.nvim'},
+  {
+    'numToStr/Comment.nvim',
+    config = function() 
+      require('Comment').setup()
+    end
   },
 })
