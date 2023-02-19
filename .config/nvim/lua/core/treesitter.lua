@@ -25,6 +25,12 @@ require'nvim-treesitter.configs'.setup {
   auto_install = true,
   highlight = {
     enable = true,
+    disable = function(lang, bufnr)
+      return 
+        (lang == "cpp" and vim.api.nvim_buf_line_count(bufnr) > 50000) or
+        (lang == "javascript" and vim.api.nvim_buf_line_count(bufnr) > 10000) or
+        (lang == "typescript" and vim.api.nvim_buf_line_count(bufnr) > 10000)
+    end,
     additional_vim_regex_highlighting = { "markdown" },
   },
 }
