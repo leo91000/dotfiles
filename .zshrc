@@ -37,6 +37,8 @@ export EDITOR='nvim'
 alias sourcetmux='tmux source ~/.tmux.conf'
 alias config='nvim ~/.config/nvim/init.lua'
 
+alias push_dotfiles="cd ~/Projects/leo91000/dotfiles && ./update-config.sh && cd -"
+
 source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

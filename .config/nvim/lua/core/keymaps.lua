@@ -52,3 +52,6 @@ vim.keymap.set('i', '<M-;>', '<Plug>(copilot-suggest)')
 
 -- NVIM Tree
 vim.keymap.set('n', '<M-&>', "<cmd>NvimTreeToggle<cr>")
+
+-- LSP
+vim.keymap.set('n', '<F9>', "<cmd>LspRestart<cr>")
