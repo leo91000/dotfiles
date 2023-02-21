@@ -41,6 +41,11 @@ require('lazy').setup({
     'nvim-lualine/lualine.nvim',
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   },
+  {
+    'nvim-tree/nvim-tree.lua',
+    requires = { 'nvim-tree/nvim-web-devicons' },
+    tag = 'nightly'
+  },
   {'gelguy/wilder.nvim'},
 
   -- GIT

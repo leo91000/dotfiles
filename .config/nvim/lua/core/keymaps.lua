@@ -49,3 +49,6 @@ vim.keymap.set('i', '<M-)>', '<Plug>(copilot-next)')
 vim.keymap.set('i', '<M-(>', '<Plug>(copilot-previous)')
 vim.keymap.set('i', '<M-,>', '<Plug>(copilot-dismiss)')
 vim.keymap.set('i', '<M-;>', '<Plug>(copilot-suggest)')
+
+-- NVIM Tree
+vim.keymap.set('n', '<M-&>', "<cmd>NvimTreeToggle<cr>")
