@@ -43,3 +43,9 @@ vim.keymap.set('n', 'gK', "<cmd>Git pull<cr>")
 vim.keymap.set('n', 'gw', "<cmd>cnext<cr>")
 vim.keymap.set('n', 'gW', "<cmd>cprevious<cr>")
 vim.keymap.set('n', '<leader>gB', '<cmd>MerginalToggle<cr>')
+
+-- Copilot
+vim.keymap.set('i', '<M-)>', '<Plug>(copilot-next)')
+vim.keymap.set('i', '<M-(>', '<Plug>(copilot-previous)')
+vim.keymap.set('i', '<M-,>', '<Plug>(copilot-dismiss)')
+vim.keymap.set('i', '<M-;>', '<Plug>(copilot-suggest)')
