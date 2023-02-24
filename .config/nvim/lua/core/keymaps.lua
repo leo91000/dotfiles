@@ -42,7 +42,7 @@ vim.keymap.set('n', '<leader>gk', "<cmd>Git push --force-with-lease<cr>")
 vim.keymap.set('n', 'gK', "<cmd>Git pull<cr>")
 vim.keymap.set('n', 'gw', "<cmd>cnext<cr>")
 vim.keymap.set('n', 'gW', "<cmd>cprevious<cr>")
-vim.keymap.set('n', '<leader>gB', '<cmd>MerginalToggle<cr>')
+vim.keymap.set('n', '<leader>gb', '<cmd>MerginalToggle<cr>')
 
 -- Copilot
 vim.keymap.set('i', '<M-)>', '<Plug>(copilot-next)')
