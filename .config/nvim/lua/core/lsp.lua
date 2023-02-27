@@ -19,7 +19,6 @@ lsp.ensure_installed({
     'tailwindcss',
     'yamlls',
     'bashls',
-    'unocss',
 })
 
 lsp.configure('tailwindcss', {
