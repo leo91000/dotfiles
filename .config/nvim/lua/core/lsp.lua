@@ -12,7 +12,7 @@ lsp.ensure_installed({
     'html',
     'jsonls',
     'texlab',
-    'sumneko_lua',
+    'lua_ls',
     'pyright',
     'svelte',
     'taplo',
