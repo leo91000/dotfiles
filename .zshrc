@@ -17,13 +17,18 @@ if [[ -e /usr/share/zsh/manjaro-zsh-prompt ]]; then
 fi
 
 export ZSH=$HOME/.oh-my-zsh
-export GOROOT=/usr/local/go
+export GOROOT=/usr/lib/go
 export GOPATH=$HOME/go
 export CARGO=$HOME/.cargo/bin
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin:$CARGO
 export CARGO=$HOME/.cargo/bin/cargo
 export VOLTA_HOME="$HOME/.volta"
 export PATH="$VOLTA_HOME/bin:$PATH"
+export JAVA_HOME=/usr/lib/jvm/java-19-openjdk
+export PATH=$PATH:$JAVA_HOME/bin
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 POWERLEVEL9K_MODE="nerdfont-complete"
