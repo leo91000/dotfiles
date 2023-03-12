@@ -108,5 +108,15 @@ require('lazy').setup({
   {
     'windwp/nvim-ts-autotag',
     config = function() require("nvim-ts-autotag").setup {} end
-  }
+  },
+  {
+    "folke/which-key.nvim",
+    config = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+      require("which-key").setup({
+
+      })
+    end,
+  },
 })
