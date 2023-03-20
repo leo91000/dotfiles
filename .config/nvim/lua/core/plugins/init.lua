@@ -100,7 +100,22 @@ require('lazy').setup({
       require('Comment').setup()
     end
   },
-  {"github/copilot.vim"},
+  {
+    'zbirenbaum/copilot.lua',
+    event = 'VimEnter',
+    config = function()
+      vim.defer_fn(function()
+        require('copilot').setup()
+      end, 100)
+    end,
+  },
+  {
+    'zbirenbaum/copilot-cmp',
+    after = {'copilot.lua'},
+    config = function ()
+      require('copilot_cmp').setup()
+    end
+  },
   {
 	"windwp/nvim-autopairs",
     config = function() require("nvim-autopairs").setup {} end
@@ -119,4 +134,14 @@ require('lazy').setup({
       })
     end,
   },
+  {
+    'Wansmer/treesj',
+    keys = { '<space>m', '<space>j', '<space>s' },
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('treesj').setup({
+        max_join_length = 500,
+      })
+    end,
+  }
 })

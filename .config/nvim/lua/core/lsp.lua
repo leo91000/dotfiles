@@ -1,6 +1,11 @@
 -- LSP Config
+local cmp = require('cmp')
 local lsp = require('lsp-zero')
-lsp.preset('recommended')
+
+lsp.preset('recommended', {
+    name = 'minimal',
+    set_lsp_keymaps = false,
+})
 
 lsp.ensure_installed({
     'tsserver',
@@ -44,5 +49,25 @@ lsp.configure('unocss', {
         "rust"
     },
 })
+
+
+lsp.setup_nvim_cmp({
+  sources = {
+    {name = 'nvim_lsp', keyword_length = 3},
+    {name = 'path'},
+    {name = 'copilot'},
+    {name = 'luasnip', keyword_length = 2},
+    {name = 'buffer', keyword_length = 3},
+  },
+  mapping = lsp.defaults.cmp_mappings({
+    ['<CR>'] = cmp.mapping.confirm({
+      -- documentation says this is important.
+      -- I don't know why.
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = false,
+    })
+  })
+})
+
 
 lsp.setup()
