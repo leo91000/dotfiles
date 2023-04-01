@@ -86,7 +86,7 @@ alias gb='git branch'
 alias gbd='git branch -d'
 
 alias grb='git rebase'
-alias grbom='git rebase origin/master'
+alias grbom='git rebase origin/main'
 alias grbc='git rebase --continue'
 
 alias gl='git log'
