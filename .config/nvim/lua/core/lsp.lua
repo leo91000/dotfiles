@@ -24,6 +24,8 @@ lsp.ensure_installed({
     'tailwindcss',
     'yamlls',
     'bashls',
+    'prismals',
+    'sqlls'
 })
 
 lsp.configure('tailwindcss', {

@@ -19,7 +19,9 @@ require'nvim-treesitter.configs'.setup {
     "vim",
     "vue",
     "yaml",
-    "query"
+    "query",
+    "prisma",
+    "sql",
   },
   sync_install = false,
   auto_install = true,
