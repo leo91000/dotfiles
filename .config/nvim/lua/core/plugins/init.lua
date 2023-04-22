@@ -74,7 +74,7 @@ require('lazy').setup({
   -- LSP zero preconfiguration
   {
     'VonHeikemen/lsp-zero.nvim',
-    branch = 'v1.x',
+    branch = 'v2.x',
     requires = {
       {'neovim/nvim-lspconfig'},
       {'williamboman/mason.nvim'},
@@ -96,7 +96,7 @@ require('lazy').setup({
   {'gpanders/editorconfig.nvim'},
   {
     'numToStr/Comment.nvim',
-    config = function() 
+    config = function()
       require('Comment').setup()
     end
   },

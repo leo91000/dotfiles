@@ -2,9 +2,24 @@
 local cmp = require('cmp')
 local lsp = require('lsp-zero')
 
-lsp.preset('recommended', {
-    name = 'minimal',
-    set_lsp_keymaps = false,
+lsp.preset({
+  float_border = 'rounded',
+  configure_diagnostics = true,
+  setup_servers_on_start = true,
+  call_servers = 'local',
+  set_lsp_keymaps = false,
+  manage_nvim_cmp = {
+    set_sources = 'recommended',
+    set_basic_mappings = true,
+    set_extra_mappings = true,
+    use_luasnip = true,
+    set_format = true,
+    documentation_window = true,
+  },
+})
+
+vim.diagnostic.config({
+    virtual_text = false,
 })
 
 lsp.ensure_installed({
@@ -63,8 +78,6 @@ lsp.setup_nvim_cmp({
   },
   mapping = lsp.defaults.cmp_mappings({
     ['<CR>'] = cmp.mapping.confirm({
-      -- documentation says this is important.
-      -- I don't know why.
       behavior = cmp.ConfirmBehavior.Replace,
       select = false,
     })
