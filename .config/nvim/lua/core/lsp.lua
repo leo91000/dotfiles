@@ -23,7 +23,6 @@ vim.diagnostic.config({
 })
 
 lsp.ensure_installed({
-    'tsserver',
     'eslint',
     'volar',
     'rust_analyzer',
@@ -55,18 +54,16 @@ lsp.configure('tailwindcss', {
     },
 })
 
-lsp.configure('unocss', {
+lsp.configure('volar', {
     filetypes = {
-        "html",
-        "javascriptreact",
-        "typescriptreact",
-        "rescript",
         "vue",
-        "svelte",
-        "rust"
+        "typescriptreact",
+        "javascriptreact",
+        "typescript",
+        "javascript",
+        "json"
     },
 })
-
 
 lsp.setup_nvim_cmp({
   sources = {
@@ -83,6 +80,5 @@ lsp.setup_nvim_cmp({
     })
   })
 })
-
 
 lsp.setup()

@@ -24,9 +24,10 @@ require('lazy').setup({
   { 'nvim-tree/nvim-web-devicons' },
   {
     "j-hui/fidget.nvim",
+    tag = "legacy",
     config = function()
       require("fidget").setup()
-    end
+    end,
   },
   'folke/tokyonight.nvim',
   "petertriho/nvim-scrollbar",
