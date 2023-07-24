@@ -2,3 +2,4 @@ set relativenumber number
 set commentary
 set scrolloff=5
 set incsearch
+set clipboard+=unnamed
