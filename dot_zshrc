@@ -114,6 +114,7 @@ alias nd='nix develop -c $SHELL'
 alias cm="chezmoi"
 alias cme="chezmoi edit --apply"
 alias cmez="chezmoi edit --apply ~/.zshrc"
+alias cmen="chezmoi edit --apply ~/.config/nvim"
 alias cmu="chezmoi update"
 
 # Make sure to use nvim as the default editor
