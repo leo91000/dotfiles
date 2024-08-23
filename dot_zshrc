@@ -1,0 +1,136 @@
+export ZSH="$HOME/.oh-my-zsh"
+
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+setopt autocd nomatch
+unsetopt beep extendedglob notify
+autoload -Uz compinit
+compinit
+
+typeset -U path cdpath fpath manpath
+
+for profile in ${(z)NIX_PROFILES}; do
+  fpath+=($profile/share/zsh/site-functions $profile/share/zsh/$ZSH_VERSION/functions $profile/share/zsh/vendor-completions)
+done
+
+plugins=(
+  git
+  npm
+  docker
+  zsh-autosuggestions
+  zsh-history-substring-search
+)
+
+ZSH_THEME="robbyrussell"
+source $ZSH/oh-my-zsh.sh
+
+# History options should be set in .zshrc and after oh-my-zsh sourcing.
+# See https://github.com/nix-community/home-manager/issues/177.
+HISTSIZE="10000"
+SAVEHIST="10000"
+
+HISTFILE="$HOME/.zsh_history"
+mkdir -p "$(dirname "$HISTFILE")"
+
+setopt HIST_FCNTL_LOCK
+setopt HIST_IGNORE_DUPS
+unsetopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+unsetopt HIST_EXPIRE_DUPS_FIRST
+setopt SHARE_HISTORY
+unsetopt EXTENDED_HISTORY
+
+
+zstyle ":completion:*" menu select
+zstyle ":completion:*" matcher-list "" "m:{a-z0A-Z}={A-Za-z}" "r:|=*" "l:|=* r:|=*"
+if type nproc &>/dev/null; then
+  export MAKEFLAGS="$MAKEFLAGS -j$(($(nproc)-1))"
+fi
+bindkey '^[[3~' delete-char                     # Key Del
+bindkey '^[[5~' beginning-of-buffer-or-history  # Key Page Up
+bindkey '^[[6~' end-of-buffer-or-history        # Key Page Down
+bindkey '^[[1;3D' backward-word                 # Key Alt + Left
+bindkey '^[[1;3C' forward-word                  # Key Alt + Right
+bindkey '^[[H' beginning-of-line                # Key Home
+bindkey '^[[F' end-of-line                      # Key End
+bindkey '^H' backward-delete-word
+# #neofetch
+# export TERM='screen-256color'
+if [ -f $HOME/.zshrc-personal ]; then
+  source $HOME/.zshrc-personal
+fi
+if [ -z "$TMUX" ]; then
+  tmux attach || tmux new-session
+fi
+
+
+# Aliases
+alias ..='cd ..'
+alias gA='git add -A'
+alias ga='git add'
+alias gb='git branch'
+alias gbd='git branch -d'
+alias gc='git commit'
+alias gca='git commit -a'
+alias gcam='git add -A && git commit -m'
+alias gcl='git clone'
+alias gcm='git commit -m'
+alias gco='git checkout'
+alias gcob='git checkout -b'
+alias gfrb='git fetch origin && git rebase origin/master'
+alias ghci='gh run list -L 1'
+alias gl='git log'
+alias glo='git log --oneline --graph'
+alias gmv='git mv'
+alias gp='git push'
+alias gpf='git push --force'
+alias gpft='git push --follow-tags'
+alias gpl='git pull --rebase'
+alias grb='git rebase'
+alias grbc='git rebase --continue'
+alias grbom='git rebase origin/main'
+alias grh='git reset HEAD'
+alias grh1='git reset HEAD~1'
+alias grm='git rm'
+alias grt='cd "$(git rev-parse --show-toplevel)"'
+alias gs='git status'
+alias gsha='git rev-parse HEAD | pbcopy'
+alias gst='git stash'
+alias gx='git clean -df'
+alias gxn='git clean -dn'
+alias la='lsd -a'
+alias lal='lsd -al'
+alias ll='lsd -l'
+alias ls='lsd'
+alias main='git checkout main'
+alias nd='nix develop -c $SHELL'
+alias neofetch='neofetch --ascii ~/.config/ascii-neofetch'
+alias sv='sudo vim'
+alias v='nvim'
+alias r='source ~/.zshrc'
+alias sudonvim='sudo XDG_CONFIG_HOME=$HOME/.config XDG_DATA_HOME=$HOME/.local/share nvim'
+alias nd='nix develop -c $SHELL'
+
+# Make sure to use nvim as the default editor
+export EDITOR=nvim
+
+# Named Directory Hashes
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+ZSH_HIGHLIGHT_HIGHLIGHTERS+=()
+
+
+bindkey "^[[A" history-substring-search-up
+bindkey "^[[B" history-substring-search-down
+
+if [ -f "$HOME/.cargo/env" ]; then
+  source $HOME/.cargo/env
+fi
+
+export MISE_NODE_COREPACK='true'
+eval "$(/usr/bin/mise activate zsh)"
+
+export PATH="$PATH:/opt/nvim-linux64/bin"
+export PATH="$PATH:$HOME/zig-linux-x86_64-0.12.0"
+
+

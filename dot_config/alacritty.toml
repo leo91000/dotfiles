@@ -1,0 +1,10 @@
+[font]
+normal.family = "JetBrainsMono Nerd Font"
+
+size = 14
+
+[window]
+opacity = 1
+
+[shell]
+program = "/bin/zsh"

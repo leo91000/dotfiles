@@ -1,0 +1,82 @@
+[
+  {
+    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu",
+    "bindings": {
+      "space f f": "file_finder::Toggle",
+      "space f w": "workspace::NewSearch",
+      "space f p": "projects::OpenRecent",
+      "space f a": "command_palette::Toggle",
+      "space l d": "diagnostics::Deploy",
+      "space d n": "editor::GoToDiagnostic",
+      "space d p": "editor::GoToPrevDiagnostic",
+      "space c": "pane::CloseActiveItem",
+      "space g p": "editor::ToggleHunkDiff",
+      "space g r": "editor::RevertSelectedHunks",
+      "space u w": "editor::ToggleSoftWrap",
+      "space m p": "markdown::OpenPreview",
+      "space m P": "markdown::OpenPreviewToTheSide",
+      "space e": "project_panel::ToggleFocus",
+      "space c o": "collab_panel::ToggleFocus",
+      "H": "pane::ActivatePrevItem",
+      "L": "pane::ActivateNextItem",
+      "ctrl-shift-u": "vim::ScrollUp",
+      "ctrl-shift-d": "vim::ScrollDown",
+      "ctrl-u": ["workspace::SendKeystrokes", "ctrl-shift-u z z"],
+      "ctrl-d": ["workspace::SendKeystrokes", "ctrl-shift-d z z"]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
+    "bindings": {
+      "space l a": "editor::ToggleCodeActions",
+      "space l r": "editor::Rename",
+      "g d": "editor::GoToDefinition",
+      "g D": "editor::GoToDefinitionSplit",
+      "g i": "editor::GoToImplementation",
+      "g I": "editor::GoToImplementationSplit",
+      "g t": "editor::GoToTypeDefinition",
+      "g T": "editor::GoToTypeDefinitionSplit",
+      "g r": "editor::FindAllReferences",
+      "] h": "editor::GoToHunk",
+      "[ h": "editor::GoToPrevHunk"
+    }
+  },
+  {
+    "context": "ProjectPanel && not_editing",
+    "bindings": {
+      "a": "project_panel::NewFile",
+      "A": "project_panel::NewDirectory",
+      "r": "project_panel::Rename",
+      "d": "project_panel::Delete",
+      "x": "project_panel::Cut",
+      "c": "project_panel::Copy",
+      "p": "project_panel::Paste",
+      "q": "workspace::ToggleRightDock",
+      "space e": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "CollabPanel && not_editing",
+    "bindings": {
+      "q": "workspace::ToggleLeftDock",
+      "space e": "workspace::ToggleLeftDock"
+    }
+  },
+  {
+    "context": "Dock",
+    "bindings": {
+      "ctrl-w h": ["workspace::ActivatePaneInDirection", "Left"],
+      "ctrl-w l": ["workspace::ActivatePaneInDirection", "Right"],
+      "ctrl-w k": ["workspace::ActivatePaneInDirection", "Up"],
+      "ctrl-w j": ["workspace::ActivatePaneInDirection", "Down"]
+    }
+  },
+  {
+    "context": "EmptyPane || SharedScreen",
+    "bindings": {
+      "space f f": "file_finder::Toggle",
+      "space f p": "projects::OpenRecent",
+      "space f a": "command_palette::Toggle"
+    }
+  }
+]
