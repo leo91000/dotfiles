@@ -111,6 +111,9 @@ alias v='nvim'
 alias r='source ~/.zshrc'
 alias sudonvim='sudo XDG_CONFIG_HOME=$HOME/.config XDG_DATA_HOME=$HOME/.local/share nvim'
 alias nd='nix develop -c $SHELL'
+alias cm="chezmoi"
+alias cme="chezmoi edit --apply"
+alias cmu="chezmoi update"
 
 # Make sure to use nvim as the default editor
 export EDITOR=nvim
