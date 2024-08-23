@@ -60,7 +60,7 @@ bindkey '^H' backward-delete-word
 if [ -f $HOME/.zshrc-personal ]; then
   source $HOME/.zshrc-personal
 fi
-if [ "$TERM_PROGRAM" != "Zed" ]; then
+if [ "$TERM_PROGRAM" != "zed" ]; then
   if [ -z "$TMUX" ]; then
     tmux attach || tmux new-session
   fi
