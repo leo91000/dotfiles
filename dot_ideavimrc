@@ -1,0 +1,44 @@
+set scrolloff=5
+set surround
+set multiple-cursors
+set argtextobj
+set easymotion
+set textobj-entire
+set ReplaceWithRegister
+set exchange
+set clipboard+=unnamed
+set visualbell
+set noerrorbells
+set relativenumber
+set number
+set hlsearch
+set incsearch
+
+Plug 'machakann/vim-highlightedyank'
+Plug 'tpope/vim-commentary'
+
+let mapleader = " "
+
+nnoremap H :action PreviousTab<CR>
+nnoremap L :action NextTab<CR>
+nnoremap <leader>fw :action FindInPath<CR>
+nnoremap <leader>ff :action GotoFile<CR>
+nnoremap <leader>fa :action GotoAction<CR>
+nnoremap <leader>la :action ShowIntentionActions<CR>
+nnoremap <leader>ld :action ShowErrorDescription<CR>
+nnoremap <leader>dn :action GotoNextError<CR>
+nnoremap <leader>dn :action GotoPreviousError<CR>
+nnoremap <leader>gk :action Vcs.Push<CR>
+nnoremap <leader>gK :action Vcs.UpdateProject<CR>
+nnoremap <leader>bc :action CloseAllEditorsButActive<CR>
+nnoremap <leader>c :action CloseContent<CR>
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+nnoremap ]g :action GotoNextChange<CR>
+nnoremap [g :action GotoPreviousChange<CR>
+nnoremap \r :action IdeaVim.ReloadVimRc.reload<CR>
+nnoremap zm :action
+nnoremap <leader>zo :action ZoomOutIdeAction<CR>
+nnoremap <leader>zi :action ZoomInIdeAction<CR>
+
+vnoremap p pgvy
