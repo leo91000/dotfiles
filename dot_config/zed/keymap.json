@@ -79,5 +79,11 @@
       "space f p": "projects::OpenRecent",
       "space f a": "command_palette::Toggle"
     }
+  },
+  {
+    "context": "Editor && showing_completions",
+    "bindings": {
+      "alt-l": "editor::ConfirmCompletion"
+    }
   }
 ]
