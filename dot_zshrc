@@ -115,6 +115,7 @@ alias sudonvim='sudo XDG_CONFIG_HOME=$HOME/.config XDG_DATA_HOME=$HOME/.local/sh
 alias nd='nix develop -c $SHELL'
 alias cm="chezmoi"
 alias cme="chezmoi edit --apply"
+alias cma="chezmoi add"
 alias cmez="chezmoi edit --apply ~/.zshrc"
 alias cmen="chezmoi edit --apply ~/.config/nvim"
 alias cmezed="chezmoi edit ~/.config/zed"
