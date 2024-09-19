@@ -16,7 +16,7 @@
       "space m p": "markdown::OpenPreview",
       "space m P": "markdown::OpenPreviewToTheSide",
       "space e": "project_panel::ToggleFocus",
-      "space c o": "collab_panel::ToggleFocus",
+      "space C o": "collab_panel::ToggleFocus",
       "space a": "assistant::ToggleFocus",
       "H": "pane::ActivatePrevItem",
       "L": "pane::ActivateNextItem",
