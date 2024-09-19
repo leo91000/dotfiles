@@ -1,6 +1,6 @@
 [
   {
-    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu",
+    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu && !Assistant",
     "bindings": {
       "space f f": "file_finder::Toggle",
       "space f w": "workspace::NewSearch",
@@ -17,12 +17,14 @@
       "space m P": "markdown::OpenPreviewToTheSide",
       "space e": "project_panel::ToggleFocus",
       "space c o": "collab_panel::ToggleFocus",
+      "space a": "assistant::ToggleFocus",
       "H": "pane::ActivatePrevItem",
       "L": "pane::ActivateNextItem",
       "ctrl-shift-u": "vim::ScrollUp",
       "ctrl-shift-d": "vim::ScrollDown",
       "ctrl-u": ["workspace::SendKeystrokes", "ctrl-shift-u z z"],
-      "ctrl-d": ["workspace::SendKeystrokes", "ctrl-shift-d z z"]
+      "ctrl-d": ["workspace::SendKeystrokes", "ctrl-shift-d z z"],
+      "ctrl-x": "terminal_panel::ToggleFocus"
     }
   },
   {
@@ -63,12 +65,12 @@
     }
   },
   {
-    "context": "Dock",
+    "context": "Dock || Editor",
     "bindings": {
-      "ctrl-w h": ["workspace::ActivatePaneInDirection", "Left"],
-      "ctrl-w l": ["workspace::ActivatePaneInDirection", "Right"],
-      "ctrl-w k": ["workspace::ActivatePaneInDirection", "Up"],
-      "ctrl-w j": ["workspace::ActivatePaneInDirection", "Down"],
+      // "ctrl-w h": ["workspace::ActivatePaneInDirection", "Left"],
+      // "ctrl-w l": ["workspace::ActivatePaneInDirection", "Right"],
+      // "ctrl-w k": ["workspace::ActivatePaneInDirection", "Up"],
+      // "ctrl-w j": ["workspace::ActivatePaneInDirection", "Down"],
       "ctrl-w o": "workspace::CloseAllDocks"
     }
   },
@@ -84,6 +86,18 @@
     "context": "Editor && showing_completions",
     "bindings": {
       "alt-l": "editor::ConfirmCompletion"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-x": "workspace::ToggleBottomDock"
+    }
+  },
+  {
+    "context": "Assistant",
+    "bindings": {
+      "space a": "assistant::ToggleFocus"
     }
   }
 ]
