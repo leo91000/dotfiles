@@ -16,7 +16,7 @@
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
-  "theme": "Ayu Dark",
+  "theme": "One Dark",
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "ui_font_size": 16,
   "buffer_font_size": 16,
@@ -43,7 +43,8 @@
       }
     },
     "Vue.js": {
-      "formatter": "language_server",
+      "formatter": "prettier",
+      "tab_size": 2,
       "format_on_save": "off",
       "code_actions_on_format": {
         "source.fixAll.eslint": true
