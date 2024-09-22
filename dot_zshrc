@@ -121,7 +121,8 @@ alias cmez="chezmoi edit --apply ~/.zshrc"
 alias cmen="chezmoi edit --apply ~/.config/nvim"
 alias cmezed="chezmoi edit ~/.config/zed"
 alias cmazed="chezmoi add ~/.config/zed"
-alias cmam="chezmoi edit --apply ~/.config/mise/config.toml"
+alias cmem="chezmoi edit --apply ~/.config/mise/config.toml"
+alias cmam="chezmoi add --apply ~/.config/mise/config.toml"
 alias cmu="chezmoi update"
 
 # Make sure to use nvim as the default editor
