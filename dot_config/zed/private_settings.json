@@ -16,7 +16,7 @@
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
-  "theme": "One Dark",
+  "theme": "Catppuccin Mocha",
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "buffer_font_weight": 200,
   "ui_font_family": "JetBrainsMono Nerd Font",
