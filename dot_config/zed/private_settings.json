@@ -14,6 +14,11 @@
     },
     "version": "2"
   },
+  "auto_install_extensions": {
+    "html": true,
+    "vue": true,
+    "catppuccin": true
+  },
   "base_keymap": "VSCode",
   "vim_mode": true,
   "theme": "Catppuccin Mocha",
