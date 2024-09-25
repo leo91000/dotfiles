@@ -1,6 +1,6 @@
 [
   {
-    "context": "Editor && (vim_mode == normal || vim_mode == visual) && !VimWaiting && !menu && !Assistant",
+    "context": "Editor && !AssistantPanel && (vim_mode == normal || vim_mode == visual)",
     "bindings": {
       "space f f": "file_finder::Toggle",
       "space f w": "workspace::NewSearch",
@@ -29,7 +29,7 @@
     }
   },
   {
-    "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
+    "context": "Editor && vim_mode == normal && !menu",
     "bindings": {
       "space l a": "editor::ToggleCodeActions",
       "space l r": "editor::Rename",
@@ -106,7 +106,7 @@
   {
     "context": "Assistant",
     "bindings": {
-      "space a": "assistant::ToggleFocus"
+      "space a": "workspace::ToggleRightDock"
     }
   }
 ]
