@@ -104,7 +104,7 @@
     }
   },
   {
-    "context": "Assistant",
+    "context": "AssistantPanel",
     "bindings": {
       "space a": "workspace::ToggleRightDock"
     }
