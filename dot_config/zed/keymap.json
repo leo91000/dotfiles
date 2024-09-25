@@ -6,7 +6,7 @@
       "space f w": "workspace::NewSearch",
       "space f p": "projects::OpenRecent",
       "space f a": "command_palette::Toggle",
-      "space l d": "diagnostics::Deploy",
+      "space l d": "editor::Hover",
       "space d n": "editor::GoToDiagnostic",
       "space d p": "editor::GoToPrevDiagnostic",
       "space c": "pane::CloseActiveItem",
@@ -104,7 +104,7 @@
     }
   },
   {
-    "context": "AssistantPanel",
+    "context": "AssistantPanel && (vim_mode == normal || vim_mode == visual) && !menu",
     "bindings": {
       "space a": "workspace::ToggleRightDock"
     }
