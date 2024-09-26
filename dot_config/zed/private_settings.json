@@ -18,11 +18,12 @@
     "html": true,
     "vue": true,
     "catppuccin": true,
-    "tokyo-night": true
+    "tokyo-night": true,
+    "github-theme": true
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
-  "theme": "Tokyo Night",
+  "theme": "Github Dark",
   "experimental.theme_overrides": {
     "syntax": {
       "type": {
@@ -33,8 +34,8 @@
   "buffer_font_family": "JetBrains Mono",
   "buffer_font_weight": 400,
   "ui_font_family": "JetBrains Mono",
-  "ui_font_size": 16,
-  "buffer_font_size": 16,
+  "ui_font_size": 14,
+  "buffer_font_size": 14,
   "format_on_save": "on",
   "git": {
     "inline_blame": {
