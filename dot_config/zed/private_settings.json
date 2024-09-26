@@ -17,11 +17,19 @@
   "auto_install_extensions": {
     "html": true,
     "vue": true,
-    "catppuccin": true
+    "catppuccin": true,
+    "tokyo-night": true
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
-  "theme": "Catppuccin Mocha",
+  "theme": "Tokyo Night",
+  "experimental.theme_overrides": {
+    "syntax": {
+      "type": {
+        "color": "#e0af68"
+      }
+    }
+  },
   "buffer_font_family": "FiraCode Nerd Font Mono",
   "buffer_font_weight": 400,
   "ui_font_family": "FiraCode Nerd Font Mono",
