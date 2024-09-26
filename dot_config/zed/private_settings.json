@@ -30,11 +30,11 @@
       }
     }
   },
-  "buffer_font_family": "FiraCode Nerd Font Mono",
+  "buffer_font_family": "JetBrains Mono",
   "buffer_font_weight": 400,
   "ui_font_family": "FiraCode Nerd Font Mono",
-  "ui_font_size": 18,
-  "buffer_font_size": 18,
+  "ui_font_size": 19,
+  "buffer_font_size": 19,
   "format_on_save": "on",
   "git": {
     "inline_blame": {
@@ -89,5 +89,8 @@
   },
   "chat_panel": {
     "dock": "left"
+  },
+  "tabs": {
+    "file_icons": true
   }
 }
