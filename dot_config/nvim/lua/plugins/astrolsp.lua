@@ -23,11 +23,11 @@ return {
 				allow_filetypes = { -- enable format on save for specified filetypes only
 					-- "go",
 				},
-				ignore_filetypes = { -- disable format on save for specified filetypes
-					-- "python",
-					"vue",
-					"ts",
-				},
+				-- ignore_filetypes = { -- disable format on save for specified filetypes
+				-- 	-- "python",
+				-- 	"vue",
+				-- 	"ts",
+				-- },
 			},
 			disabled = { -- disable formatting capabilities for the listed language servers
 				-- disable lua_ls formatting capability if you want to use StyLua to format your lua code
@@ -58,15 +58,15 @@ return {
 				},
 				filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact", "vue" },
 			},
-			eslint = {
-				---@diagnostic disable-next-line: unused-local
-				on_attach = function(client, bufnr)
-					vim.api.nvim_create_autocmd("BufWritePre", {
-						buffer = bufnr,
-						command = "EslintFixAll",
-					})
-				end,
-			},
+			-- eslint = {
+			-- 	---@diagnostic disable-next-line: unused-local
+			-- 	on_attach = function(client, bufnr)
+			-- 		vim.api.nvim_create_autocmd("BufWritePre", {
+			-- 			buffer = bufnr,
+			-- 			command = "EslintFixAll",
+			-- 		})
+			-- 	end,
+			-- },
 			rust_analyzer = {
 				settings = {
 					["rust-analyzer"] = {
