@@ -58,15 +58,15 @@ return {
 				},
 				filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact", "vue" },
 			},
-			-- eslint = {
-			-- 	---@diagnostic disable-next-line: unused-local
-			-- 	on_attach = function(client, bufnr)
-			-- 		vim.api.nvim_create_autocmd("BufWritePre", {
-			-- 			buffer = bufnr,
-			-- 			command = "EslintFixAll",
-			-- 		})
-			-- 	end,
-			-- },
+			eslint = {
+				---@diagnostic disable-next-line: unused-local
+				on_attach = function(client, bufnr)
+					vim.api.nvim_create_autocmd("BufWritePre", {
+						buffer = bufnr,
+						command = "EslintFixAll",
+					})
+				end,
+			},
 			rust_analyzer = {
 				settings = {
 					["rust-analyzer"] = {
