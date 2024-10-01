@@ -3,6 +3,29 @@
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
 --       as this provides autocomplete and documentation while editing
 
+local function get_vue_ts_plugin_location()
+	-- Get the global npm path
+	local handle = io.popen("npm root -g")
+	local result = handle:read("*a")
+	handle:close()
+
+	-- Trim any trailing whitespace and append the plugin path
+	local global_npm_path = result:gsub("%s+", "")
+	local plugin_path = global_npm_path .. "/@vue/typescript-plugin"
+
+	-- Check if the plugin is already installed
+	local plugin_exists = vim.fn.isdirectory(plugin_path) == 1
+
+	-- If the plugin is not found, install it globally
+	if not plugin_exists then
+		print("@vue/typescript-plugin not found, installing globally...")
+		os.execute("npm i -g @vue/typescript-plugin")
+	end
+
+	-- Return the plugin path for the language server configuration
+	return plugin_path
+end
+
 ---@type LazySpec
 return {
 	"AstroNvim/astrolsp",
@@ -50,8 +73,7 @@ return {
 					plugins = {
 						{
 							name = "@vue/typescript-plugin",
-							location = os.getenv("VUE_TYPESCRIPT_PLUGIN_LOCATION")
-								or "/home/leoc/.volta/tools/image/packages/@vue/typescript-plugin/lib/node_modules/@vue/typescript-plugin",
+							location = get_vue_ts_plugin_location(),
 							languages = { "vue", "javascript", "typescript", "typescriptreact", "javascriptreact" },
 						},
 					},
