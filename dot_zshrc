@@ -141,7 +141,7 @@ if [ -f "$HOME/.cargo/env" ]; then
 fi
 
 export MISE_NODE_COREPACK='true'
-eval "$(/usr/bin/mise activate zsh)"
+eval "$(mise activate zsh)"
 
 export PATH="$PATH:/opt/nvim-linux64/bin"
 export PATH="$PATH:$HOME/zig-linux-x86_64-0.12.0"
