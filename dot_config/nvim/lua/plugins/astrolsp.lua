@@ -118,10 +118,10 @@ return {
 						return
 					end
 
-					vim.api.nvim_create_autocmd("BufWritePre", {
-						buffer = bufnr,
-						command = "EslintFixAll",
-					})
+					-- vim.api.nvim_create_autocmd("BufWritePre", {
+					-- 	buffer = bufnr,
+					-- 	command = "EslintFixAll",
+					-- })
 				end,
 			},
 			rust_analyzer = {
