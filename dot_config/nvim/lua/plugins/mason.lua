@@ -41,6 +41,7 @@ return {
 				"hadolint",
 				"ruff",
 				"rustfmt",
+				"prettierd",
 			})
 		end,
 	},
