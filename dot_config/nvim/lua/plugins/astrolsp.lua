@@ -3,27 +3,50 @@
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
 --       as this provides autocomplete and documentation while editing
 
-local function get_vue_ts_plugin_location()
+local function get_vue_ts_plugin_location(callback)
 	-- Get the global npm path
-	local handle = io.popen("npm root -g")
-	local result = handle:read("*a")
-	handle:close()
+	local result = vim.fn.system("npm root -g")
+	local global_npm_path = vim.fn.trim(result)
 
-	-- Trim any trailing whitespace and append the plugin path
-	local global_npm_path = result:gsub("%s+", "")
-	local plugin_path = global_npm_path .. "/@vue/typescript-plugin"
+	-- Use appropriate path separator
+	local sep = package.config:sub(1, 1)
+	local plugin_path = global_npm_path .. sep .. "@vue" .. sep .. "typescript-plugin"
 
 	-- Check if the plugin is already installed
 	local plugin_exists = vim.fn.isdirectory(plugin_path) == 1
 
-	-- If the plugin is not found, install it globally
-	if not plugin_exists then
-		print("@vue/typescript-plugin not found, installing globally...")
-		os.execute("npm i -g @vue/typescript-plugin")
+	-- Function to return the plugin path
+	local function return_plugin_path()
+		if callback then
+			callback(plugin_path)
+		else
+			return plugin_path
+		end
 	end
 
-	-- Return the plugin path for the language server configuration
-	return plugin_path
+	-- If the plugin is not found, install it globally
+	if not plugin_exists then
+		vim.notify("@vue/typescript-plugin not found, installing globally...")
+		vim.fn.jobstart("npm i -g @vue/typescript-plugin", {
+			on_exit = function(job_id, exit_code, event_type)
+				if exit_code == 0 then
+					vim.notify("@vue/typescript-plugin installed successfully.")
+					-- Call the callback after successful installation
+					return_plugin_path()
+				else
+					vim.notify(
+						"Failed to install @vue/typescript-plugin. Exit code: " .. exit_code,
+						vim.log.levels.ERROR
+					)
+				end
+			end,
+			stdout_buffered = true,
+			stderr_buffered = true,
+		})
+	else
+		-- Plugin exists, return the path immediately
+		return_plugin_path()
+	end
 end
 
 local util = require("lspconfig/util")
