@@ -5,13 +5,12 @@
 
 local function get_vue_ts_plugin_location()
 	-- Get the global npm path
-	local handle = io.popen("npm root -g")
-	local result = handle:read("*a")
-	handle:close()
+	local result = vim.fn.system("npm root -g")
+	local global_npm_path = vim.fn.trim(result)
 
-	-- Trim any trailing whitespace and append the plugin path
-	local global_npm_path = result:gsub("%s+", "")
-	local plugin_path = global_npm_path .. "/@vue/typescript-plugin"
+	-- Use appropriate path separator
+	local sep = package.config:sub(1, 1)
+	local plugin_path = global_npm_path .. sep .. "@vue" .. sep .. "typescript-plugin"
 
 	-- Check if the plugin is already installed
 	local plugin_exists = vim.fn.isdirectory(plugin_path) == 1
@@ -19,7 +18,20 @@ local function get_vue_ts_plugin_location()
 	-- If the plugin is not found, install it globally
 	if not plugin_exists then
 		vim.notify("@vue/typescript-plugin not found, installing globally...")
-		os.execute("npm i -g @vue/typescript-plugin")
+		vim.fn.jobstart("npm i -g @vue/typescript-plugin", {
+			on_exit = function(_job_id, exit_code, _event_type)
+				if exit_code == 0 then
+					vim.notify("@vue/typescript-plugin installed successfully.")
+				else
+					vim.notify(
+						"Failed to install @vue/typescript-plugin. Exit code: " .. exit_code,
+						vim.log.levels.ERROR
+					)
+				end
+			end,
+			stdout_buffered = true,
+			stderr_buffered = true,
+		})
 	end
 
 	-- Return the plugin path for the language server configuration
