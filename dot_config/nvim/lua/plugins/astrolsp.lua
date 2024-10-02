@@ -26,6 +26,31 @@ local function get_vue_ts_plugin_location()
 	return plugin_path
 end
 
+local util = require("lspconfig/util")
+
+local function has_eslint_config(root_dir)
+	-- List of possible ESLint config file names
+	local eslint_files = {
+		".eslintrc",
+		".eslintrc.js",
+		".eslintrc.json",
+		".eslintrc.yaml",
+		".eslintrc.yml",
+		"eslint.config.js",
+		"eslint.config.mjs",
+		"eslint.config.cjs",
+	}
+
+	-- Iterate through the list and check if any file exists in the root directory
+	for _, filename in ipairs(eslint_files) do
+		if util.path.exists(util.path.join(root_dir, filename)) then
+			return true
+		end
+	end
+
+	return false
+end
+
 ---@type LazySpec
 return {
 	"AstroNvim/astrolsp",
@@ -33,8 +58,8 @@ return {
 	opts = {
 		-- Configuration table of features provided by AstroLSP
 		features = {
-			autoformat = true,   -- enable or disable auto formatting on start
-			codelens = true,     -- enable/disable codelens refresh on start
+			autoformat = true, -- enable or disable auto formatting on start
+			codelens = true, -- enable/disable codelens refresh on start
 			inlay_hints = false, -- enable/disable inlay hints on start
 			semantic_tokens = true, -- enable/disable semantic token highlighting
 		},
@@ -42,7 +67,7 @@ return {
 		formatting = {
 			-- control auto formatting on save
 			format_on_save = {
-				enabled = true, -- enable or disable format on save globally
+				enabled = true,
 				allow_filetypes = { -- enable format on save for specified filetypes only
 					-- "go",
 				},
@@ -53,8 +78,8 @@ return {
 				-- },
 			},
 			disabled = { -- disable formatting capabilities for the listed language servers
-				-- disable lua_ls formatting capability if you want to use StyLua to format your lua code
-				-- "lua_ls",
+				"yamlls",
+				"ts_ls",
 			},
 			timeout_ms = 1000, -- default format timeout
 			-- filter = function(client) -- fully override the default formatting function
@@ -80,15 +105,23 @@ return {
 				},
 				filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact", "vue" },
 			},
-			-- eslint = {
-			-- 	---@diagnostic disable-next-line: unused-local
-			-- 	on_attach = function(client, bufnr)
-			-- 		vim.api.nvim_create_autocmd("BufWritePre", {
-			-- 			buffer = bufnr,
-			-- 			command = "EslintFixAll",
-			-- 		})
-			-- 	end,
-			-- },
+			eslint = {
+				---@diagnostic disable-next-line: unused-local
+				on_attach = function(client, bufnr)
+					local root_dir = client.config.root_dir
+
+					if not has_eslint_config(root_dir) then
+						client.stop()
+						vim.notify("ESLint is disabled (no ESLint config found in project root)", vim.log.levels.WARN)
+						return
+					end
+
+					vim.api.nvim_create_autocmd("BufWritePre", {
+						buffer = bufnr,
+						command = "EslintFixAll",
+					})
+				end,
+			},
 			rust_analyzer = {
 				settings = {
 					["rust-analyzer"] = {

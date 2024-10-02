@@ -43,6 +43,25 @@ return {
 				"rustfmt",
 				"prettierd",
 			})
+			opts.handlers = {
+				prettierd = function(source_name, methods)
+					-- Conditional to only use prettier when a .pretterrc is in root
+					local null_ls = require("null-ls")
+					null_ls.register(null_ls.builtins.formatting.prettierd.with({
+						condition = function(utils)
+							return utils.root_has_file(
+								".prettierrc",
+								".prettierrc.js",
+								".prettierrc.cjs",
+								".prettierrc.json",
+								".prettierrc.yaml",
+								".prettierrc.yml",
+								".prettierrc.toml"
+							)
+						end,
+					}))
+				end,
+			}
 		end,
 	},
 	{
