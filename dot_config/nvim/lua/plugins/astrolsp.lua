@@ -83,10 +83,10 @@ return {
 				"volar",
 			},
 			timeout_ms = 1000, -- default format timeout
-			filter = function(client) -- Uncomment this to debug which formatter are applied
-				vim.notify("Formatting with " .. client.name)
-				return true
-			end,
+			-- filter = function(client) -- Uncomment this to debug which formatter are applied
+			-- 	vim.notify("Formatting with " .. client.name)
+			-- 	return true
+			-- end,
 		},
 		-- enable servers that you already have installed without mason
 		servers = {
