@@ -95,9 +95,9 @@ if [ "$TERM_PROGRAM" != "zed" ]; then
     if [ "$plugin_count" -eq 0 ]; then
       echo "Installing tmux plugins..."
       bash "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh" &>/dev/null
-    else
-      echo "Updating tmux plugins..."
-      bash "$HOME/.tmux/plugins/tpm/scripts/update_plugins.sh" &>/dev/null
+    # else
+    #   echo "Updating tmux plugins..."
+    #   bash "$HOME/.tmux/plugins/tpm/scripts/update_plugins.sh" &>/dev/null
     fi
 
     tmux attach || tmux new-session
