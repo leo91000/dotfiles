@@ -41,7 +41,6 @@ unsetopt HIST_EXPIRE_DUPS_FIRST
 setopt SHARE_HISTORY
 unsetopt EXTENDED_HISTORY
 
-
 zstyle ":completion:*" menu select
 zstyle ":completion:*" matcher-list "" "m:{a-z0A-Z}={A-Za-z}" "r:|=*" "l:|=* r:|=*"
 if type nproc &>/dev/null; then
@@ -60,12 +59,18 @@ bindkey '^H' backward-delete-word
 if [ -f $HOME/.zshrc-personal ]; then
   source $HOME/.zshrc-personal
 fi
+
+# Automatically install tmux tpm if not present
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  echo "Installing tmux tpm..."
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
 if [ "$TERM_PROGRAM" != "zed" ]; then
   if [ -z "$TMUX" ]; then
     tmux attach || tmux new-session
   fi
 fi
-
 
 # Aliases
 alias ..='cd ..'
@@ -132,7 +137,6 @@ export EDITOR=nvim
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ZSH_HIGHLIGHT_HIGHLIGHTERS+=()
 
-
 bindkey "^[[A" history-substring-search-up
 bindkey "^[[B" history-substring-search-down
 
@@ -142,8 +146,3 @@ fi
 
 export MISE_NODE_COREPACK='true'
 eval "$(mise activate zsh)"
-
-export PATH="$PATH:/opt/nvim-linux64/bin"
-export PATH="$PATH:$HOME/zig-linux-x86_64-0.12.0"
-
-
