@@ -86,12 +86,20 @@ fi
 if [ "$TERM_PROGRAM" != "zed" ]; then
   if [ -z "$TMUX" ]; then
     # Ensure tpm plugins are installed and updated before starting tmux
-    if [ -d "$HOME/.tmux/plugins/tpm" ]; then
+    tmux_plugins_dir="$HOME/.tmux/plugins"
+    tpm_dir="$tmux_plugins_dir/tpm"
+
+    # Count the number of plugin directories excluding tpm
+    plugin_count=$(fd --type d --max-depth 1 --exclude tpm . "$tmux_plugins_dir" | wc -l)
+
+    if [ "$plugin_count" -eq 0 ]; then
       echo "Installing tmux plugins..."
-      "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh" &>/dev/null
+      bash "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh" &>/dev/null
     else
-      "$HOME/.tmux/plugins/tpm/scripts/update_plugins.sh" &>/dev/null
+      echo "Updating tmux plugins..."
+      bash "$HOME/.tmux/plugins/tpm/scripts/update_plugins.sh" &>/dev/null
     fi
+
     tmux attach || tmux new-session
   fi
 fi
