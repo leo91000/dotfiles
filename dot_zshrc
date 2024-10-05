@@ -1,4 +1,9 @@
+# Check if oh-my-zsh is installed; if not, install it
 export ZSH="$HOME/.oh-my-zsh"
+if [ ! -d "$ZSH" ]; then
+  echo "Installing oh-my-zsh..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+fi
 
 HISTFILE=~/.histfile
 HISTSIZE=1000
@@ -13,6 +18,18 @@ typeset -U path cdpath fpath manpath
 for profile in ${(z)NIX_PROFILES}; do
   fpath+=($profile/share/zsh/site-functions $profile/share/zsh/$ZSH_VERSION/functions $profile/share/zsh/vendor-completions)
 done
+
+# Install zsh-autosuggestions if not already installed
+if [ ! -d "${ZSH_CUSTOM:-$ZSH/custom}/plugins/zsh-autosuggestions" ]; then
+  echo "Installing zsh-autosuggestions..."
+  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$ZSH/custom}/plugins/zsh-autosuggestions
+fi
+
+# Install zsh-history-substring-search if not already installed
+if [ ! -d "${ZSH_CUSTOM:-$ZSH/custom}/plugins/zsh-history-substring-search" ]; then
+  echo "Installing zsh-history-substring-search..."
+  git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-$ZSH/custom}/plugins/zsh-history-substring-search
+fi
 
 plugins=(
   git
@@ -113,7 +130,6 @@ alias ll='lsd -l'
 alias ls='lsd'
 alias main='git checkout main'
 alias nd='nix develop -c $SHELL'
-# alias neofetch='neofetch --ascii ~/.config/ascii-neofetch'
 alias sv='sudo vim'
 alias v='nvim'
 alias r='source ~/.zshrc'
