@@ -85,6 +85,13 @@ fi
 
 if [ "$TERM_PROGRAM" != "zed" ]; then
   if [ -z "$TMUX" ]; then
+    # Ensure tpm plugins are installed and updated before starting tmux
+    if [ -d "$HOME/.tmux/plugins/tpm" ]; then
+      echo "Installing tmux plugins..."
+      "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh" &>/dev/null
+    else
+      "$HOME/.tmux/plugins/tpm/scripts/update_plugins.sh" &>/dev/null
+    fi
     tmux attach || tmux new-session
   fi
 fi
