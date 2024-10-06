@@ -18,6 +18,7 @@ return {
 				"svelte",
 				"taplo",
 				"tailwindcss",
+				"unocss",
 				"yamlls",
 				"bashls",
 				"prismals",
