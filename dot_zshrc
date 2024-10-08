@@ -172,5 +172,8 @@ if [ -f "$HOME/.cargo/env" ]; then
   source $HOME/.cargo/env
 fi
 
+PATH="$PATH":"$HOME/.local/scripts/"
+bindkey -s ^p "tmux-sessionizer\n"
+
 export MISE_NODE_COREPACK='true'
 eval "$(mise activate zsh)"
