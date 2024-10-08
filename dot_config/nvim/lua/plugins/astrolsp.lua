@@ -146,7 +146,6 @@ return {
 
 					if not has_eslint_config(root_dir) then
 						client.stop()
-						vim.notify("ESLint is disabled (no ESLint config found in project root)", vim.log.levels.WARN)
 						return
 					end
 				end,
@@ -164,10 +163,6 @@ return {
 
 					if not has_tailwind_config(root_dir) then
 						client.stop()
-						vim.notify(
-							"Tailwind CSS LSP is disabled (no Tailwind config found in project root)",
-							vim.log.levels.WARN
-						)
 						return
 					end
 				end,
