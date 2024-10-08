@@ -19,7 +19,7 @@ local function get_vue_ts_plugin_location()
 	if not plugin_exists then
 		vim.notify("@vue/typescript-plugin not found, installing globally...")
 		vim.fn.jobstart("npm i -g @vue/typescript-plugin", {
-			on_exit = function(_job_id, exit_code, _event_type)
+			on_exit = function(_job_id, exit_code)
 				if exit_code == 0 then
 					vim.notify("@vue/typescript-plugin installed successfully.")
 				else
@@ -63,6 +63,28 @@ local function has_eslint_config(root_dir)
 	return false
 end
 
+local function has_tailwind_config(root_dir)
+	-- List of possible Tailwind CSS config file names
+	local tailwind_files = {
+		"tailwind.config.js",
+		"tailwind.config.cjs",
+		"tailwind.config.mjs",
+		"tailwind.config.ts",
+		"tailwind.config.cts",
+		"tailwind.config.mts",
+		"tailwind.config.json",
+	}
+
+	-- Iterate through the list and check if any file exists in the root directory
+	for _, filename in ipairs(tailwind_files) do
+		if util.path.exists(util.path.join(root_dir, filename)) then
+			return true
+		end
+	end
+
+	return false
+end
+
 ---@type LazySpec
 return {
 	"AstroNvim/astrolsp",
@@ -83,11 +105,9 @@ return {
 				allow_filetypes = { -- enable format on save for specified filetypes only
 					-- "go",
 				},
-				-- ignore_filetypes = { -- disable format on save for specified filetypes
-				-- 	-- "python",
-				-- 	"vue",
-				-- 	"ts",
-				-- },
+				ignore_filetypes = { -- disable format on save for specified filetypes
+					-- "python",
+				},
 			},
 			disabled = { -- disable formatting capabilities for the listed language servers
 				"yamlls",
@@ -121,7 +141,7 @@ return {
 			},
 			eslint = {
 				---@diagnostic disable-next-line: unused-local
-				on_attach = function(client, bufnr)
+				on_attach = function(client)
 					local root_dir = client.config.root_dir
 
 					if not has_eslint_config(root_dir) then
@@ -129,11 +149,6 @@ return {
 						vim.notify("ESLint is disabled (no ESLint config found in project root)", vim.log.levels.WARN)
 						return
 					end
-
-					-- vim.api.nvim_create_autocmd("BufWritePre", {
-					-- 	buffer = bufnr,
-					-- 	command = "EslintFixAll",
-					-- })
 				end,
 			},
 			rust_analyzer = {
@@ -142,6 +157,20 @@ return {
 						checkOnSave = true,
 					},
 				},
+			},
+			tailwindcss = {
+				on_attach = function(client)
+					local root_dir = client.config.root_dir
+
+					if not has_tailwind_config(root_dir) then
+						client.stop()
+						vim.notify(
+							"Tailwind CSS LSP is disabled (no Tailwind config found in project root)",
+							vim.log.levels.WARN
+						)
+						return
+					end
+				end,
 			},
 		},
 		-- customize how language servers are attached
