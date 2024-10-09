@@ -160,6 +160,8 @@ alias cmu="chezmoi update"
 alias wws='npx concurrently --names "EDITOR,DASHBOARD" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve" "cd ~/projects/weweb/weweb-dashboard && npm run serve"'
 alias wwss='npx concurrently --names "EDITOR,DASHBOARD" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve:staging" "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"'
 alias wwspp='npx concurrently --names "EDITOR,DASHBOARD" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"'
+alias wwcde='cd ~/projects/weweb/weweb-editor'
+alias wwcdd='cd ~/projects/weweb/weweb-dashboard'
 
 # Make sure to use nvim as the default editor
 export EDITOR=nvim
