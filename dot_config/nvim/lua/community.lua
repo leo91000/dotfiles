@@ -5,4 +5,5 @@ return {
 	{ import = "astrocommunity.pack.rust" },
 	-- { import = "astrocommunity.completion.copilot-lua" },
 	{ import = "astrocommunity.utility.telescope-live-grep-args-nvim" },
+	{ import = "astrocommunity.search.grug-far-nvim" },
 }
