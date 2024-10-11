@@ -90,6 +90,13 @@ return {
 				-- ["<C-s>"] = { ":w!<cr>", desc = "Save File" },  -- change description but the same command
 
 				["<F9>"] = { ":LspRestart<cr>", desc = "Restart LSPs" },
+
+				["m"] = {
+					function()
+						require("treesj").toggle()
+					end,
+					desc = "Toggle treesj",
+				},
 			},
 			t = {
 				-- setting a mapping to false will disable it
