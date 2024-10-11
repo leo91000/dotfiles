@@ -163,6 +163,7 @@ alias wwspp='npx concurrently --names "EDITOR,DASHBOARD" --prefix-colors "bgBlue
 alias wwcd='cd ~/projects/weweb'
 alias wwcde='cd ~/projects/weweb/weweb-editor'
 alias wwcdd='cd ~/projects/weweb/weweb-dashboard'
+alias wwcdb='cd ~/projects/weweb/weweb-docker/weweb-back'
 
 # Make sure to use nvim as the default editor
 export EDITOR=nvim
