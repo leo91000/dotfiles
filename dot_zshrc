@@ -166,6 +166,7 @@ alias wwcde='cd ~/projects/weweb/weweb-editor'
 alias wwcdd='cd ~/projects/weweb/weweb-dashboard'
 alias wwcdb='cd ~/projects/weweb/weweb-docker/weweb-back'
 alias wwcdp='cd ~/projects/weweb/weweb-docker/weweb-publisher'
+alias clearnodemodules='fd node_modules --type d -X rm -rf'
 
 # Make sure to use nvim as the default editor
 export EDITOR=nvim
