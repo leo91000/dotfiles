@@ -24,7 +24,6 @@ return {
 				"prismals",
 				"sqlls",
 				"zls",
-				"ts_ls",
 			})
 		end,
 	},
