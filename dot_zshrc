@@ -188,3 +188,10 @@ bindkey -s ^p "tmux-sessionizer\n"
 
 export MISE_NODE_COREPACK='true'
 eval "$(mise activate zsh)"
+
+# bun completions
+[ -s "/home/leoc/.bun/_bun" ] && source "/home/leoc/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
