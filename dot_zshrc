@@ -254,7 +254,6 @@ function wwdevcc() {
 
   wait $concurrently_pid
 }
-}
 
 # Make sure to use nvim as the default editor
 export EDITOR=nvim
