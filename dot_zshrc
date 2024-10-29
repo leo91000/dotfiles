@@ -219,7 +219,7 @@ function wwdevcc() {
 
   # Import certificates into Chrome's NSS database
   echo "Importing certificates into Chrome's NSS database..."
-  local index=0
+  local index=1
   for cert_path in "${cert_paths[@]}"
   do
     local param="${params[$index]}"
