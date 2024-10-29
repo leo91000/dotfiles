@@ -215,21 +215,25 @@ function wwdevcc() {
   # Give the servers some time to start and generate certificates
   sleep 5
 
-  # Import certificates into Chrome's certificate store
+  # Import certificates into Chrome's NSS database
   echo "Importing certificates into Chrome's NSS database..."
   local index=0
   for cert_path in "${cert_paths[@]}"
   do
     local param="${names[$index]}"
     
+    # Sanitize the nickname by replacing colons and spaces with underscores
+    local sanitized_param="${param//:/_}"
+    sanitized_param="${sanitized_param// /_}"
+    
     # Check if the certificate file exists
     if [[ -f "$cert_path" ]]; then
       # Convert PEM to DER format
-      local der_cert="/tmp/${param}.der"
+      local der_cert="/tmp/${sanitized_param}.der"
       openssl x509 -in "$cert_path" -outform der -out "$der_cert"
 
-      # Generate a unique nickname using the parameter name
-      local cert_nickname="ww-${param}-cert"
+      # Generate a unique nickname using the sanitized parameter name
+      local cert_nickname="ww-${sanitized_param}-cert"
 
       # Delete any existing certificate with the same nickname to avoid conflicts
       certutil -d sql:$HOME/.pki/nssdb -D -n "$cert_nickname" 2>/dev/null
@@ -249,6 +253,7 @@ function wwdevcc() {
   done
 
   wait $concurrently_pid
+}
 }
 
 # Make sure to use nvim as the default editor
