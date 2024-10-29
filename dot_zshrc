@@ -215,7 +215,7 @@ function wwdevcc() {
   # Give the servers some time to start and generate certificates
   sleep 5
 
-  # Import certificates into Chrome's certificate store
+  echo "Importing certificates into Chrome's certificate store..."
   for cert_path in "${cert_paths[@]}"
   do
     # Check if the certificate file exists
