@@ -97,6 +97,19 @@ return {
 					end,
 					desc = "Toggle treesj",
 				},
+
+				["<leader>rn"] = {
+					function()
+						if vim.wo.relativenumber then
+							vim.wo.relativenumber = false
+							vim.wo.number = true
+						else
+							vim.wo.relativenumber = true
+							vim.wo.number = false
+						end
+					end,
+					desc = "Toggle relative line numbers",
+				},
 			},
 			t = {
 				-- setting a mapping to false will disable it
