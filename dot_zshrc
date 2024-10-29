@@ -188,7 +188,7 @@ function wwdevcc() {
 
     # Generate a random color from the list
     local color_list=("red" "green" "yellow" "blue" "magenta" "cyan" "white" "gray")
-    local color=${color_list[RANDOM % ${#color_list[@]}]}
+    local color="${color_list[$i]}"
     colors+=("$color")
 
     ((i++))
