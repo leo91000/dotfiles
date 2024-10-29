@@ -174,11 +174,14 @@ function wwdevcc() {
   local commands=()
   local names=()
   local colors=()
+  local ports=()
+  local pids=()
   local i=0
 
   for param in "$@"
   do
     local port=$((8080 + i))
+    ports+=("$port")
     local cmd="cd ~/projects/weweb/weweb-assets/ww-${param} && npm i && npm run serve --port=${port}"
     commands+=("$cmd")
     names+=("ww:cc:${param}")
@@ -195,8 +198,21 @@ function wwdevcc() {
   local names_str="${(j:,:)names}"
   local colors_str="${(j:,:)colors}"
 
-  # Run the commands concurrently with npx
-  npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}"
+  echo "Commands: ${commands[@]}"
+
+  # Run the commands concurrently with npx and capture PIDs
+  npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}" &
+  local concurrently_pid=$!
+
+  # Wait for the concurrently process to finish
+  wait $concurrently_pid
+
+  # After the commands are complete, kill any processes listening on the ports
+  for port in "${ports[@]}"
+  do
+    # Find and kill processes listening on the port
+    lsof -ti tcp:"$port" | xargs -r kill -9
+  done
 }
 
 # Make sure to use nvim as the default editor
