@@ -223,11 +223,13 @@ function wwdevcc() {
       # Convert PEM to DER format
       local der_cert="/tmp/$(basename "$cert_path").der"
       openssl x509 -in "$cert_path" -outform der -out "$der_cert"
+      ls -la "$der_cert"
 
       # Import the certificate into Chrome's NSS database
       local chrome_nssdb="$HOME/.pki/nssdb"
-      certutil -d sql:"$chrome_nssdb" -A -t "P,," -n "$(basename "$cert_path")" -i "$der_cert"
+      certutil -d sql:"$chrome_nssdb" -A -t "P,," -n "ww-${param}-cert" -i "$der_cert"
 
+      ls -la "$chrome_nssdb"
       # Clean up the DER certificate
       rm "$der_cert"
 
