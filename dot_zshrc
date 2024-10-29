@@ -176,18 +176,20 @@ function wwdevcc() {
   local colors=()
   local ports=()
   local cert_paths=()
+  local params=()
   local i=0
 
   for param in "$@"
   do
     local port=$((8080 + i))
     ports+=("$port")
+    params+=("$param")
     local cmd="cd ~/projects/weweb/weweb-assets/ww-${param} && npm i && npm run serve port=${port}"
     commands+=("$cmd")
     names+=("ww:cc:${param}")
 
     local color_list=("red" "green" "yellow" "blue" "magenta" "cyan" "white" "gray")
-    local color="${color_list[$i]}"
+    local color="${color_list[$i % ${#color_list[@]}]}"
     colors+=("$color")
 
     # Store the certificate path for each parameter
@@ -216,30 +218,40 @@ function wwdevcc() {
   sleep 5
 
   # Import certificates into Chrome's certificate store
+  local index=0
   for cert_path in "${cert_paths[@]}"
   do
-    # Check if the certificate file exists
+    local param="${params[$index]}"
+    # Wait for the certificate to be generated
+    max_wait=30  # Maximum wait time in seconds
+    waited=0
+    while [[ ! -f "$cert_path" && $waited -lt $max_wait ]]; do
+      sleep 1
+      ((waited++))
+    done
+
     if [[ -f "$cert_path" ]]; then
       # Convert PEM to DER format
-      local der_cert="/tmp/$(basename "$cert_path").der"
+      local der_cert="/tmp/ww-${param}-cert.der"
       openssl x509 -in "$cert_path" -outform der -out "$der_cert"
-      ls -la "$der_cert"
 
       # Import the certificate into Chrome's NSS database
+      # Adjust the Chrome profile path if necessary
       local chrome_nssdb="$HOME/.pki/nssdb"
       certutil -d sql:"$chrome_nssdb" -A -t "P,," -n "ww-${param}-cert" -i "$der_cert"
 
-      ls -la "$chrome_nssdb"
       # Clean up the DER certificate
       rm "$der_cert"
-
-      echo "Certificate imported into Chrome's NSS database at $chrome_nssdb/$(basename "$cert_path")"
     else
-      echo "Certificate not found at $cert_path"
+      echo "Certificate not found at $cert_path after waiting $max_wait seconds."
     fi
+
+    ((index++))
   done
 
-  wait $concurrently_pid
+  # Wait for the concurrently process to finish (optional)
+  # Uncomment the following line if you want the script to wait
+  # wait $concurrently_pid
 }
 
 # Make sure to use nvim as the default editor
