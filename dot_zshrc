@@ -182,7 +182,7 @@ function wwdevcc() {
   do
     local port=$((8080 + i))
     ports+=("$port")
-    local cmd="cd ~/projects/weweb/weweb-assets/ww-${param} && npm i && npm run serve --port=${port}"
+    local cmd="cd ~/projects/weweb/weweb-assets/ww-${param} && npm i && npm run serve port=${port}"
     commands+=("$cmd")
     names+=("ww:cc:${param}")
 
