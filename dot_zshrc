@@ -200,6 +200,13 @@ function wwdevcc() {
 
   echo "Commands: ${commands[@]}"
 
+  # Kill all processes listening on the ports
+  for port in "${ports[@]}"
+  do
+    # Find and kill processes listening on the port
+    lsof -ti tcp:"$port" | xargs -r kill -9
+  done
+
   # Run the commands concurrently with npx and capture PIDs
   npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}" &
   local concurrently_pid=$!
