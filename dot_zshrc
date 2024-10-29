@@ -175,7 +175,7 @@ function wwdevcc() {
   local names=()
   local colors=()
   local ports=()
-  local pids=()
+  local cert_paths=()
   local i=0
 
   for param in "$@"
@@ -189,6 +189,10 @@ function wwdevcc() {
     local color_list=("red" "green" "yellow" "blue" "magenta" "cyan" "white" "gray")
     local color="${color_list[$i]}"
     colors+=("$color")
+
+    # Store the certificate path for each parameter
+    local cert_path="$HOME/projects/weweb/weweb-assets/ww-${param}/node_modules/@weweb/cli/node_modules/.cache/webpack-dev-server/server.pem"
+    cert_paths+=("$cert_path")
 
     ((i++))
   done
@@ -204,8 +208,35 @@ function wwdevcc() {
     lsof -ti tcp:"$port" | xargs -r kill -9
   done
 
-  # Run the commands concurrently with npx and capture PIDs
-  npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}"
+  # Run the commands concurrently with npx and capture the PID
+  npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}" &
+  local concurrently_pid=$!
+
+  # Give the servers some time to start and generate certificates
+  sleep 5
+
+  # Import certificates into Chrome's certificate store
+  for cert_path in "${cert_paths[@]}"
+  do
+    # Check if the certificate file exists
+    if [[ -f "$cert_path" ]]; then
+      # Convert PEM to DER format
+      local der_cert="/tmp/$(basename "$cert_path").der"
+      openssl x509 -in "$cert_path" -outform der -out "$der_cert"
+
+      # Import the certificate into Chrome's NSS database
+      # Adjust the Chrome profile path if necessary
+      local chrome_nssdb="$HOME/.pki/nssdb"
+      certutil -d sql:"$chrome_nssdb" -A -t "P,," -n "$(basename "$cert_path")" -i "$der_cert"
+
+      # Clean up the DER certificate
+      rm "$der_cert"
+    else
+      echo "Certificate not found at $cert_path"
+    fi
+  done
+
+  wait $concurrently_pid
 }
 
 # Make sure to use nvim as the default editor
