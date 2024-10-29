@@ -225,12 +225,13 @@ function wwdevcc() {
       openssl x509 -in "$cert_path" -outform der -out "$der_cert"
 
       # Import the certificate into Chrome's NSS database
-      # Adjust the Chrome profile path if necessary
       local chrome_nssdb="$HOME/.pki/nssdb"
       certutil -d sql:"$chrome_nssdb" -A -t "P,," -n "$(basename "$cert_path")" -i "$der_cert"
 
       # Clean up the DER certificate
       rm "$der_cert"
+
+      echo "Certificate imported into Chrome's NSS database at $chrome_nssdb/$(basename "$cert_path")"
     else
       echo "Certificate not found at $cert_path"
     fi
