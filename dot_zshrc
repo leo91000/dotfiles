@@ -215,6 +215,7 @@ function wwdevcc() {
   # Give the servers some time to start and generate certificates
   sleep 5
 
+  # Import certificates into Chrome's certificate store
   echo "Importing certificates into Chrome's certificate store..."
   for cert_path in "${cert_paths[@]}"
   do
@@ -228,7 +229,6 @@ function wwdevcc() {
       local chrome_nssdb="$HOME/.pki/nssdb"
       certutil -d sql:"$chrome_nssdb" -A -t "P,," -n "ww-${param}-cert" -i "$der_cert"
 
-      ls -la "$chrome_nssdb"
       # Clean up the DER certificate
       rm "$der_cert"
 
