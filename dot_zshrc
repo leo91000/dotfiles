@@ -216,26 +216,36 @@ function wwdevcc() {
   sleep 5
 
   # Import certificates into Chrome's certificate store
-  echo "Importing certificates into Chrome's certificate store..."
+  echo "Importing certificates into Chrome's NSS database..."
+  local index=0
   for cert_path in "${cert_paths[@]}"
   do
+    local param="${names[$index]}"
+    
     # Check if the certificate file exists
     if [[ -f "$cert_path" ]]; then
       # Convert PEM to DER format
-      local der_cert="/tmp/$(basename "$cert_path").der"
+      local der_cert="/tmp/${param}.der"
       openssl x509 -in "$cert_path" -outform der -out "$der_cert"
 
+      # Generate a unique nickname using the parameter name
+      local cert_nickname="ww-${param}-cert"
+
+      # Delete any existing certificate with the same nickname to avoid conflicts
+      certutil -d sql:$HOME/.pki/nssdb -D -n "$cert_nickname" 2>/dev/null
+
       # Import the certificate into Chrome's NSS database
-      local chrome_nssdb="$HOME/.pki/nssdb"
-      certutil -d sql:"$chrome_nssdb" -A -t "P,," -n "ww-${param}-cert" -i "$der_cert"
+      certutil -d sql:$HOME/.pki/nssdb -A -t "P,," -n "$cert_nickname" -i "$der_cert"
 
       # Clean up the DER certificate
       rm "$der_cert"
-
-      echo "Certificate imported into Chrome's NSS database at $chrome_nssdb/$(basename "$cert_path")"
+      
+      echo "Imported $cert_nickname into Chrome's NSS database."
     else
       echo "Certificate not found at $cert_path"
     fi
+
+    ((index++))
   done
 
   wait $concurrently_pid
