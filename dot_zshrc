@@ -186,7 +186,6 @@ function wwdevcc() {
     commands+=("$cmd")
     names+=("ww:cc:${param}")
 
-    # Generate a random color from the list
     local color_list=("red" "green" "yellow" "blue" "magenta" "cyan" "white" "gray")
     local color="${color_list[$i]}"
     colors+=("$color")
@@ -198,8 +197,6 @@ function wwdevcc() {
   local names_str="${(j:,:)names}"
   local colors_str="${(j:,:)colors}"
 
-  echo "Commands: ${commands[@]}"
-
   # Kill all processes listening on the ports
   for port in "${ports[@]}"
   do
@@ -208,18 +205,7 @@ function wwdevcc() {
   done
 
   # Run the commands concurrently with npx and capture PIDs
-  npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}" &
-  local concurrently_pid=$!
-
-  # Wait for the concurrently process to finish
-  wait $concurrently_pid
-
-  # After the commands are complete, kill any processes listening on the ports
-  for port in "${ports[@]}"
-  do
-    # Find and kill processes listening on the port
-    lsof -ti tcp:"$port" | xargs -r kill -9
-  done
+  npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}"
 }
 
 # Make sure to use nvim as the default editor
