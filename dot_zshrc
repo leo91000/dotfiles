@@ -170,6 +170,35 @@ alias wwcda='cd ~/projects/weweb/weweb-assets'
 alias node_modules_clear='fd node_modules -t d -I -X rm -rf'
 alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -f yarn.lock && rm -f pnpm-lock.yaml && npx --yes @antfu/ni@latest'
 
+function wwdevcc() {
+  local commands=()
+  local names=()
+  local colors=()
+  local i=0
+
+  for param in "$@"
+  do
+    local port=$((8080 + i))
+    local cmd="cd ~/projects/weweb/weweb-assets/ww-${param} && npm i && npm run serve --port=${port}"
+    commands+=("$cmd")
+    names+=("ww:cc:${param}")
+
+    # Generate a random color from the list
+    local color_list=("red" "green" "yellow" "blue" "magenta" "cyan" "white" "gray")
+    local color=${color_list[RANDOM % ${#color_list[@]}]}
+    colors+=("$color")
+
+    ((i++))
+  done
+
+  # Join the names and colors into comma-separated strings
+  local names_str="${(j:,:)names}"
+  local colors_str="${(j:,:)colors}"
+
+  # Run the commands concurrently with npx
+  npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}"
+}
+
 # Make sure to use nvim as the default editor
 export EDITOR=nvim
 
