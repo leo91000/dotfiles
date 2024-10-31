@@ -100,12 +100,12 @@ return {
 
 				["<leader>rn"] = {
 					function()
-						if vim.wo.relativenumber then
-							vim.wo.relativenumber = false
-							vim.wo.number = true
+						if vim.opt.relativenumber:get() then
+							vim.opt.relativenumber = false
+							vim.opt.number = true
 						else
-							vim.wo.relativenumber = true
-							vim.wo.number = false
+							vim.opt.relativenumber = true
+							vim.opt.number = false
 						end
 					end,
 					desc = "Toggle relative line numbers",
