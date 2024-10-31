@@ -102,10 +102,8 @@ return {
 					function()
 						if vim.opt.relativenumber:get() then
 							vim.opt.relativenumber = false
-							vim.opt.number = true
 						else
 							vim.opt.relativenumber = true
-							vim.opt.number = false
 						end
 					end,
 					desc = "Toggle relative line numbers",
