@@ -100,10 +100,15 @@ return {
 
 				["<leader>rn"] = {
 					function()
-						if vim.opt.relativenumber:get() then
-							vim.opt.relativenumber = false
-						else
-							vim.opt.relativenumber = true
+						local is_relativenumber = vim.opt.relativenumber:get()
+						vim.opt.relativenumber = not is_relativenumber
+
+						for _, win in ipairs(vim.api.nvim_list_wins()) do
+							vim.api.nvim_set_option_value(
+								"relativenumber",
+								not is_relativenumber,
+								{ scope = "local", win = win }
+							)
 						end
 					end,
 					desc = "Toggle relative line numbers",
