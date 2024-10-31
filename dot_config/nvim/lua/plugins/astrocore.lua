@@ -102,12 +102,7 @@ return {
 					function()
 						local is_relativenumber = vim.opt.relativenumber:get()
 						vim.opt.relativenumber = not is_relativenumber
-
-						for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-							if vim.api.nvim_buf_is_loaded(buf) then
-								vim.api.nvim_set_option_value("relativenumber", not is_relativenumber, { buf = buf })
-							end
-						end
+						vim.api.nvim_set_option_value("relativenumber", not is_relativenumber, { scope = "global" })
 					end,
 					desc = "Toggle relative line numbers",
 				},
