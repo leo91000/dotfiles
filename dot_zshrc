@@ -161,6 +161,7 @@ alias cmu="chezmoi update"
 alias wws='npx concurrently --names "ww:editor,ww:dashboard,ww:back" --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" "cd ~/projects/weweb/weweb-editor && npm run serve" "cd ~/projects/weweb/weweb-dashboard && npm run serve" "cd ~/projects/weweb/weweb-docker && docker compose up"'
 alias wwss='npx concurrently --names "ww:editor,ww:dashboard" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve:staging" "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"'
 alias wwspp='npx concurrently --names "ww:editor,ww:dashboard" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"'
+alias wwvs='npx concurrently --names "ww:editor,ww:dashboard,ww:back" --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" "cd ~/projects/weweb/weweb-editor-vite && npm run serve" "cd ~/projects/weweb/weweb-dashboard && npm run serve" "cd ~/projects/weweb/weweb-docker && docker compose up"'
 alias wwcd='cd ~/projects/weweb'
 alias wwcde='cd ~/projects/weweb/weweb-editor'
 alias wwcdd='cd ~/projects/weweb/weweb-dashboard'
