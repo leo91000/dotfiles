@@ -158,6 +158,7 @@ alias cmazed="chezmoi add ~/.config/zed"
 alias cmem="chezmoi edit --apply ~/.config/mise/config.toml"
 alias cmam="chezmoi add --apply ~/.config/mise/config.toml"
 alias cmu="chezmoi update"
+alias cdl="cd ~/projects/leo91000"
 alias wws='npx concurrently --names "ww:editor,ww:dashboard,ww:back" --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" "cd ~/projects/weweb/weweb-editor && npm run serve" "cd ~/projects/weweb/weweb-dashboard && npm run serve" "cd ~/projects/weweb/weweb-docker && docker compose up"'
 alias wwss='npx concurrently --names "ww:editor,ww:dashboard" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve:staging" "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"'
 alias wwspp='npx concurrently --names "ww:editor,ww:dashboard" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"'
