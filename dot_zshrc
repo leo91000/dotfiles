@@ -213,7 +213,7 @@ function wwdevcc() {
   done
 
   # Run the commands concurrently with npx and capture the PID
-  npx concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}" &
+  npx --yes concurrently --names "$names_str" --prefix-colors "$colors_str" "${commands[@]}" &
   local concurrently_pid=$!
 
   # Give the servers some time to start and generate certificates
