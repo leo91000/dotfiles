@@ -97,14 +97,6 @@ return {
 					end,
 					desc = "Toggle treesj",
 				},
-
-				["<leader>rn"] = {
-					function()
-						local is_relativenumber = vim.opt.relativenumber:get()
-						vim.opt.relativenumber = not is_relativenumber
-					end,
-					desc = "Toggle relative line numbers",
-				},
 			},
 			t = {
 				-- setting a mapping to false will disable it
