@@ -77,7 +77,7 @@ return {
 
 				["<F9>"] = { ":LspRestart<cr>", desc = "Restart LSPs" },
 
-				["m"] = {
+				["<leader>m"] = {
 					function()
 						require("treesj").toggle()
 					end,
