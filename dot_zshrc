@@ -211,7 +211,7 @@ wws() {
   done
 
   echo "Starting servers..."
-  npx concurrently \
+  npx -y concurrently \
     --names "ww:editor,ww:dashboard,ww:back" \
     --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" \
     "cd ~/projects/weweb/weweb-editor && npm run serve" \
@@ -254,7 +254,7 @@ wwspp() {
   done
 
   echo "Starting servers..."
-  npx concurrently \
+  npx -y concurrently \
     --names "ww:editor,ww:dashboard" \
     --prefix-colors "bgBlue.bold,bgGreen.bold" \
     "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" \
