@@ -159,10 +159,6 @@ alias cmem="chezmoi edit --apply ~/.config/mise/config.toml"
 alias cmam="chezmoi add --apply ~/.config/mise/config.toml"
 alias cmu="chezmoi update"
 alias cdl="cd ~/projects/leo91000"
-alias wws='npx concurrently --names "ww:editor,ww:dashboard,ww:back" --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" "cd ~/projects/weweb/weweb-editor && npm run serve" "cd ~/projects/weweb/weweb-dashboard && npm run serve" "cd ~/projects/weweb/weweb-docker && docker compose up"'
-alias wwss='npx concurrently --names "ww:editor,ww:dashboard" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve:staging" "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"'
-alias wwspp='npx concurrently --names "ww:editor,ww:dashboard" --prefix-colors "bgBlue.bold,bgGreen.bold" "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"'
-alias wwvs='npx concurrently --names "ww:editor,ww:dashboard,ww:back" --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" "cd ~/projects/weweb/weweb-editor-vite && npm run serve" "cd ~/projects/weweb/weweb-dashboard && npm run serve" "cd ~/projects/weweb/weweb-docker && docker compose up"'
 alias wwcd='cd ~/projects/weweb'
 alias wwcde='cd ~/projects/weweb/weweb-editor'
 alias wwcdd='cd ~/projects/weweb/weweb-dashboard'
@@ -171,6 +167,99 @@ alias wwcdp='cd ~/projects/weweb/weweb-docker/weweb-publisher'
 alias wwcda='cd ~/projects/weweb/weweb-assets'
 alias node_modules_clear='fd node_modules -t d -I -X rm -rf'
 alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -f yarn.lock && rm -f pnpm-lock.yaml && npx --yes @antfu/ni@latest'
+
+# Function to check for `staging` branch and pull changes
+check_and_pull() {
+  local project=$1
+  echo "Checking project: $project"
+  
+  if [ -d "$project/.git" ]; then
+    cd "$project" || return
+
+    # Check if on staging branch
+    local branch=$(git branch --show-current)
+    if [ "$branch" = "staging" ]; then
+      # Check for local changes
+      if [ -z "$(git status --porcelain)" ]; then
+        echo "No local changes detected on staging branch in $project. Pulling latest changes..."
+        git pull
+      else
+        echo "Local changes detected in $project. Skipping pull."
+      fi
+    else
+      echo "$project is not on the staging branch. Skipping."
+    fi
+
+    cd - > /dev/null || return
+  else
+    echo "$project is not a git repository. Skipping."
+  fi
+}
+
+# Complex alias with checks and pulling logic
+wws() {
+  local projects=(
+    "~/projects/weweb/weweb-dashboard"
+    "~/projects/weweb/weweb-editor"
+    # Expand to include any git folders under weweb-docker
+    $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
+  )
+
+  echo "Starting pre-checks for staging branches..."
+  for project in "${projects[@]}"; do
+    check_and_pull "$project"
+  done
+
+  echo "Starting servers..."
+  npx concurrently \
+    --names "ww:editor,ww:dashboard,ww:back" \
+    --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" \
+    "cd ~/projects/weweb/weweb-editor && npm run serve" \
+    "cd ~/projects/weweb/weweb-dashboard && npm run serve" \
+    "cd ~/projects/weweb/weweb-docker && docker compose up"
+}
+
+wwss() {
+  # Repeat the logic but adjust commands for staging
+  local projects=(
+    "~/projects/weweb/weweb-dashboard"
+    "~/projects/weweb/weweb-editor"
+    $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
+  )
+
+  echo "Starting pre-checks for staging branches..."
+  for project in "${projects[@]}"; do
+    check_and_pull "$project"
+  done
+
+  echo "Starting servers..."
+  npx concurrently \
+    --names "ww:editor,ww:dashboard" \
+    --prefix-colors "bgBlue.bold,bgGreen.bold" \
+    "cd ~/projects/weweb/weweb-editor && npm run serve:staging" \
+    "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"
+}
+
+wwspp() {
+  # Repeat the logic but adjust commands for preprod
+  local projects=(
+    "~/projects/weweb/weweb-dashboard"
+    "~/projects/weweb/weweb-editor"
+    $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
+  )
+
+  echo "Starting pre-checks for staging branches..."
+  for project in "${projects[@]}"; do
+    check_and_pull "$project"
+  done
+
+  echo "Starting servers..."
+  npx concurrently \
+    --names "ww:editor,ww:dashboard" \
+    --prefix-colors "bgBlue.bold,bgGreen.bold" \
+    "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" \
+    "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"
+}
 
 function wwdevcc() {
   local commands=()
