@@ -176,18 +176,12 @@ check_and_pull() {
   if [ -d "$project/.git" ]; then
     cd "$project" || return
 
-    # Check if on staging branch
-    local branch=$(git branch --show-current)
-    if [ "$branch" = "staging" ]; then
-      # Check for local changes
-      if [ -z "$(git status --porcelain)" ]; then
-        echo "No local changes detected on staging branch in $project. Pulling latest changes..."
-        git pull
-      else
-        echo "Local changes detected in $project. Skipping pull."
-      fi
+    # Check for local changes
+    if [ -z "$(git status --porcelain)" ]; then
+      echo "No local changes detected on staging branch in $project. Pulling latest changes..."
+      git pull
     else
-      echo "$project is not on the staging branch. Skipping."
+      echo "Local changes detected in $project. Skipping pull."
     fi
 
     cd - > /dev/null || return
