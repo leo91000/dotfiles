@@ -83,6 +83,9 @@ return {
 					end,
 					desc = "Toggle treesj",
 				},
+
+				["<C-BS>"] = { "<C-w>", desc = "Delete previous word" },
+				["<C-Del>"] = { "<C-o>dw", desc = "Delete next word" },
 			},
 		},
 	},
