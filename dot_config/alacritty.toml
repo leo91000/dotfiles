@@ -1,8 +1,6 @@
 [font]
 normal.family = "JetBrainsMono Nerd Font"
-offset.y = 2
-
-size = 14
+size = 10
 
 [window]
 opacity = 1
