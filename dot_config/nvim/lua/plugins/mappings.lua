@@ -85,7 +85,7 @@ return {
 				},
 			},
 			i = {
-				["<C-BS>"] = { "<C-w>", desc = "Delete previous word" },
+				["<C-h>"] = { "<C-w>", desc = "Delete word" },
 				["<C-Del>"] = { "<C-o>dw", desc = "Delete next word" },
 			},
 		},
