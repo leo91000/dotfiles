@@ -190,7 +190,7 @@ check_and_pull() {
   fi
 }
 
-generate_check_commands() {
+check_and_pull_all() {
     local projects=("$@")
     local commands=()
     local names=()
@@ -202,7 +202,7 @@ generate_check_commands() {
         names+=("check:$name")
     done
     
-    echo "npx -y concurrently --names \"${names[*]}\" \"${commands[*]}\""
+    npx -y concurrently --names \"${names[*]}\" \"${commands[*]}\"
 }
 
 wws() {
@@ -213,7 +213,7 @@ wws() {
     )
     
     echo "Starting parallel pre-checks for staging branches..."
-    eval $(generate_check_commands "${projects[@]}")
+    eval $(check_and_pull_all "${projects[@]}")
     
     echo "Starting servers..."
     npx -y concurrently \
@@ -232,7 +232,7 @@ wwss() {
     )
     
     echo "Starting parallel pre-checks for staging branches..."
-    eval $(generate_check_commands "${projects[@]}")
+    eval $(check_and_pull_all "${projects[@]}")
     
     echo "Starting servers..."
     npx -y concurrently \
@@ -250,7 +250,7 @@ wwspp() {
     )
     
     echo "Starting parallel pre-checks for staging branches..."
-    eval $(generate_check_commands "${projects[@]}")
+    eval $(check_and_pull_all "${projects[@]}")
     
     echo "Starting servers..."
     npx -y concurrently \
