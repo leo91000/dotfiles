@@ -177,7 +177,7 @@ check_and_pull() {
     cd "$project" || return
 
     # Check for local changes
-    if [ -z "$(git status --porcelain)" ]; then
+    if [ -z "$(git status --porcelain -uno)" ]; then
       echo "No local changes detected on staging branch in $project. Pulling latest changes..."
       git pull
     else
