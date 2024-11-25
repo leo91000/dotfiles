@@ -199,14 +199,14 @@ check_and_pull_all() {
         # Create the command for this project
         local name=$(basename "$project")
         names+=("$name")
-        # Wrap the command in zsh -c to ensure it uses zsh
-        concurrently_commands+=("zsh -c 'cd $project && check_and_pull .'")
+        # Source .zshrc first, then run our command
+        concurrently_commands+=("zsh -c 'source ~/.zshrc && cd $project && check_and_pull .'")
     done
     
     # Join arrays with commas for the names
     local names_str=$(IFS=,; echo "${names[*]}")
     
-    echo "Executing: npx -y concurrently --names \"$names_str\" \"${concurrently_commands[@]}\""
+    echo "Executing parallel checks..."
     npx -y concurrently --names "$names_str" "${concurrently_commands[@]}"
 }
 
