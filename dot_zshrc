@@ -207,6 +207,7 @@ check_and_pull_all() {
     local names_str=$(IFS=,; echo "${names[*]}")
     local commands_str=$(IFS=' '; echo "${commands[*]}")
     
+    echo "Executing: npx -y concurrently --names \"$names_str\" $commands_str"
     npx -y concurrently --names "$names_str" $commands_str
 }
 
