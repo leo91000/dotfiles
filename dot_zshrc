@@ -202,6 +202,7 @@ check_and_pull_all() {
         names+=("check:$name")
     done
     
+    echo "Executing: npx -y concurrently --names \"${names[*]}\" \"${commands[*]}\""
     npx -y concurrently --names \"${names[*]}\" \"${commands[*]}\"
 }
 
