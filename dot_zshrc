@@ -192,23 +192,21 @@ check_and_pull() {
 
 check_and_pull_all() {
     local projects=("$@")
-    local commands=()
     local names=()
+    local concurrently_commands=()
     
     for project in "${projects[@]}"; do
-        # Wrap the command in quotes to handle spaces in paths
-        commands+=("\"check_and_pull '$project'\"")
-        # Extract the last part of the path for the name
+        # Create the command for this project
         local name=$(basename "$project")
         names+=("$name")
+        concurrently_commands+=("cd $project && check_and_pull .")
     done
     
-    # Join arrays with commas for the names and spaces for the commands
+    # Join arrays with commas for the names
     local names_str=$(IFS=,; echo "${names[*]}")
-    local commands_str=$(IFS=' '; echo "${commands[*]}")
     
-    echo "Executing: npx -y concurrently --names \"$names_str\" $commands_str"
-    npx -y concurrently --names "$names_str" $commands_str
+    echo "Executing: npx -y concurrently --names \"$names_str\" \"${concurrently_commands[@]}\""
+    npx -y concurrently --names "$names_str" "${concurrently_commands[@]}"
 }
 
 wws() {
