@@ -190,69 +190,74 @@ check_and_pull() {
   fi
 }
 
-# Complex alias with checks and pulling logic
+generate_check_commands() {
+    local projects=("$@")
+    local commands=()
+    local names=()
+    
+    for project in "${projects[@]}"; do
+        commands+=("check_and_pull $project")
+        # Extract the last part of the path for the name
+        local name=$(basename "$project")
+        names+=("check:$name")
+    done
+    
+    echo "npx -y concurrently --names \"${names[*]}\" \"${commands[*]}\""
+}
+
 wws() {
-  local projects=(
-    "~/projects/weweb/weweb-dashboard"
-    "~/projects/weweb/weweb-editor"
-    # Expand to include any git folders under weweb-docker
-    $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
-  )
-
-  echo "Starting pre-checks for staging branches..."
-  for project in "${projects[@]}"; do
-    check_and_pull "$project"
-  done
-
-  echo "Starting servers..."
-  npx -y concurrently \
-    --names "ww:editor,ww:dashboard,ww:back" \
-    --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" \
-    "cd ~/projects/weweb/weweb-editor && npm run serve" \
-    "cd ~/projects/weweb/weweb-dashboard && npm run serve" \
-    "cd ~/projects/weweb/weweb-docker && docker compose up"
+    local projects=(
+        "~/projects/weweb/weweb-dashboard"
+        "~/projects/weweb/weweb-editor"
+        $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
+    )
+    
+    echo "Starting parallel pre-checks for staging branches..."
+    eval $(generate_check_commands "${projects[@]}")
+    
+    echo "Starting servers..."
+    npx -y concurrently \
+        --names "ww:editor,ww:dashboard,ww:back" \
+        --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" \
+        "cd ~/projects/weweb/weweb-editor && npm run serve" \
+        "cd ~/projects/weweb/weweb-dashboard && npm run serve" \
+        "cd ~/projects/weweb/weweb-docker && docker compose up"
 }
 
 wwss() {
-  # Repeat the logic but adjust commands for staging
-  local projects=(
-    "~/projects/weweb/weweb-dashboard"
-    "~/projects/weweb/weweb-editor"
-    $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
-  )
-
-  echo "Starting pre-checks for staging branches..."
-  for project in "${projects[@]}"; do
-    check_and_pull "$project"
-  done
-
-  echo "Starting servers..."
-  npx concurrently \
-    --names "ww:editor,ww:dashboard" \
-    --prefix-colors "bgBlue.bold,bgGreen.bold" \
-    "cd ~/projects/weweb/weweb-editor && npm run serve:staging" \
-    "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"
+    local projects=(
+        "~/projects/weweb/weweb-dashboard"
+        "~/projects/weweb/weweb-editor"
+        $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
+    )
+    
+    echo "Starting parallel pre-checks for staging branches..."
+    eval $(generate_check_commands "${projects[@]}")
+    
+    echo "Starting servers..."
+    npx -y concurrently \
+        --names "ww:editor,ww:dashboard" \
+        --prefix-colors "bgBlue.bold,bgGreen.bold" \
+        "cd ~/projects/weweb/weweb-editor && npm run serve:staging" \
+        "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"
 }
 
 wwspp() {
-  # Repeat the logic but adjust commands for preprod
-  local projects=(
-    "~/projects/weweb/weweb-dashboard"
-    "~/projects/weweb/weweb-editor"
-    $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
-  )
-
-  echo "Starting pre-checks for staging branches..."
-  for project in "${projects[@]}"; do
-    check_and_pull "$project"
-  done
-
-  echo "Starting servers..."
-  npx -y concurrently \
-    --names "ww:editor,ww:dashboard" \
-    --prefix-colors "bgBlue.bold,bgGreen.bold" \
-    "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" \
-    "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"
+    local projects=(
+        "~/projects/weweb/weweb-dashboard"
+        "~/projects/weweb/weweb-editor"
+        $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
+    )
+    
+    echo "Starting parallel pre-checks for staging branches..."
+    eval $(generate_check_commands "${projects[@]}")
+    
+    echo "Starting servers..."
+    npx -y concurrently \
+        --names "ww:editor,ww:dashboard" \
+        --prefix-colors "bgBlue.bold,bgGreen.bold" \
+        "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" \
+        "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"
 }
 
 function wwdevcc() {
