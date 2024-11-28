@@ -31,9 +31,9 @@
       }
     }
   },
-  "buffer_font_family": "JetBrains Mono",
+  "buffer_font_family": "JetBrainsMono Nerd Font",
   "buffer_font_weight": 400,
-  "ui_font_family": "JetBrains Mono",
+  "ui_font_family": "JetBrainsMono Nerd Font",
   "ui_font_size": 14,
   "buffer_font_size": 14,
   "format_on_save": "on",
