@@ -19,7 +19,9 @@
     "vue": true,
     "catppuccin": true,
     "tokyo-night": true,
-    "github-theme": true
+    "github-theme": true,
+    "sql": true,
+    "git-firefly": true
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
