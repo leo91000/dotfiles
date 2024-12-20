@@ -270,6 +270,7 @@ wwstop() {
     echo "Stopping servers..."
     cd ~/projects/weweb/weweb-docker
     docker compose down
+    cd -
 }
 
 function wwdevcc() {
