@@ -266,6 +266,12 @@ wwspp() {
         "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"
 }
 
+wwstop() {
+    echo "Stopping servers..."
+    cd ~/projects/weweb/weweb-docker
+    docker compose down
+}
+
 function wwdevcc() {
   local commands=()
   local names=()
