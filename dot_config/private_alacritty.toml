@@ -5,5 +5,7 @@ size = 12
 [window]
 opacity = 1
 
-[shell]
+[terminal]
+
+[terminal.shell]
 program = "/bin/zsh"
