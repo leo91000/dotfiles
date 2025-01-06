@@ -1,3 +1,4 @@
+echo "start"
 # Check if oh-my-zsh is installed; if not, install it
 export ZSH="$HOME/.oh-my-zsh"
 if [ ! -d "$ZSH" ]; then
@@ -360,6 +361,7 @@ function wwdevcc() {
   wait $concurrently_pid
 }
 
+echo "foo"
 # Make sure to use nvim as the default editor
 export EDITOR=nvim
 
@@ -380,6 +382,14 @@ bindkey -s ^p "tmux-sessionizer\n"
 export MISE_NODE_COREPACK='true'
 eval "$(mise activate zsh)"
 
+echo "foo"
+if [ ! -d "/home/leoc/.bun" ]; then
+    echo "Installing bun"
+    curl -fsSL https://bun.sh/install | bash
+fi
+echo "bar"
+
 [ -s "/home/leoc/.bun/_bun" ] && source "/home/leoc/.bun/_bun"
+echo "baz"
 
 
