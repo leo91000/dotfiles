@@ -12,5 +12,4 @@ return {
 	{ import = "astrocommunity.pack.wgsl" },
 	{ import = "astrocommunity.utility.telescope-live-grep-args-nvim" },
 	{ import = "astrocommunity.search.grug-far-nvim" },
-	{ import = "astrocommunity.completion.avante-nvim" },
 }
