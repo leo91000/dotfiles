@@ -1,4 +1,4 @@
 [tools]
-poetry = { version = "latest", pyproject = "{{ config_root }}/pyproject.toml" }
+# poetry = { version = "latest", pyproject = "{{ config_root }}/pyproject.toml" }
 python = ["3", "2"]
 node = "20"
