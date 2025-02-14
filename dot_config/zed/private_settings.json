@@ -20,6 +20,7 @@
   "auto_install_extensions": {
     "html": true,
     "vue": true,
+    "toml": true,
     "catppuccin": true,
     "tokyo-night": true,
     "github-theme": true,

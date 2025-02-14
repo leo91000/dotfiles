@@ -10,12 +10,13 @@
       "space d n": "editor::GoToDiagnostic",
       "space d p": "editor::GoToPrevDiagnostic",
       "space c": "pane::CloseActiveItem",
-      "space g p": "editor::ToggleHunkDiff",
+      "space g p": "editor::ToggleSelectedDiffHunks",
       "space g r": "editor::RevertSelectedHunks",
       "space u w": "editor::ToggleSoftWrap",
       "space m p": "markdown::OpenPreview",
       "space m P": "markdown::OpenPreviewToTheSide",
       "space e": "project_panel::ToggleFocus",
+      "space O o": "outline_panel::ToggleFocus",
       "space C o": "collab_panel::ToggleFocus",
       "space a": "assistant::ToggleFocus",
       "H": "pane::ActivatePrevItem",
@@ -47,7 +48,7 @@
   {
     "context": "Editor && vim_mode == insert && !VimWaiting && !menu",
     "bindings": {
-      "alt-l": "editor::AcceptInlineCompletion"
+      "alt-l": "editor::ConfirmCompletion"
     }
   },
   {
