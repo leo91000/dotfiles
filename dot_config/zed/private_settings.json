@@ -7,10 +7,13 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "features": {
+    "inline_completion_provider": "supermaven"
+  },
   "assistant": {
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-3-5-sonnet-20240620"
+      "model": "claude-3-5-haiku-latest"
     },
     "version": "2"
   },
@@ -65,6 +68,15 @@
       "format_on_save": "on",
       "code_actions_on_format": {
         "source.fixAll.eslint": true
+      }
+    }
+  },
+  "lsp": {
+    "rust-analyzer": {
+      "initialization_options": {
+        "check": {
+          "command": "clippy" // rust-analyzer.check.command (default: "check")
+        }
       }
     }
   },
