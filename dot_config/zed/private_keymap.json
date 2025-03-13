@@ -11,7 +11,7 @@
       "space d p": "editor::GoToPreviousDiagnostic",
       "space c": "pane::CloseActiveItem",
       "space g p": "editor::ToggleSelectedDiffHunks",
-      "space g r": "editor::RevertSelectedHunks",
+      "space g r": "git::Restore",
       "space u w": "editor::ToggleSoftWrap",
       "space m p": "markdown::OpenPreview",
       "space m P": "markdown::OpenPreviewToTheSide",
