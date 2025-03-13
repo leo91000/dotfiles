@@ -2,5 +2,6 @@
   "chromiumSwitches": {},
   "IS_MAXIMIZED": false,
   "IS_MINIMIZED": true,
-  "SKIP_HOST_UPDATE": true
+  "SKIP_HOST_UPDATE": true,
+  "BACKGROUND_COLOR": "#2b2d31"
 }
