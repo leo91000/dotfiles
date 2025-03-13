@@ -5,6 +5,7 @@
       "space f f": "file_finder::Toggle",
       "space f w": "workspace::NewSearch",
       "space f p": "projects::OpenRecent",
+      "space f P": "workspace::Open",
       "space f a": "command_palette::Toggle",
       "space l d": "editor::Hover",
       "space d n": "editor::GoToDiagnostic",
