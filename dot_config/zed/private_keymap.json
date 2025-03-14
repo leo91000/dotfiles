@@ -1,8 +1,13 @@
 [
   {
+    "bindings": {
+      "ctrl-c": ["workspace::SendKeystrokes", "escape"]
+    }
+  },
+  {
     "context": "Editor",
     "bindings": {
-      "ctrl-w": "pane::CloseActiveItem",
+      "ctrl-shift-w": "pane::CloseActiveItem",
       "ctrl-x": "terminal_panel::ToggleFocus",
       "ctrl-shift-u": "vim::ScrollUp",
       "ctrl-shift-d": "vim::ScrollDown",
@@ -33,7 +38,8 @@
       "space a": "assistant::ToggleFocus",
       "H": "pane::ActivatePreviousItem",
       "L": "pane::ActivateNextItem",
-      "space p": "pane::TogglePinTab"
+      "space p": "pane::TogglePinTab",
+      "space b": "git_panel::ToggleFocus"
     }
   },
   {
@@ -82,7 +88,8 @@
   {
     "context": "Dock || Editor",
     "bindings": {
-      "ctrl-shift-w": "workspace::CloseAllDocks"
+      "ctrl-w o": "workspace::CloseAllDocks",
+      "ctrl-w à": ["workspace::ActivatePane", 0]
     }
   },
   {
@@ -104,13 +111,31 @@
     "bindings": {
       "ctrl-x": "workspace::ToggleBottomDock",
       "ctrl-t": "workspace::NewTerminal",
-      "ctrl-w": "pane::CloseActiveItem"
+      "ctrl-c": null
     }
   },
   {
     "context": "AssistantPanel && (vim_mode == normal || vim_mode == visual) && !menu",
     "bindings": {
       "space a": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "GitPanel ",
+    "bindings": {
+      "space b": "workspace::ToggleLeftDock"
+    }
+  },
+  {
+    "context": "GitPanel && ChangesList",
+    "bindings": {
+      "space": null,
+      "s": "git::StageFile",
+      "shift-s": "git::StageAll",
+      "u": "git::UnstageFile",
+      "shift-u": "git::UnstageAll",
+      "x": "git::RestoreFile",
+      "c": "git::Commit"
     }
   }
 ]
