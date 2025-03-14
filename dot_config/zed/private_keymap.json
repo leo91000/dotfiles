@@ -54,8 +54,8 @@
       "g t": "editor::GoToTypeDefinition",
       "g T": "editor::GoToTypeDefinitionSplit",
       "g r": "editor::FindAllReferences",
-      "] h": "editor::GoToHunk",
-      "[ h": "editor::GoToPreviousHunk"
+      "] g": "editor::GoToHunk",
+      "[ g": "editor::GoToPreviousHunk"
     }
   },
   {
@@ -121,7 +121,7 @@
     }
   },
   {
-    "context": "GitPanel ",
+    "context": "GitPanel",
     "bindings": {
       "space b": "workspace::ToggleLeftDock"
     }
@@ -129,7 +129,6 @@
   {
     "context": "GitPanel && ChangesList",
     "bindings": {
-      "space": null,
       "s": "git::StageFile",
       "shift-s": "git::StageAll",
       "u": "git::UnstageFile",
