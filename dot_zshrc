@@ -170,7 +170,7 @@ alias wwcda='cd ~/projects/weweb/weweb-assets'
 alias node_modules_clear='fd node_modules -t d -I -X rm -rf'
 alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -f yarn.lock && rm -f pnpm-lock.yaml && npx --yes @antfu/ni@latest'
 export CLAUDE_CODE_USE_BEDROCK=1
-export ANTHROPIC_MODEL='us.anthropic.claude-3-7-sonnet-20250219-v1:0'
+export ANTHROPIC_MODEL='us.anthropic.claude-3-5-sonnet-20241022-v2:0'
 export DISABLE_PROMPT_CACHING=1
 alias claude='npx -y @anthropic-ai/claude-code@latest'
 
