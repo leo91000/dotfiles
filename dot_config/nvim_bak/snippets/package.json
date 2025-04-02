@@ -1,0 +1,40 @@
+{
+  "name": "user_snippets",
+  "engines": {
+    "vscode": "^1.11.0"
+  },
+  "contributes": {
+    "snippets": [
+      {
+        "language": [
+          "javascript",
+          "typescript",
+          "typescriptreact",
+          "javascriptreact",
+          "vue"
+        ],
+        "path": "./wwEditorComment.json"
+      },
+      {
+        "language": [
+          "javascript",
+          "typescript",
+          "typescriptreact",
+          "javascriptreact",
+          "vue"
+        ],
+        "path": "./wwFrontComment.json"
+      },
+      {
+        "language": [
+          "javascript",
+          "typescript",
+          "typescriptreact",
+          "javascriptreact",
+          "vue"
+        ],
+        "path": "./wwManagerComment.json"
+      }
+    ]
+  }
+}

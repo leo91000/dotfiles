@@ -1,0 +1,13 @@
+{
+  "setup": {
+    "prefix": [
+      "wwm",
+      "wwManager"
+    ],
+    "body": [
+      "/* wwManager:start */",
+      "$1",
+      "/* wwManager:end */"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "setup": {
+    "prefix": [
+      "wwf",
+      "wwFront"
+    ],
+    "body": [
+      "/* wwFront:start */",
+      "$1",
+      "/* wwFront:end */"
+    ]
+  }
+}

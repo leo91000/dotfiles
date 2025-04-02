@@ -1,0 +1,13 @@
+{
+  "setup": {
+    "prefix": [
+      "wwe",
+      "wwEditor"
+    ],
+    "body": [
+      "/* wwEditor:start */",
+      "$1",
+      "/* wwEditor:end */"
+    ]
+  }
+}
