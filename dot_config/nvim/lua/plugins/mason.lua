@@ -52,31 +52,31 @@ return {
   -- Add any additional configuration needed for prettierd
   -- This handler code wasn't directly convertible to mason-tool-installer
   -- so it may need additional implementation
-  {
-    "nvimtools/none-ls.nvim",
-    optional = true,
-    opts = function(_, opts)
-      local null_ls = require "null-ls"
-      if null_ls and null_ls.builtins and null_ls.builtins.formatting then
-        -- Add the conditional prettierd formatter
-        table.insert(
-          opts.sources or {},
-          null_ls.builtins.formatting.prettierd.with {
-            condition = function(utils)
-              return utils.root_has_file(
-                ".prettierrc",
-                ".prettierrc.js",
-                ".prettierrc.cjs",
-                ".prettierrc.json",
-                ".prettierrc.yaml",
-                ".prettierrc.yml",
-                ".prettierrc.toml"
-              )
-            end,
-          }
-        )
-      end
-      return opts
-    end,
-  },
+  -- {
+  --   "nvimtools/none-ls.nvim",
+  --   optional = true,
+  --   opts = function(_, opts)
+  --     local null_ls = require "null-ls"
+  --     if null_ls and null_ls.builtins and null_ls.builtins.formatting then
+  --       -- Add the conditional prettierd formatter
+  --       table.insert(
+  --         opts.sources or {},
+  --         null_ls.builtins.formatting.prettierd.with {
+  --           condition = function(utils)
+  --             return utils.root_has_file(
+  --               ".prettierrc",
+  --               ".prettierrc.js",
+  --               ".prettierrc.cjs",
+  --               ".prettierrc.json",
+  --               ".prettierrc.yaml",
+  --               ".prettierrc.yml",
+  --               ".prettierrc.toml"
+  --             )
+  --           end,
+  --         }
+  --       )
+  --     end
+  --     return opts
+  --   end,
+  -- },
 }
