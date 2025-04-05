@@ -416,5 +416,8 @@ fi
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-
+if [ ! -d "/home/leoc/.deno" ]; then
+    echo "Installing deno..."
+    curl -fsSL https://deno.land/install.sh | sh
+fi
 . "/home/leoc/.deno/env"
