@@ -171,7 +171,6 @@ alias wwcdp='cd ~/projects/weweb/weweb-docker/weweb-publisher'
 alias wwcda='cd ~/projects/weweb/weweb-assets'
 alias node_modules_clear='fd node_modules -t d -I -X rm -rf'
 alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -f yarn.lock && rm -f pnpm-lock.yaml && npx --yes @antfu/ni@latest'
-alias claude_update='npm outdated -g @anthropic-ai/claude-code > /dev/null || npm i -g @anthropic-ai/claude-code@latest'
 
 claude() {
   # Make sure package is installed/updated
