@@ -173,20 +173,14 @@ alias node_modules_clear='fd node_modules -t d -I -X rm -rf'
 alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -f yarn.lock && rm -f pnpm-lock.yaml && npx --yes @antfu/ni@latest'
 
 claude() {
-  # Make sure package is installed/updated
-  npm i -g @anthropic-ai/claude-code@latest &> /dev/null
-  
-  # Find the executable path
+  npm i -g @anthropic-ai/claude-code@latest > /dev/null
   local npm_root=$(npm root -g)
   local bin_dir="$npm_root/../.bin"
   
-  # Execute the command
   if [ -f "$bin_dir/claude" ]; then
     "$bin_dir/claude" "$@"
   else
-    echo "Error: Claude executable not found at $bin_dir/claude"
-    echo "Looking for claude in PATH..."
-    command -v claude || echo "Claude not found in PATH either."
+    echo "Error: Claude executable not found"
   fi
 }
 
