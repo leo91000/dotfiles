@@ -172,7 +172,24 @@ alias wwcda='cd ~/projects/weweb/weweb-assets'
 alias node_modules_clear='fd node_modules -t d -I -X rm -rf'
 alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -f yarn.lock && rm -f pnpm-lock.yaml && npx --yes @antfu/ni@latest'
 alias claude_update='npm outdated -g @anthropic-ai/claude-code > /dev/null || npm i -g @anthropic-ai/claude-code@latest'
-alias claude='claude_update && command claude'
+
+claude() {
+  # Make sure package is installed/updated
+  npm i -g @anthropic-ai/claude-code@latest &> /dev/null
+  
+  # Find the executable path
+  local npm_root=$(npm root -g)
+  local bin_dir="$npm_root/../.bin"
+  
+  # Execute the command
+  if [ -f "$bin_dir/claude" ]; then
+    "$bin_dir/claude" "$@"
+  else
+    echo "Error: Claude executable not found at $bin_dir/claude"
+    echo "Looking for claude in PATH..."
+    command -v claude || echo "Claude not found in PATH either."
+  fi
+}
 
 # Function to check for `staging` branch and pull changes
 check_and_pull() {
