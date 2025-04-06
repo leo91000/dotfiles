@@ -172,15 +172,30 @@ alias wwcda='cd ~/projects/weweb/weweb-assets'
 alias node_modules_clear='fd node_modules -t d -I -X rm -rf'
 alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -f yarn.lock && rm -f pnpm-lock.yaml && npx --yes @antfu/ni@latest'
 
-claude_() {
+claude() {
+  # Install/update the package if needed
   npm i -g @anthropic-ai/claude-code@latest > /dev/null
-  local npm_root=$(npm root -g)
-  local bin_dir="$npm_root/../.bin"
   
-  if [ -f "$bin_dir/claude" ]; then
-    "$bin_dir/claude" "$@"
+  # Run the command using its actual path in PATH
+  local claude_exec=$(command -v claude)
+  
+  if [ -n "$claude_exec" ] && [ "$claude_exec" != "$0" ]; then
+    # Found the executable and it's not this function
+    "$claude_exec" "$@"
   else
-    echo "Error: Claude executable not found"
+    # Try to find it in the mise directory
+    local node_version=$(mise current node 2>/dev/null)
+    if [ -n "$node_version" ]; then
+      local mise_path="$HOME/.local/share/mise/installs/node/$node_version/bin/claude"
+      if [ -f "$mise_path" ]; then
+        "$mise_path" "$@"
+        return
+      fi
+    fi
+    
+    # Last resort - try npx
+    echo "Falling back to npx..."
+    npx @anthropic-ai/claude-code "$@"
   fi
 }
 
