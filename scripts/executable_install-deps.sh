@@ -24,6 +24,7 @@ packages=(
     steam
     zsh
     tmux
+    obsidian
 )
 
 echo "Installing all packages with yay..."
