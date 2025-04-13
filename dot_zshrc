@@ -454,5 +454,7 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 if [ ! -d "$HOME/.deno" ]; then
     echo "Installing deno..."
     curl -fsSL https://deno.land/install.sh | sh
+else
+    echo "Deno is already installed."
 fi
 . "$HOME/.deno/env"
