@@ -25,6 +25,7 @@ packages=(
     zsh
     tmux
     obsidian
+    postgresql-libs
 )
 
 echo "Installing all packages with yay..."
