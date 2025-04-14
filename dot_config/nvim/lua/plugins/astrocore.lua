@@ -8,14 +8,17 @@ return {
 			large_buf = { size = 1024 * 500, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
 			autopairs = true, -- enable autopairs at start
 			cmp = true, -- enable completion at start
-			diagnostics = { virtual_text = true, virtual_lines = false }, -- using v5 diagnostics format (previously diagnostics_mode = 2)
+			diagnostics = true,
 			highlighturl = true, -- highlight URLs at start
-			notifications = false, -- keep notifications disabled from v4
+			notifications = false,
 		},
 		-- Diagnostics configuration (for vim.diagnostics.config({...})) when diagnostics are on
 		diagnostics = {
-			virtual_text = true,
+			virtual_text = false,
+			virtual_lines = false, -- Neovim v0.11+ only
+			update_in_insert = false,
 			underline = true,
+			severity_sort = true,
 		},
 		-- passed to `vim.filetype.add`
 		filetypes = {
