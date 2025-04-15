@@ -26,6 +26,8 @@ packages=(
     tmux
     obsidian
     postgresql-libs
+    beeper-latest-bin
+    discord
 )
 
 echo "Installing all packages with yay..."
