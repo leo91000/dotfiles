@@ -31,7 +31,7 @@ packages=(
 )
 
 echo "Installing all packages with yay..."
-yay -S --noconfirm --needed --nodiffmenu "${packages[@]}"
+yay -S --noconfirm --needed --answerdiff None --answerclean None "${packages[@]}"
 
 
 # Need to find workaround to install zsh autocomplete with deno in TTY
