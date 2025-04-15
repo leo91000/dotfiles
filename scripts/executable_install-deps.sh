@@ -28,6 +28,7 @@ packages=(
     postgresql-libs
     beeper-latest-bin
     discord
+    wl-clipboard
 )
 
 echo "Installing all packages with yay..."
