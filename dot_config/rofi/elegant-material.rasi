@@ -1,0 +1,193 @@
+/**
+ * Dark Purple Elegant Material Theme for Rofi
+ * An elegant, refined dark purple material design-inspired theme
+ */
+
+* {
+    /* Dark Purple Material color palette */
+    material-bg:        #1A1731; /* Darker purple background */
+    material-bg-alt:    #282042; /* Slightly lighter dark purple */
+    material-fg:        #E6E1F5; /* Light purple-tinted text */
+    material-accent:    #9C7CFC; /* Bright purple accent */
+    material-accent-alt:#7E57C2; /* Secondary purple accent */
+    material-selected:  #32284A; /* Selected item background */
+    material-highlight: #3A3053; /* Slightly lighter than background for contrast */
+    material-error:     #FF5252; /* Error red */
+    material-success:   #69F0AE; /* Success green */
+    material-warning:   #FFD740; /* Warning yellow */
+    
+    /* Theme colors */
+    background:         @material-bg;
+    background-alt:     @material-highlight;
+    foreground:         @material-fg;
+    border:             @material-accent;
+    selected:           @material-selected;
+    active:             @material-success;
+    urgent:             @material-error;
+    accent:             @material-accent;
+    
+    /* Global properties */
+    font:               "Roboto 14";
+    border-radius:      6px;
+    spacing:            0;
+    background-color:   transparent;
+    text-color:         @foreground;
+}
+
+window {
+    transparency:       "real";
+    background-color:   rgba(26, 23, 49, 0.95); /* Dark purple with transparency */
+    width:              45%;
+    border:             2px;
+    border-color:       rgba(156, 124, 252, 0.7); /* Bright purple border */
+    border-radius:      @border-radius;
+}
+
+mainbox {
+    children:           [inputbar, message, listview, mode-switcher];
+    padding:            20px;
+    spacing:            15px;
+}
+
+inputbar {
+    children:           [prompt, textbox-prompt-colon, entry, case-indicator];
+    padding:            12px;
+    border-radius:      @border-radius;
+    background-color:   rgba(58, 48, 83, 0.7); /* Slightly lighter dark purple */
+    spacing:            8px;
+    margin:             0 0 10px 0;
+}
+
+prompt {
+    enabled:            true;
+    text-color:         @accent;
+    font:               "Roboto Bold 14";
+}
+
+textbox-prompt-colon {
+    enabled:            true;
+    expand:             false;
+    str:                ":";
+    margin:             0 4px 0 0;
+    text-color:         @accent;
+}
+
+entry {
+    placeholder:        "Type to search...";
+    placeholder-color:  rgba(230, 225, 245, 0.5); /* Light purple with transparency */
+    cursor:             text;
+}
+
+case-indicator {
+    text-color:         @accent;
+}
+
+message {
+    border-radius:      @border-radius;
+    background-color:   rgba(58, 48, 83, 0.5); /* Slightly lighter dark purple with transparency */
+    padding:            8px;
+    margin:             0 0 10px 0;
+}
+
+listview {
+    scrollbar:          true;
+    padding:            2px;
+    spacing:            4px;
+    lines:              10;
+    dynamic:            true;
+    cycle:              true;
+    border-radius:      @border-radius;
+    background-color:   rgba(58, 48, 83, 0.3); /* Slightly lighter dark purple with more transparency */
+}
+
+scrollbar {
+    width:              6px;
+    padding:            0 2px;
+    handle-width:       6px;
+    border-radius:      @border-radius;
+    handle-color:       @accent;
+    background-color:   rgba(58, 48, 83, 0.3);
+}
+
+element {
+    padding:            8px 12px;
+    spacing:            10px;
+    border-radius:      @border-radius;
+    children:           [element-icon, element-text];
+}
+
+element-icon {
+    size:               1.5em;
+    vertical-align:     0.5;
+}
+
+element-text {
+    vertical-align:     0.5;
+    text-color:         inherit;
+}
+
+element normal.normal {
+    background-color:   transparent;
+    text-color:         @foreground;
+}
+
+element normal.urgent {
+    background-color:   transparent;
+    text-color:         @urgent;
+}
+
+element normal.active {
+    background-color:   transparent;
+    text-color:         @active;
+}
+
+element selected.normal {
+    background-color:   rgba(50, 40, 74, 0.8); /* Selected item background with transparency */
+    text-color:         @foreground;
+    border:             0 2px 0 0;
+    border-color:       @accent;
+}
+
+element selected.urgent {
+    background-color:   rgba(255, 82, 82, 0.3);
+    text-color:         @urgent;
+}
+
+element selected.active {
+    background-color:   rgba(105, 240, 174, 0.3);
+    text-color:         @active;
+}
+
+element alternate.normal {
+    background-color:   transparent;
+    text-color:         @foreground;
+}
+
+element alternate.urgent {
+    background-color:   transparent;
+    text-color:         @urgent;
+}
+
+element alternate.active {
+    background-color:   transparent;
+    text-color:         @active;
+}
+
+mode-switcher {
+    spacing:            10px;
+    border-radius:      @border-radius;
+    margin:             10px 0 0 0;
+}
+
+button {
+    padding:            8px;
+    border-radius:      @border-radius;
+    background-color:   rgba(58, 48, 83, 0.6); /* Slightly lighter dark purple with transparency */
+    text-color:         @foreground;
+}
+
+button selected {
+    background-color:   @accent;
+    text-color:         @material-bg;
+    font:               "Roboto Bold 14";
+}
