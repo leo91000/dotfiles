@@ -29,6 +29,19 @@ packages=(
     beeper-latest-bin
     discord
     wl-clipboard
+    bottom
+    openssl
+    jq
+    rofi-wayland
+    proton-vpn-gtk-app
+    qbittorrent
+    neofetch
+    envycontrol
+    cursor-bin
+    just
+    bat
+    git-delta
+    htop
 )
 
 echo "Installing all packages with yay..."
