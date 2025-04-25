@@ -432,3 +432,7 @@ if [ ! -d "$HOME/.deno" ]; then
     curl -fsSL https://deno.land/install.sh | sh
 fi
 . "$HOME/.deno/env"
+
+if [ ! -d "$HOME/.local/bin" ]; then
+  export PATH=$HOME/.local/bin:$PATH
+fi
