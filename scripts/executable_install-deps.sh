@@ -42,6 +42,7 @@ packages=(
     bat
     git-delta
     htop
+    aws-cli-v2
 )
 
 echo "Installing all packages with yay..."
