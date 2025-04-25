@@ -184,33 +184,6 @@ alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -
 alias git-clone-org='~/scripts/git-clone-org.sh'
 alias d='dolphin . &>/dev/null & disown'
 
-claude() {
-  # Install/update the package if needed
-  npm i -g @anthropic-ai/claude-code@latest > /dev/null
-  
-  # Run the command using its actual path in PATH
-  local claude_exec=$(command -v claude)
-  
-  if [ -n "$claude_exec" ] && [ "$claude_exec" != "$0" ]; then
-    # Found the executable and it's not this function
-    "$claude_exec" "$@"
-  else
-    # Try to find it in the mise directory
-    local node_version=$(mise current node 2>/dev/null)
-    if [ -n "$node_version" ]; then
-      local mise_path="$HOME/.local/share/mise/installs/node/$node_version/bin/claude"
-      if [ -f "$mise_path" ]; then
-        "$mise_path" "$@"
-        return
-      fi
-    fi
-    
-    # Last resort - try npx
-    echo "Falling back to npx..."
-    npx @anthropic-ai/claude-code "$@"
-  fi
-}
-
 # Function to check for `staging` branch and pull changes
 check_and_pull() {
   local project=$1
