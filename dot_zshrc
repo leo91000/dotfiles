@@ -94,7 +94,8 @@ if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
 
-if [ "$TERM_PROGRAM" != "zed" ]; then
+# zed or vscode
+if [ "$TERM_PROGRAM" != "zed" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
   if [ -z "$TMUX" ]; then
     # Ensure tpm plugins are installed and updated before starting tmux
     tmux_plugins_dir="$HOME/.tmux/plugins"
