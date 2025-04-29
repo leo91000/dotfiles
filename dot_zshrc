@@ -97,6 +97,7 @@ fi
 # zed or vscode
 echo "Hello?"
 if [ "$TERM_PROGRAM" != "zed" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
+  echo "Hello2?"
   if [ -z "$TMUX" ]; then
     # Ensure tpm plugins are installed and updated before starting tmux
     tmux_plugins_dir="$HOME/.tmux/plugins"
