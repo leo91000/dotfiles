@@ -17,6 +17,10 @@ unsetopt beep extendedglob notify
 autoload -Uz compinit
 compinit
 
+echo "TERM=$TERM"
+echo "TERM_PROGRAM=$TERM_PROGRAM"
+echo "TMUX=$TMUX"
+
 typeset -U path cdpath fpath manpath
 
 for profile in ${(z)NIX_PROFILES}; do
