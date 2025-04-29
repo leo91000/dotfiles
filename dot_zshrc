@@ -95,9 +95,7 @@ if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 fi
 
 # zed or vscode
-echo "Hello?"
 if [ "$TERM_PROGRAM" != "zed" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
-  echo "Hello2?"
   if [ -z "$TMUX" ]; then
     # Ensure tpm plugins are installed and updated before starting tmux
     tmux_plugins_dir="$HOME/.tmux/plugins"
@@ -111,7 +109,6 @@ if [ "$TERM_PROGRAM" != "zed" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
       bash "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh" &>/dev/null
     fi
 
-    echo "Starting tmux..."
     tmux attach || tmux new-session
   fi
 fi
