@@ -109,6 +109,7 @@ if [ "$TERM_PROGRAM" != "zed" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
       bash "$HOME/.tmux/plugins/tpm/scripts/install_plugins.sh" &>/dev/null
     fi
 
+    echo "Starting tmux..."
     tmux attach || tmux new-session
   fi
 fi
