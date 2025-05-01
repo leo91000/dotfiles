@@ -192,7 +192,7 @@ alias node_modules_clear='fd node_modules -t d -I -X rm -rf'
 alias node_reset_lockfile='node_modules_clear && rm -f package-lock.json && rm -f yarn.lock && rm -f pnpm-lock.yaml && npx --yes @antfu/ni@latest'
 alias git-clone-org='~/scripts/git-clone-org.sh'
 alias d='dolphin . &>/dev/null & disown'
-alias claude="AWS_REGION='us-west-2' ANTHROPIC_MODEL='us.anthropic.claude-3-7-sonnet-20250219-v1:0' ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-3-5-haiku-20241022-v1:0' CLAUDE_CODE_USE_BEDROCK=1 DISABLE_PROMPT_CACHING=0 CLAUDE_CODE_DEBUG=1 claude"
+alias claude="AWS_REGION='us-west-2' ANTHROPIC_MODEL='us.anthropic.claude-3-7-sonnet-20250219-v1:0' ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-3-5-haiku-20241022-v1:0' CLAUDE_CODE_USE_BEDROCK=1 DISABLE_PROMPT_CACHING=0 CLAUDE_CODE_DEBUG=1 mise exec node@20 -- node --no-warnings --enable-source-maps ~/.claude/local/node_modules/.bin/claude"
 alias dc='docker compose'
 
 # Function to check for `staging` branch and pull changes
