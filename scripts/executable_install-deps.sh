@@ -53,6 +53,25 @@ packages=(
     bat
     git-delta
     htop
+    blender
+    wofi
+    qt6ct
+    qt6-base
+    qt6-wayland
+    kvantum
+    kvantum-qt6
+    waybar
+    hyprland 
+    mako 
+    dunst 
+    thunar 
+    pavucontrol 
+    pipewire 
+    wireplumber 
+    xdg-desktop-portal-hyprland 
+    hyprpaper
+    hyprshot
+    hyprpicker
 )
 
 # Filter out already installed packages
