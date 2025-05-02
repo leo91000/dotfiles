@@ -95,7 +95,7 @@ if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 fi
 
 # zed or vscode
-if [ "$TERM_PROGRAM" != "zed" ] && [ "$TERM_PROGRAM" != "vscode" ]; then
+if [ "$TERM_PROGRAM" != "zed" ] && [ "$TERM_PROGRAM" != "vscode" ] && [ "$TERM_PROGRAM" != "WarpTerminal" ]; then
   # Start tmux if no TMUX is running or current session is not main
   if [ -z "$TMUX" ] || [ "$(tmux display-message -p '#S')" != "main" ]; then
     # Ensure tpm plugins are installed and updated before starting tmux
