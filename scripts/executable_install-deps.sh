@@ -72,6 +72,8 @@ packages=(
     hyprpaper
     hyprshot
     hyprpicker
+    xone-dkms-git
+    xone-dongle-firmware
 )
 
 # Filter out already installed packages
