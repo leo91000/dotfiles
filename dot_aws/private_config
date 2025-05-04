@@ -4,3 +4,6 @@ output = json
 endpoint_url = https://s3.fr-par.scw.cloud
 s3 =
     signature_version = s3v4
+[default]
+region = us-west-2
+output = json
