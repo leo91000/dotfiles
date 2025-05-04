@@ -74,6 +74,8 @@ packages=(
     hyprpicker
     xone-dkms-git
     xone-dongle-firmware
+    zen-browser-bin
+    openbsd-netcat
 )
 
 # Filter out already installed packages
