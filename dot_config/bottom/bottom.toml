@@ -1,0 +1,5 @@
+[flags]
+enable_gpu = true
+
+[processes]
+columns = ["name", "cpu%", "mem%", "gmem%", "gpu%", "pid", "state", "user", "time"]
