@@ -2,3 +2,6 @@
 # poetry = { version = "latest", pyproject = "{{ config_root }}/pyproject.toml" }
 python = ["3", "2"]
 node = "20"
+
+[settings]
+idiomatic_version_file_enable_tools = ["node"]
