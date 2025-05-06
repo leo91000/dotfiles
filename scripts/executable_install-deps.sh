@@ -76,6 +76,7 @@ packages=(
     xone-dongle-firmware
     zen-browser-bin
     openbsd-netcat
+    scc-bin
 )
 
 # Filter out already installed packages
