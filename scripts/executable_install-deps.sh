@@ -77,6 +77,7 @@ packages=(
     zen-browser-bin
     openbsd-netcat
     scc-bin
+    brightnessctl
 )
 
 # Filter out already installed packages
