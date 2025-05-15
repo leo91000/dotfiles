@@ -34,7 +34,7 @@
         "name": "T3 Chat",
         "keyword": "t3",
         "cmd": "https://beta.t3.chat/new?model=gemini-2.0-flash&q=%s",
-        "icon": "~/Images/t3.png",
+        "icon": "~/.config/ulauncher/icons/t3.png",
         "is_default_search": true,
         "run_without_argument": false,
         "added": 1747318795.863789
@@ -44,7 +44,7 @@
         "name": "Perplexity",
         "keyword": "p",
         "cmd": "https://www.perplexity.ai/?q=%s",
-        "icon": "~/Images/perplexity.png",
+        "icon": "~/.config/ulauncher/icons/perplexity.png",
         "is_default_search": true,
         "run_without_argument": false,
         "added": 1747319709.110611
@@ -54,7 +54,7 @@
         "name": "Chat GPT",
         "keyword": "gpt",
         "cmd": "https://chat.openai.com/?model=gpt-4&prompt=%s",
-        "icon": "~/Images/chatgpt.png",
+        "icon": "~/.config/ulauncher/icons/chatgpt.png",
         "is_default_search": true,
         "run_without_argument": false,
         "added": 1747319965.8615236
