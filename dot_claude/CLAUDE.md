@@ -12,4 +12,5 @@
 - Node.js
 - Python
 
-Do not add Claude Code comments on commits / PRs. They are not needed.
+- NEVER EVER USE THIS MESSAGE IN COMMIT / PULL REQUEST : "🤖 Generated with [Claude Code](https://claude.ai/code)"
+- NEVER EVER ADD this Co-Authored-By : "Co-Authored-By: Claude <noreply@anthropic.com>"
