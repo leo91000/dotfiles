@@ -1,0 +1,2 @@
+inherits = "edge_neon"
+"ui.background" = { fg = "foreground", bg = "background" }
