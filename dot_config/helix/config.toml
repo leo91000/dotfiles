@@ -1,1 +1,4 @@
 theme = "transparent_edge_neon"
+
+[editor.custom-shape]
+insert = "bar"
