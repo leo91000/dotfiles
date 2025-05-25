@@ -1,4 +1,6 @@
 theme = "transparent_edge_neon"
 
-[editor.custom-shape]
+[editor.cursor-shape]
 insert = "bar"
+normal = "block"
+select = "underline"
