@@ -162,12 +162,23 @@ alias ll='lsd -l'
 alias ls='lsd'
 alias main='git checkout main'
 alias nd='nix develop -c $SHELL'
-alias sv='sudo vim'
+sv() {
+  if [ $# -eq 0 ]; then
+    sudo XDG_CONFIG_HOME=$HOME/.config XDG_DATA_HOME=$HOME/.local/share nvim .
+  else
+    sudo XDG_CONFIG_HOME=$HOME/.config XDG_DATA_HOME=$HOME/.local/share nvim "$@"
+  fi
+}
 alias p='cd ~/projects'
-alias v='nvim .'
+v() {
+  if [ $# -eq 0 ]; then
+    nvim .
+  else
+    nvim "$@"
+  fi
+}
 alias vo='cd ~/Documents/obsidian-vault/Tech && nvim . && cd -'
 alias r='source ~/.zshrc'
-alias sudonvim='sudo XDG_CONFIG_HOME=$HOME/.config XDG_DATA_HOME=$HOME/.local/share nvim'
 alias nd='nix develop -c $SHELL'
 alias cm="chezmoi"
 alias cme="chezmoi edit --apply"
