@@ -22,3 +22,4 @@
   - "chore(JIRA-1234): Cleanup this code"
 - And the pull request title should be formatted as follows:
   - "[JIRA-1234] Add this feature"
+- In pull request, do not create a test plan
