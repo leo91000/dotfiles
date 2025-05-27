@@ -78,6 +78,7 @@ packages=(
     openbsd-netcat
     scc-bin
     brightnessctl
+    cliphist
 )
 
 # Filter out already installed packages
