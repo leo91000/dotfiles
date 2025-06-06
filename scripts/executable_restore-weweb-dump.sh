@@ -60,12 +60,12 @@ fi
 
 # Check if dump files exist
 print_step "Checking for dump files in $DUMPS_DIR"
-BACK_DUMP=$(find "$DUMPS_DIR" -name "PROD*BACK*.dump" -type f | sort -r | head -n 1)
-PREVIEW_DUMP=$(find "$DUMPS_DIR" -name "PROD*PREVIEW*.dump" -type f | sort -r | head -n 1)
-PLUGINS_DUMP=$(find "$DUMPS_DIR" -name "PROD*PLUGINS*.dump" -type f | sort -r | head -n 1)
+BACK_DUMP="$DUMPS_DIR/back.dump"
+PREVIEW_DUMP="$DUMPS_DIR/preview.dump"
+PLUGINS_DUMP="$DUMPS_DIR/plugin.dump"
 
-if [ -z "$BACK_DUMP" ] || [ -z "$PREVIEW_DUMP" ] || [ -z "$PLUGINS_DUMP" ]; then
-    print_error_and_exit "Missing dump files in $DUMPS_DIR. Please download them first."
+if [ ! -f "$BACK_DUMP" ] || [ ! -f "$PREVIEW_DUMP" ] || [ ! -f "$PLUGINS_DUMP" ]; then
+    print_error_and_exit "Missing dump files in $DUMPS_DIR. Expected: back.dump, preview.dump, plugin.dump"
 fi
 
 echo "Found dump files:"
