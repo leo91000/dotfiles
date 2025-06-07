@@ -8,14 +8,34 @@
 // from the command palette or from `Zed` application menu.
 {
   "features": {
-    "inline_completion_provider": "supermaven"
+    "edit_prediction_provider": "supermaven"
   },
   "assistant": {
+    "always_allow_tool_actions": true,
     "default_model": {
-      "provider": "bedrock",
-      "model": "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet-thinking-latest"
     },
     "version": "2"
+  },
+  "language_models": {
+    "bedrock": {
+      "available_models": [
+        {
+          "name": "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+          "display_name": "Claude 3.7 Sonnet (us-west-2)",
+          "max_tokens": 200000,
+          "max_output_tokens": 128000,
+          "default_temperature": 1.0,
+          "mode": {
+            "type": "thinking",
+            "budget_tokens": 4096
+          }
+        }
+      ],
+      "region": "us-west-2",
+      "authentication_method": "default"
+    }
   },
   "auto_install_extensions": {
     "html": true,
@@ -41,10 +61,9 @@
     }
   },
   "buffer_font_family": "JetBrainsMono Nerd Font",
-  "buffer_font_weight": 400,
-  "ui_font_family": "JetBrainsMono Nerd Font",
-  "ui_font_size": 14,
-  "buffer_font_size": 14,
+  "buffer_font_size": 16,
+  "ui_font_family": "Noto Sans Mono",
+  "ui_font_size": 17,
   "format_on_save": "on",
   "git": {
     "inline_blame": {
@@ -54,21 +73,18 @@
   "relative_line_numbers": true,
   "languages": {
     "JavaScript": {
-      "formatter": "language_server",
       "format_on_save": "on",
       "code_actions_on_format": {
         "source.fixAll.eslint": true
       }
     },
     "TypeScript": {
-      "formatter": "language_server",
       "format_on_save": "on",
       "code_actions_on_format": {
         "source.fixAll.eslint": true
       }
     },
     "Vue.js": {
-      "formatter": "language_server",
       "format_on_save": "on",
       "code_actions_on_format": {
         "source.fixAll.eslint": true

@@ -10,7 +10,7 @@
   "features": {
     "edit_prediction_provider": "supermaven"
   },
-  "assistant": {
+  "agent": {
     "always_allow_tool_actions": true,
     "default_model": {
       "provider": "anthropic",
@@ -61,9 +61,9 @@
     }
   },
   "buffer_font_family": "JetBrainsMono Nerd Font",
-  "buffer_font_size": 14,
+  "buffer_font_size": 16,
   "ui_font_family": "Noto Sans Mono",
-  "ui_font_size": 15,
+  "ui_font_size": 17,
   "format_on_save": "on",
   "git": {
     "inline_blame": {
