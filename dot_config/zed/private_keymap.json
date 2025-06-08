@@ -142,5 +142,11 @@
     "bindings": {
       "ctrl-w": "workspace::ToggleRightDock"
     }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-w": "pane::CloseActiveItem"
+    }
   }
 ]
