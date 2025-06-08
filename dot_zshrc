@@ -253,7 +253,20 @@ check_and_pull_all() {
     npx -y concurrently --names "$names_str" "${concurrently_commands[@]}"
 }
 
-wws() {
+# Common function to handle WeWeb server startup
+_ww_serve() {
+    local environment="$1"
+    local include_docker="$2"
+    local dev_mode=false
+    
+    # Parse arguments for --dev flag
+    for arg in "${@:3}"; do
+        if [[ "$arg" == "--dev" ]]; then
+            dev_mode=true
+            break
+        fi
+    done
+    
     local projects=(
         "~/projects/weweb/weweb-dashboard"
         "~/projects/weweb/weweb-editor"
@@ -263,85 +276,76 @@ wws() {
     echo "Starting parallel pre-checks for staging branches..."
     check_and_pull_all "${projects[@]}"
     
-    echo "Starting servers..."
+    # Determine editor script suffix
+    local editor_script="serve"
+    if [[ "$dev_mode" == true ]]; then
+        if [[ "$environment" == "local" ]]; then
+            editor_script="serve:dev"
+        else
+            editor_script="serve:dev:$environment"
+        fi
+        echo "Starting servers with auto-restart (DEV MODE)..."
+    else
+        if [[ "$environment" != "local" ]]; then
+            editor_script="serve:$environment"
+        fi
+        echo "Starting servers with auto-restart..."
+    fi
+    
+    # Determine dashboard script
+    local dashboard_script="serve"
+    if [[ "$environment" != "local" ]]; then
+        dashboard_script="serve:$environment"
+    fi
+    
+    # Build concurrently command
+    local commands=()
+    local names=()
+    local colors=()
+    
+    # Editor
+    commands+=("cd ~/projects/weweb/weweb-editor && npm run $editor_script")
+    names+=("ww:editor")
+    colors+=("bgBlue.bold")
+    
+    # Dashboard
+    commands+=("cd ~/projects/weweb/weweb-dashboard && npm run $dashboard_script")
+    names+=("ww:dashboard")
+    colors+=("bgGreen.bold")
+    
+    # Docker (only for local)
+    if [[ "$include_docker" == true ]]; then
+        commands+=("cd ~/projects/weweb/weweb-docker && docker compose up")
+        names+=("ww:back")
+        colors+=("bgMagenta.bold")
+    fi
+    
+    # Join arrays
+    local names_str=$(IFS=,; echo "${names[*]}")
+    local colors_str=$(IFS=,; echo "${colors[*]}")
+    
     npx -y concurrently \
-        --names "ww:editor,ww:dashboard,ww:back" \
-        --prefix-colors "bgBlue.bold,bgGreen.bold,bgMagenta.bold" \
-        "cd ~/projects/weweb/weweb-editor && npm run serve" \
-        "cd ~/projects/weweb/weweb-dashboard && npm run serve" \
-        "cd ~/projects/weweb/weweb-docker && docker compose up"
+        --names "$names_str" \
+        --prefix-colors "$colors_str" \
+        --restart-tries 999 \
+        --restart-after 2000 \
+        "${commands[@]}"
+}
+
+wws() {
+    _ww_serve "local" true "$@"
 }
 
 wwss() {
-    local projects=(
-        "~/projects/weweb/weweb-dashboard"
-        "~/projects/weweb/weweb-editor"
-        $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
-    )
-    
-    echo "Starting parallel pre-checks for staging branches..."
-    check_and_pull_all "${projects[@]}"
-    
-    echo "Starting servers..."
-    npx -y concurrently \
-        --names "ww:editor,ww:dashboard" \
-        --prefix-colors "bgBlue.bold,bgGreen.bold" \
-        "cd ~/projects/weweb/weweb-editor && npm run serve:staging" \
-        "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"
+    _ww_serve "staging" false "$@"
 }
 
 wwssi() {
-    local projects=(
-        "~/projects/weweb/weweb-dashboard"
-        "~/projects/weweb/weweb-editor"
-        $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
-    )
-    
-    echo "Starting parallel pre-checks for staging branches..."
-    check_and_pull_all "${projects[@]}"
-    
-    echo "Starting servers..."
-    npx -y concurrently \
-        --names "ww:editor,ww:dashboard" \
-        --prefix-colors "bgBlue.bold,bgGreen.bold" \
-        "cd ~/projects/weweb/weweb-editor && npm run serve:staging-ignis" \
-        "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging-ignis"
-}
-
-wwssd() {
-    local projects=(
-        "~/projects/weweb/weweb-dashboard"
-        "~/projects/weweb/weweb-editor"
-        $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
-    )
-    
-    echo "Starting parallel pre-checks for staging branches..."
-    check_and_pull_all "${projects[@]}"
-    
-    echo "Starting servers..."
-    npx -y concurrently \
-        --names "ww:editor,ww:dashboard" \
-        --prefix-colors "bgBlue.bold,bgGreen.bold" \
-        "cd ~/projects/weweb/weweb-editor && npm run serve:dev:staging" \
-        "cd ~/projects/weweb/weweb-dashboard && npm run serve:staging"
+    _ww_serve "staging-ignis" false "$@"
 }
 
 wwspp() {
-    local projects=(
-        "~/projects/weweb/weweb-dashboard"
-        "~/projects/weweb/weweb-editor"
-        $(find ~/projects/weweb/weweb-docker -maxdepth 1 -type d -exec test -d {}/.git \; -print)
-    )
-    
-    echo "Starting parallel pre-checks for staging branches..."
-    check_and_pull_all "${projects[@]}"
-    
-    echo "Starting servers..."
-    npx -y concurrently \
-        --names "ww:editor,ww:dashboard" \
-        --prefix-colors "bgBlue.bold,bgGreen.bold" \
-        "cd ~/projects/weweb/weweb-editor && npm run serve:preprod" \
-        "cd ~/projects/weweb/weweb-dashboard && npm run serve:preprod"
+    _ww_serve "preprod" false "$@"
 }
 
 wwstop() {
@@ -457,7 +461,6 @@ bindkey -s ^p "tmux-sessionizer\n"
 export MISE_NODE_COREPACK='true'
 export MISE_POETRY_AUTO_INSTALL='true'
 eval "$(mise activate zsh)"
-mise install
 
 # Reduce delay when changing modes (from insert to normal)
 export KEYTIMEOUT=1
