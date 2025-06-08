@@ -461,7 +461,7 @@ bindkey -s ^p "tmux-sessionizer\n"
 export MISE_NODE_COREPACK='true'
 export MISE_POETRY_AUTO_INSTALL='true'
 eval "$(mise activate zsh)"
-mise install
+CFLAGS="-std=c99 -Wno-misleading-indentation" CPPFLAGS="-std=c99 -Wno-misleading-indentation" mise install 2>/dev/null
 
 # Reduce delay when changing modes (from insert to normal)
 export KEYTIMEOUT=1
