@@ -35,7 +35,7 @@
       "space e": "project_panel::ToggleFocus",
       "space O o": "outline_panel::ToggleFocus",
       "space C o": "collab_panel::ToggleFocus",
-      "space a": "assistant::ToggleFocus",
+      "space a": "agent::ToggleFocus",
       "H": "pane::ActivatePreviousItem",
       "L": "pane::ActivateNextItem",
       "space p": "pane::TogglePinTab",
@@ -61,7 +61,7 @@
   {
     "context": "Editor && vim_mode == insert && !VimWaiting && !menu",
     "bindings": {
-      "alt-l": "editor::ConfirmCompletion"
+      "alt-l": "editor::ComposeCompletion"
     }
   },
   {
@@ -135,6 +135,12 @@
       "shift-u": "git::UnstageAll",
       "x": "git::RestoreFile",
       "c": "git::Commit"
+    }
+  },
+  {
+    "context": "AgentPanel",
+    "bindings": {
+      "ctrl-w": "workspace::ToggleRightDock"
     }
   }
 ]
