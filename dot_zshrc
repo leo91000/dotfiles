@@ -96,8 +96,8 @@ fi
 
 # zed or vscode
 if [ "$TERM_PROGRAM" != "zed" ] && [ "$TERM_PROGRAM" != "vscode" ] && [ "$TERM_PROGRAM" != "WarpTerminal" ]; then
-  # Start tmux if no TMUX is running or current session is not main
-  if [ -z "$TMUX" ] || [ "$(tmux display-message -p '#S')" != "main" ]; then
+  # Start tmux if no TMUX is running
+  if [ -z "$TMUX" ]; then
     # Ensure tpm plugins are installed and updated before starting tmux
     tmux_plugins_dir="$HOME/.tmux/plugins"
     tpm_dir="$tmux_plugins_dir/tpm"
@@ -348,6 +348,10 @@ wwspp() {
     _ww_serve "preprod" false "$@"
 }
 
+wwsp() {
+    _ww_serve "prod" false "$@"
+}
+
 wwstop() {
     echo "Stopping servers..."
     cd ~/projects/weweb/weweb-docker
@@ -455,8 +459,7 @@ if [ -f "$HOME/.cargo/env" ]; then
   source $HOME/.cargo/env
 fi
 
-PATH="$PATH":"$HOME/.local/scripts/"
-bindkey -s ^p "tmux-sessionizer\n"
+PATH="$PATH":"$HOME/scripts/"
 
 export MISE_NODE_COREPACK='true'
 export MISE_POETRY_AUTO_INSTALL='true'
