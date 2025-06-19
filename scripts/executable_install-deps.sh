@@ -79,6 +79,9 @@ packages=(
     scc-bin
     brightnessctl
     cliphist
+    tokei
+    lib32-nvidia-utils
+    lib32-vulkan-icd-loader
 )
 
 # Filter out already installed packages
