@@ -82,6 +82,7 @@ packages=(
     tokei
     lib32-nvidia-utils
     lib32-vulkan-icd-loader
+    nix
 )
 
 # Filter out already installed packages
