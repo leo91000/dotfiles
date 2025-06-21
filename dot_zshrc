@@ -191,6 +191,7 @@ alias cmem="chezmoi edit --apply ~/.config/mise/config.toml"
 alias cmam="chezmoi add --apply ~/.config/mise/config.toml"
 alias cmu="chezmoi update"
 alias cdl="cd ~/projects/leo91000"
+alias cdle="cd ~/projects/leo91000/eliah"
 alias wwcd='cd ~/projects/weweb'
 alias wwcde='cd ~/projects/weweb/weweb-editor'
 alias wwcdd='cd ~/projects/weweb/weweb-dashboard'
