@@ -83,6 +83,7 @@ packages=(
     lib32-nvidia-utils
     lib32-vulkan-icd-loader
     nix
+    opencode-bin
 )
 
 # Filter out already installed packages
