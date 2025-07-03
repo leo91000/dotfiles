@@ -84,6 +84,7 @@ packages=(
     lib32-vulkan-icd-loader
     nix
     opencode-bin
+    go
 )
 
 # Filter out already installed packages
