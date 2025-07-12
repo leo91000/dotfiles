@@ -487,5 +487,5 @@ if [ ! -d "$HOME/.deno" ]; then
 fi
 . "$HOME/.deno/env"
 
-export PATH=$HOME/.opencode/bin/opencode:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
