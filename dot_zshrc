@@ -208,7 +208,7 @@ alias git-clone-org='~/scripts/git-clone-org.sh'
 alias d='dolphin . &>/dev/null & disown'
 alias bedrock_claude="AWS_REGION='us-west-2' ANTHROPIC_MODEL='us.anthropic.claude-3-7-sonnet-20250219-v1:0' ANTHROPIC_SMALL_FAST_MODEL='us.anthropic.claude-3-5-haiku-20241022-v1:0' CLAUDE_CODE_USE_BEDROCK=1 DISABLE_PROMPT_CACHING=0 CLAUDE_CODE_DEBUG=1 mise exec node@20 -- node --no-warnings --enable-source-maps ~/.claude/local/node_modules/.bin/claude"
 alias claude_update='cd ~/.claude/local && npm update && cd -'
-alias claude="mise exec node@20 -- node --no-warnings --enable-source-maps ~/.claude/local/node_modules/.bin/claude"
+alias claude="NODE_VERSION=20 ~/.claude/local/node_modules/.bin/claude"
 alias dc='docker compose'
 alias dcw='docker compose -p weweb-docker'
 alias dce='docker compose -p eliah'
