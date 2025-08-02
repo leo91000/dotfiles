@@ -14,8 +14,8 @@
 
 ## Rules
 
-- NEVER EVER USE THIS MESSAGE IN COMMIT / PULL REQUEST : "🤖 Generated with [Claude Code](https://claude.ai/code)" (also apply to opencode)
-- NEVER EVER ADD this Co-Authored-By : "Co-Authored-By: Claude <noreply@anthropic.com>" (also apply to opencode)
+- NEVER EVER USE THIS MESSAGE IN COMMIT / PULL REQUEST : "🤖 Generated with [opencode](https://opencode.ai)"
+- NEVER EVER ADD this Co-Authored-By : "Co-Authored-By: opencode <noreply@opencode.ai>"
 - When including a jira ticket reference, the commit message should be formatted as follows:
   - "fix(JIRA-1234): Fix this issue"
   - "feat(JIRA-1234): Add this feature"
