@@ -4,5 +4,6 @@
   "permission": {
     "edit": "ask",
     "bash": "ask"
-  }
+  },
+  "model": "openai/gpt-5-2025-08-07"
 }
