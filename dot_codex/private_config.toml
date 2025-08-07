@@ -1,1 +1,5 @@
 projects = { "/home/leoc/projects/leo91000/eliah" = { trust_level = "trusted" } }
+
+[mcp_servers.browser-mcp]
+command = "npx"
+args = ["-y", "@browsermcp/mcp@latest"]
