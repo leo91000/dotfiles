@@ -1,4 +1,4 @@
-approval_mode = "full-auto"
+sandbox_mode = "danger-full-access"
 
 [projects."/home/leoc"]
 trust_level = "trusted"
