@@ -1,4 +1,32 @@
-projects = { "/home/leoc/projects/leo91000/eliah" = { trust_level = "trusted" } }
+[projects."/home/leoc"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/eliah"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-assets/ww-input-otp"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-assets/ww-chat"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-plugin-figma"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-editor"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/vue-tiptap-renderer"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-assets/ww-chat-ai"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-assets"]
+trust_level = "trusted"
 
 [mcp_servers.browser-mcp]
 command = "npx"
