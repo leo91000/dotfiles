@@ -1,3 +1,6 @@
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+
 [projects."/home/leoc"]
 trust_level = "trusted"
 
@@ -29,5 +32,5 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [mcp_servers.browser-mcp]
-command = "npx"
 args = ["-y", "@browsermcp/mcp@latest"]
+command = "npx"
