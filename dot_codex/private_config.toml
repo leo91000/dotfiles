@@ -1,6 +1,9 @@
 approval_policy = "never"
-sandbox_mode = "danger-full-access"
 model = "gpt-5-codex"
+sandbox_mode = "danger-full-access"
+
+[tools]
+web_search = true
 
 [projects."/home/leoc"]
 trust_level = "trusted"
