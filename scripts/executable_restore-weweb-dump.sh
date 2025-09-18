@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/env zsh
 
 # Colors for pretty output
 GREEN='\033[0;32m'
@@ -48,9 +48,16 @@ check_command docker
 check_command pg_restore
 check_command psql
 
-# Path configurations
-DUMPS_DIR="$HOME/Téléchargements"
-WEWEB_DOCKER_DIR="$HOME/projects/weweb/weweb-docker"
+# Path configurations (allow override via env)
+# You can run with: DUMPS_DIR=/path/to/dumps WEWEB_DOCKER_DIR=/path/to/weweb-docker ./restore-weweb-dump.sh
+DUMPS_DIR="${DUMPS_DIR:-$HOME/Téléchargements}"
+# If Downloads exists and Téléchargements does not, prefer Downloads (macOS label vs folder name)
+if [ ! -d "$DUMPS_DIR" ]; then
+    if [ -d "$HOME/Downloads" ]; then
+        DUMPS_DIR="$HOME/Downloads"
+    fi
+fi
+WEWEB_DOCKER_DIR="${WEWEB_DOCKER_DIR:-$HOME/projects/weweb/weweb-docker}"
 DOCKER_COMPOSE_FILE="$WEWEB_DOCKER_DIR/docker-compose.yml"
 
 # Check if docker-compose file exists
