@@ -28,3 +28,7 @@
 ## Commit / PR
 
 - **When adding new lines to commit message, use multiple `-m`s**. Example: `git commit -m "feat: new feature" -m "- description of the feature 1" -m "- description of the feature 2"`.
+
+## Refactoring / Clean code
+
+- At the end of each code change, if you think the code is currently very complex and could be simplified by refactoring, inform the user at the end of your message with some quick propositions
