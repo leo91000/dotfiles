@@ -35,6 +35,6 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/weweb/weweb-assets"]
 trust_level = "trusted"
 
-[mcp_servers.browser-mcp]
-args = ["-y", "@browsermcp/mcp@latest"]
+[mcp_servers.browsermcp]
 command = "npx"
+args = ["@browsermcp/mcp@latest"]
