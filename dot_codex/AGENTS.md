@@ -25,6 +25,10 @@
 - In pull request, never write a body message, only a title. (with gh cli, use --body "")
 - In JS/TS, prefer for-of and for-in over forEach loops
 
+## Note on ripgrep (rg) and fd
+
+`rg` and `fd` both respect `.gitignore` files, if you need to search things such as node_modules or env config, don't forget to add the option in the CLI.
+
 ## Commit / PR
 
 - **When adding new lines to commit message, use multiple `-m`s**. Example: `git commit -m "feat: new feature" -m "- description of the feature 1" -m "- description of the feature 2"`.
