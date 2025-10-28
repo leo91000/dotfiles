@@ -23,7 +23,11 @@
 - And the pull request title should be formatted as follows:
   - "[JIRA-1234] Add this feature"
 - In pull request, never write a body message, only a title. (with gh cli, use --body "")
+
+### Javascript / Typescript
+
 - In JS/TS, prefer for-of and for-in over forEach loops
+- Prefer Object.hasOwn() over Object.prototype.hasOwnProperty.call()
 
 ## Note on ripgrep (rg) and fd
 
