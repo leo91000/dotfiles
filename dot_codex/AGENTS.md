@@ -29,6 +29,10 @@
 - In JS/TS, prefer for-of and for-in over forEach loops
 - Prefer Object.hasOwn() over Object.prototype.hasOwnProperty.call()
 
+### Vue
+
+- Always assume codebase is Vue version 3 unless explicitly stated
+
 ## Note on ripgrep (rg) and fd
 
 `rg` and `fd` both respect `.gitignore` files, if you need to search things such as node_modules or env config, don't forget to add the option in the CLI.
