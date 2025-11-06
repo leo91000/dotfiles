@@ -195,8 +195,7 @@ edit_prompt() {
   chezmoi apply && \
   cd ~/.local/share/chezmoi && \
   git add .chezmoitemplates/agents.md && \
-  git commit -m "chore: update AI agent prompt" && \
-  git push && \
+  (git commit -m "chore: update AI agent prompt" && git push || echo "No changes to commit") && \
   cd -
 }
 alias cdl="cd ~/projects/leo91000"
