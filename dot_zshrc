@@ -190,6 +190,9 @@ alias cmazed="chezmoi add ~/.config/zed"
 alias cmem="chezmoi edit --apply ~/.config/mise/config.toml"
 alias cmam="chezmoi add --apply ~/.config/mise/config.toml"
 alias cmu="chezmoi update"
+edit_prompt() {
+  $EDITOR ~/.local/share/chezmoi/.chezmoitemplates/agents.md && chezmoi apply
+}
 alias cdl="cd ~/projects/leo91000"
 alias cdle="cd ~/projects/leo91000/eliah"
 alias cdc="cd ~/projects/contribs"
@@ -487,3 +490,9 @@ fi
 
 export PATH=$HOME/.opencode/bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
+
+# Turso
+export PATH="$PATH:/home/leoc/.turso"
+
+# bun completions
+[ -s "/home/leoc/.bun/_bun" ] && source "/home/leoc/.bun/_bun"
