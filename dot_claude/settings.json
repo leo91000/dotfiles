@@ -12,5 +12,7 @@
       "Bash(git:*)"
     ],
     "deny": []
-  }
+  },
+  "model": "sonnet[1m]",
+  "alwaysThinkingEnabled": true
 }
