@@ -13,8 +13,8 @@
   "agent": {
     "always_allow_tool_actions": true,
     "default_model": {
-      "provider": "anthropic",
-      "model": "claude-3-7-sonnet-thinking-latest"
+      "provider": "zed.dev",
+      "model": "claude-3-7-sonnet-thinking"
     },
   },
   "language_models": {
