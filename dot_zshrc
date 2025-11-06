@@ -191,7 +191,13 @@ alias cmem="chezmoi edit --apply ~/.config/mise/config.toml"
 alias cmam="chezmoi add --apply ~/.config/mise/config.toml"
 alias cmu="chezmoi update"
 edit_prompt() {
-  $EDITOR ~/.local/share/chezmoi/.chezmoitemplates/agents.md && chezmoi apply
+  $EDITOR ~/.local/share/chezmoi/.chezmoitemplates/agents.md && \
+  chezmoi apply && \
+  cd ~/.local/share/chezmoi && \
+  git add .chezmoitemplates/agents.md && \
+  git commit -m "chore: update AI agent prompt" && \
+  git push && \
+  cd -
 }
 alias cdl="cd ~/projects/leo91000"
 alias cdle="cd ~/projects/leo91000/eliah"
