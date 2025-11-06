@@ -1,62 +1,62 @@
 {
-  "ee9b4daf-5df0-4ee1-8410-2b4ce66afa9c": {
-    "id": "ee9b4daf-5df0-4ee1-8410-2b4ce66afa9c",
-    "name": "Google Search",
-    "keyword": "g",
-    "cmd": "https://google.com/search?q=%s",
-    "icon": "/usr/share/ulauncher/media/google-search-icon.png",
-    "is_default_search": false,
-    "run_without_argument": false,
-    "added": 1747317443.5730183
-  },
-  "8251b6b4-ad56-4c68-b0b8-16e69cd63184": {
-    "id": "8251b6b4-ad56-4c68-b0b8-16e69cd63184",
-    "name": "Stack Overflow",
-    "keyword": "so",
-    "cmd": "https://stackoverflow.com/search?q=%s",
-    "icon": "/usr/share/ulauncher/media/stackoverflow-icon.svg",
-    "is_default_search": false,
-    "run_without_argument": false,
-    "added": 1747317443.5730252
-  },
-  "5e34722f-c2a6-4e86-811d-fced21ab27fc": {
-    "id": "5e34722f-c2a6-4e86-811d-fced21ab27fc",
-    "name": "Wikipedia",
-    "keyword": "wiki",
-    "cmd": "https://en.wikipedia.org/wiki/%s",
-    "icon": "/usr/share/ulauncher/media/wikipedia-icon.png",
-    "is_default_search": false,
-    "run_without_argument": false,
-    "added": 1747317443.5730343
-  },
-  "8ae03675-51bb-41fc-a8de-aa6d018b0d16": {
-    "id": "8ae03675-51bb-41fc-a8de-aa6d018b0d16",
-    "name": "T3 Chat",
-    "keyword": "t3",
-    "cmd": "https://beta.t3.chat/new?model=gemini-2.0-flash&search=true&q=%s",
-    "icon": "~/.config/ulauncher/icons/t3.png",
-    "is_default_search": true,
-    "run_without_argument": false,
-    "added": 1747318795.863789
-  },
-  "53ca1c2e-5e0e-4be2-9b93-50f8b650a070": {
-    "id": "53ca1c2e-5e0e-4be2-9b93-50f8b650a070",
-    "name": "Perplexity",
-    "keyword": "p",
-    "cmd": "https://www.perplexity.ai/?q=%s",
-    "icon": "~/.config/ulauncher/icons/perplexity.png",
-    "is_default_search": true,
-    "run_without_argument": false,
-    "added": 1747319709.110611
-  },
-  "97a727e0-e4a7-410f-b776-c56aff704f6e": {
-    "id": "97a727e0-e4a7-410f-b776-c56aff704f6e",
-    "name": "Chat GPT",
-    "keyword": "gpt",
-    "cmd": "https://chat.openai.com/?model=gpt-4&prompt=%s",
-    "icon": "~/.config/ulauncher/icons/chatgpt.png",
-    "is_default_search": true,
-    "run_without_argument": false,
-    "added": 1747319965.8615236
-  }
+    "ee9b4daf-5df0-4ee1-8410-2b4ce66afa9c": {
+        "id": "ee9b4daf-5df0-4ee1-8410-2b4ce66afa9c",
+        "name": "Google Search",
+        "keyword": "g",
+        "cmd": "https://google.com/search?q=%s",
+        "icon": "/usr/share/ulauncher/media/google-search-icon.png",
+        "is_default_search": false,
+        "run_without_argument": false,
+        "added": 1747317443.5730183
+    },
+    "8251b6b4-ad56-4c68-b0b8-16e69cd63184": {
+        "id": "8251b6b4-ad56-4c68-b0b8-16e69cd63184",
+        "name": "Stack Overflow",
+        "keyword": "so",
+        "cmd": "https://stackoverflow.com/search?q=%s",
+        "icon": "/usr/share/ulauncher/media/stackoverflow-icon.svg",
+        "is_default_search": false,
+        "run_without_argument": false,
+        "added": 1747317443.5730252
+    },
+    "5e34722f-c2a6-4e86-811d-fced21ab27fc": {
+        "id": "5e34722f-c2a6-4e86-811d-fced21ab27fc",
+        "name": "Wikipedia",
+        "keyword": "wiki",
+        "cmd": "https://en.wikipedia.org/wiki/%s",
+        "icon": "/usr/share/ulauncher/media/wikipedia-icon.png",
+        "is_default_search": false,
+        "run_without_argument": false,
+        "added": 1747317443.5730343
+    },
+    "8ae03675-51bb-41fc-a8de-aa6d018b0d16": {
+        "id": "8ae03675-51bb-41fc-a8de-aa6d018b0d16",
+        "name": "T3 Chat",
+        "keyword": "t3",
+        "cmd": "https://beta.t3.chat/new?model=gemini-2.0-flash&search=true&q=%s",
+        "icon": "~/.config/ulauncher/icons/t3.png",
+        "is_default_search": true,
+        "run_without_argument": false,
+        "added": 1747318795.863789
+    },
+    "53ca1c2e-5e0e-4be2-9b93-50f8b650a070": {
+        "id": "53ca1c2e-5e0e-4be2-9b93-50f8b650a070",
+        "name": "Perplexity",
+        "keyword": "p",
+        "cmd": "https://www.perplexity.ai/?q=%s",
+        "icon": "~/.config/ulauncher/icons/perplexity.png",
+        "is_default_search": true,
+        "run_without_argument": false,
+        "added": 1747319709.110611
+    },
+    "97a727e0-e4a7-410f-b776-c56aff704f6e": {
+        "id": "97a727e0-e4a7-410f-b776-c56aff704f6e",
+        "name": "Chat GPT",
+        "keyword": "gpt",
+        "cmd": "https://chat.openai.com/?model=gpt-4&prompt=%s",
+        "icon": "~/.config/ulauncher/icons/chatgpt.png",
+        "is_default_search": true,
+        "run_without_argument": false,
+        "added": 1747319965.8615236
+    }
 }
