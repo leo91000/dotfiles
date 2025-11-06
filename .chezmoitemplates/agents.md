@@ -1,5 +1,4 @@
 # Environment Information
-
 ## CLI Tools Available
 
 - `fd` (preferred over `find`)
