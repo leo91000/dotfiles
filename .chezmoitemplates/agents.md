@@ -40,4 +40,3 @@
 ## Commit / PR
 
 - **When adding new lines to commit message, use multiple `-m`s**. Example: `git commit -m "feat: new feature" -m "- description of the feature 1" -m "- description of the feature 2"`.
-  This line was added!!
