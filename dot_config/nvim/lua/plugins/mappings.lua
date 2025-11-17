@@ -63,6 +63,14 @@ return {
 					end,
 					desc = "Toggle treesj",
 				},
+
+				-- Toggle relative number independently
+				["<Leader>!"] = {
+					function()
+						vim.wo.relativenumber = not vim.wo.relativenumber
+					end,
+					desc = "Toggle relative number",
+				},
 			},
 			i = {
 				-- Word deletion in insert mode
