@@ -24,6 +24,10 @@
   - "[JIRA-1234] Add this feature"
 - In pull request, never write a body message, only a title. (with gh cli, use --body "")
 
+### General coding rules
+
+- Do not use any comment in the code, except for the JSDoc comment of a function
+
 ### Javascript / Typescript
 
 - In JS/TS, prefer for-of and for-in over forEach loops
