@@ -190,6 +190,7 @@ alias cmazed="chezmoi add ~/.config/zed"
 alias cmem="chezmoi edit --apply ~/.config/mise/config.toml"
 alias cmam="chezmoi add --apply ~/.config/mise/config.toml"
 alias cmu="chezmoi update"
+alias cmcd="cd ~/.local/share/chezmoi"
 edit_prompt() {
   $EDITOR ~/.local/share/chezmoi/.chezmoitemplates/agents.md && \
   chezmoi apply && \
