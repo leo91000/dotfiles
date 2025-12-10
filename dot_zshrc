@@ -328,6 +328,10 @@ _ww_serve() {
         commands+=("cd ~/projects/weweb/weweb-docker && docker compose up")
         names+=("ww:back")
         colors+=("bgMagenta.bold")
+
+        commands+=("cd ~/projects/weweb/weweb-docker/weweb-lambda-back-publisher/server && npm run start:dev")
+        names+=("ww:lambda")
+        colors+=("bgYellow.bold")
     fi
     
     # Join arrays
