@@ -27,6 +27,7 @@
 ### General coding rules
 
 - Do not use any comment in the code, except for the JSDoc comment of a function
+- Prefer early returns (guard clauses) over deeply nested if statements
 
 ### Javascript / Typescript
 
