@@ -22,7 +22,6 @@
   - "chore(JIRA-1234): Cleanup this code"
 - And the pull request title should be formatted as follows:
   - "[JIRA-1234] Add this feature"
-- In pull request, never write a body message, only a title. (with gh cli, use --body "")
 
 ### General coding rules
 
@@ -46,3 +45,5 @@
 
 - **When adding new lines to commit message, use multiple `-m`s**. Example: `git commit -m "feat: new feature" -m "- description of the feature 1" -m "- description of the feature 2"`.
 - If user ask you once to commit / push it doesn't means that you need to commit on each change, just this once. If you are not sure, ask user.
+- In pull request, never write a body message, only a title. (with gh cli, use --body "")
+- Only exception to PR body : a single ticket span acroos multiple PRs. In this case, each PR bodies should link to other PRs.
