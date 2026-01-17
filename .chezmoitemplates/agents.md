@@ -47,3 +47,25 @@
 - If user ask you once to commit / push it doesn't means that you need to commit on each change, just this once. If you are not sure, ask user.
 - In pull request, never write a body message, only a title. (with gh cli, use --body "")
 - Only exception to PR body : a single ticket span acroos multiple PRs. In this case, each PR bodies should link to other PRs.
+
+## Useful CLI Tools
+
+- `agent-browser`
+  Headless browser automation CLI for AI agents.
+
+Examples :
+
+```bash
+agent-browser open example.com
+agent-browser snapshot                    # Get accessibility tree with refs
+agent-browser click @e2                   # Click by ref from snapshot
+agent-browser fill @e3 "test@example.com" # Fill by ref
+agent-browser get text @e1                # Get text by ref
+agent-browser screenshot page.png
+agent-browser close
+agent-browser click "#submit"
+agent-browser fill "#email" "test@example.com"
+agent-browser find role button click --name "Submit"
+```
+
+For more information, see [agent-browser](https://github.com/anthropics/agent-browser).
