@@ -220,6 +220,8 @@ alias dc='docker compose'
 alias dcw='docker compose -p weweb-docker'
 alias dce='docker compose -p eliah'
 alias cc='claude'
+alias ralphy='~/projects/contribs/michaelshimeles/ralphy/ralphy.sh'
+alias ralphyu='cd ~/projects/contribs/michaelshimeles/ralphy && git pull && chmod +x ralphy.sh cd -'
 
 # Function to check for `staging` branch and pull changes
 check_and_pull() {
