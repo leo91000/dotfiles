@@ -1,7 +1,7 @@
 [tools]
 # poetry = { version = "latest", pyproject = "{{ config_root }}/pyproject.toml" }
 python = ["3", "2"]
-node = "22"
+node = "24"
 usage = "latest"
 
 [settings]
