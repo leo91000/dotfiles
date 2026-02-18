@@ -28,6 +28,7 @@
 - Do not use any comment in the code, except for the JSDoc comment of a function
 - Prefer early returns (guard clauses) over deeply nested if statements
 - After when rebasing / merging, always search for '<<<' or '====' to see if there are conflicts. Don't rely on command success to know if there are conflicts.
+- Try to refactor code when you see duplicated code, or code that is hard to read.
 
 ### Javascript / Typescript
 
