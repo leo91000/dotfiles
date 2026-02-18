@@ -1,0 +1,15 @@
+procs:
+  ww:editor:
+    shell: "npm run $WW_EDITOR_SCRIPT"
+    cwd: "/home/leoc/projects/weweb/weweb-editor"
+    autorestart: true
+  ww:dashboard:
+    shell: "npm run $WW_DASHBOARD_SCRIPT"
+    cwd: "/home/leoc/projects/weweb/weweb-dashboard"
+    autorestart: true
+  ww:lambda:
+    shell: "npm run start:dev"
+    cwd: "/home/leoc/projects/weweb/weweb-docker/weweb-lambda-back-publisher/server"
+  ww:docker:
+    shell: "COMPOSE_MENU=0 docker compose up"
+    cwd: "/home/leoc/projects/weweb/weweb-docker"

@@ -1,0 +1,9 @@
+procs:
+  ww:editor:
+    shell: "npm run $WW_EDITOR_SCRIPT"
+    cwd: "/home/leoc/projects/weweb/weweb-editor"
+    autorestart: true
+  ww:dashboard:
+    shell: "npm run $WW_DASHBOARD_SCRIPT"
+    cwd: "/home/leoc/projects/weweb/weweb-dashboard"
+    autorestart: true
