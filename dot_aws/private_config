@@ -7,3 +7,39 @@ s3 =
 [default]
 region = us-west-2
 output = json
+[profile weweb]
+region = us-east-1
+output = json
+
+[sso-session weweb]
+sso_start_url = https://weweb.awsapps.com/start
+sso_region = eu-west-3
+sso_registration_scopes = sso:account:access
+
+[profile weweb-staging]
+sso_session = weweb
+sso_account_id = 527248158056
+sso_role_name = AdminStaging
+region = us-east-1
+output = json
+
+[profile weweb-staging-free-lambdas]
+sso_session = weweb
+sso_account_id = 611395766348
+sso_role_name = AdminStagingFreeLambdas
+region = us-east-1
+output = json
+
+[profile weweb-local]
+sso_session = weweb
+sso_account_id = 776409429139
+sso_role_name = AdminLocal
+region = us-east-1
+output = json
+
+[profile weweb-local-free-lambdas]
+sso_session = weweb
+sso_account_id = 099597654389
+sso_role_name = AdminLocalFreeLambdas
+region = us-east-1
+output = json
