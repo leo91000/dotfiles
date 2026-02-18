@@ -1,8 +1,9 @@
-approval_policy = "never"
-model_reasoning_effort = "high"
+approval_policy = "on-request"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "danger-full-access"
-model = "gpt-5.2-codex"
+model = "gpt-5.3-codex"
 web_search_request = true
+personality = "pragmatic"
 
 [projects."/home/leoc"]
 trust_level = "trusted"
@@ -38,5 +39,13 @@ trust_level = "trusted"
 command = "npx"
 args = ["chrome-devtools-mcp@latest"]
 
+[mcp_servers.context7]
+url = "https://mcp.context7.com/mcp"
+http_headers = { "CONTEXT7_API_KEY" = "{{ onepasswordRead "op://Private/context7-codex-api-key/credential" }}" }
+
+[notice]
+hide_gpt5_1_migration_prompt = true
+hide_rate_limit_model_nudge = true
+
 [notice.model_migrations]
-"gpt-5.2" = "gpt-5.2-codex"
+"gpt-5.1-codex-mini" = "gpt-5.2-codex"
