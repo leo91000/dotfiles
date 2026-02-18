@@ -35,9 +35,23 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/weweb/weweb-assets"]
 trust_level = "trusted"
 
-[mcp_servers.chrome-devtools]
-command = "npx"
-args = ["chrome-devtools-mcp@latest"]
+  [mcp_servers.chrome-devtools]
+  command = "npx"
+  args = [
+    "-y",
+    "chrome-devtools-mcp@latest",
+    "--executablePath=/usr/bin/google-chrome-stable",
+    "--chrome-arg=--ozone-platform=wayland",
+    "--chrome-arg=--enable-features=UseOzonePlatform"
+  ]
+  env_vars = [
+    "XDG_SESSION_TYPE",
+    "WAYLAND_DISPLAY",
+    "XDG_RUNTIME_DIR",
+    "DBUS_SESSION_BUS_ADDRESS",
+    "__GLX_VENDOR_LIBRARY_NAME",
+    "LIBVA_DRIVER_NAME"
+  ]
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
