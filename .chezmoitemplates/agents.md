@@ -34,6 +34,7 @@
 
 - In JS/TS, prefer for-of and for-in over forEach loops
 - Prefer Object.hasOwn() over Object.prototype.hasOwnProperty.call()
+- Do not cast (like `String(xxx)`) unless it's necessary
 
 ### Vue
 
