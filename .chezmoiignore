@@ -1,2 +1,4 @@
 **/.tmp*
 **/.git
+.codex/skills/.system
+.codex/skills/.system/**
