@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task"
+  short_description: "Execute tasks.yaml tasks and mark completion"
+  default_prompt: "Execute tasks from tasks.yaml. If I specify a number, group, or next, follow it. Mark completed tasks in the file when done."

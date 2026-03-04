@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tasks"
+  short_description: "Summarize and filter tasks.yaml progress"
+  default_prompt: "Show tasks.yaml progress, grouped by parallel_group, with optional filters like pending, completed, group N, or next."
