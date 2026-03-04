@@ -1,4 +1,0 @@
-interface:
-  display_name: "PSQL Env Executor"
-  short_description: "Run psql on WeWeb envs with tunnel support"
-  default_prompt: "Use $psql-env-executor to execute this SQL on a specific WeWeb environment."
