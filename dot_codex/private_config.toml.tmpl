@@ -1,9 +1,10 @@
 approval_policy = "on-request"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "danger-full-access"
-model = "gpt-5.3-codex"
+model = "gpt-5.4"
 web_search_request = true
 personality = "pragmatic"
+plan_mode_reasoning_effort = "xhigh"
 
 [projects."/home/leoc"]
 trust_level = "trusted"
@@ -35,6 +36,12 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/weweb/weweb-assets"]
 trust_level = "trusted"
 
+[projects."/home/leoc/projects/leo91000/cairn"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-docker/weweb-back"]
+trust_level = "trusted"
+
 [tui]
 notifications = ["agent-turn-complete", "approval-requested"]
 notification_method = "osc9"
@@ -60,6 +67,13 @@ env_vars = [
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
 http_headers = { "CONTEXT7_API_KEY" = "{{ onepasswordRead "op://Private/context7-codex-api-key/credential" }}" }
+
+[mcp_servers.excalidraw]
+url = "https://mcp.excalidraw.com/mcp"
+enabled = true
+required = false
+startup_timeout_sec = 20
+tool_timeout_sec = 60
 
 [notice]
 hide_gpt5_1_migration_prompt = true
