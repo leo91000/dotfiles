@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+exec hyprpaper -c /home/leoc/.config/hypr/hyprpaper.conf
