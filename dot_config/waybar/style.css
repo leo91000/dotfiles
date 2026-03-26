@@ -68,31 +68,6 @@ tooltip {
     color: @color7;
 }
 
-#custom-monitor {
-    margin: 0 6px 0 1px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .12em;
-    color: @color7;
-    background: alpha(@color7, .08);
-}
-
-window#waybar.left #custom-monitor {
-    color: @color4;
-    background: alpha(@color4, .14);
-}
-
-window#waybar.main #custom-monitor {
-    color: @color6;
-    background: alpha(@color6, .16);
-}
-
-window#waybar.right #custom-monitor {
-    color: @color5;
-    background: alpha(@color5, .16);
-}
 
 #workspaces {
     padding: 0;
