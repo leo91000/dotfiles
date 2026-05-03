@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if ! systemctl --user is-active --quiet ulauncher.service; then
+    systemctl --user reset-failed ulauncher.service >/dev/null 2>&1
+    systemctl --user start ulauncher.service || exit 1
+    sleep 0.5
+fi
+
+if ulauncher-toggle >/dev/null 2>&1; then
+    exit 0
+fi
+
+systemctl --user reset-failed ulauncher.service >/dev/null 2>&1
+systemctl --user restart ulauncher.service || exit 1
+sleep 0.5
+ulauncher-toggle
