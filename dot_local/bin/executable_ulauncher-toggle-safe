@@ -1,16 +1,25 @@
 #!/bin/sh
 
+toggle_ulauncher() {
+    dbus-send \
+        --session \
+        --print-reply \
+        --dest=net.launchpad.ulauncher \
+        /net/launchpad/ulauncher \
+        net.launchpad.ulauncher.toggle_window >/dev/null 2>&1
+}
+
 if ! systemctl --user is-active --quiet ulauncher.service; then
     systemctl --user reset-failed ulauncher.service >/dev/null 2>&1
     systemctl --user start ulauncher.service || exit 1
     sleep 0.5
 fi
 
-if ulauncher-toggle >/dev/null 2>&1; then
+if toggle_ulauncher; then
     exit 0
 fi
 
 systemctl --user reset-failed ulauncher.service >/dev/null 2>&1
 systemctl --user restart ulauncher.service || exit 1
 sleep 0.5
-ulauncher-toggle
+toggle_ulauncher
