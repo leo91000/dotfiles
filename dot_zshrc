@@ -214,6 +214,7 @@ alias dce='docker compose -p eliah'
 alias cc='claude'
 alias ralphy='~/projects/contribs/michaelshimeles/ralphy/ralphy.sh'
 alias ralphyu='cd ~/projects/contribs/michaelshimeles/ralphy && git pull && chmod +x ralphy.sh cd -'
+alias hx='helix'
 
 # WeWeb helpers
 if [ -f "$HOME/.config/zsh/weweb.zsh" ]; then
@@ -221,7 +222,7 @@ if [ -f "$HOME/.config/zsh/weweb.zsh" ]; then
 fi
 
 # Make sure to use nvim as the default editor
-export EDITOR=nvim
+export EDITOR=helix
 
 # Named Directory Hashes
 ZSH_HIGHLIGHT_HIGHLIGHTERS+=()
