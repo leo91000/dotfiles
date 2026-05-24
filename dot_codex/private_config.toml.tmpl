@@ -1,11 +1,10 @@
 approval_policy = "never"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "danger-full-access"
-model = "gpt-5.4"
+model = "gpt-5.5"
 web_search_request = true
 personality = "pragmatic"
 plan_mode_reasoning_effort = "xhigh"
-service_tier = "fast"
 
 [projects."/home/leoc"]
 trust_level = "trusted"
@@ -64,104 +63,119 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/weweb/weweb-docker"]
 trust_level = "trusted"
 
+[projects."/home/leoc/projects/weweb/weweb-assets/ww-stack"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-docker/weweb-ai"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/crimson-duo"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/graphile_worker_rs"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/yama-code"]
+trust_level = "trusted"
+
 [tui]
 notifications = ["agent-turn-complete", "approval-requested"]
 notification_method = "osc9"
 
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+
 [mcp_servers.chrome-devtools]
 command = "npx"
-args = [
-  "-y",
-  "chrome-devtools-mcp@latest",
-  "--executablePath=/usr/bin/google-chrome-stable",
-  "--chrome-arg=--ozone-platform=wayland",
-  "--chrome-arg=--enable-features=UseOzonePlatform"
-]
-env_vars = [
-  "XDG_SESSION_TYPE",
-  "WAYLAND_DISPLAY",
-  "XDG_RUNTIME_DIR",
-  "DBUS_SESSION_BUS_ADDRESS",
-  "__GLX_VENDOR_LIBRARY_NAME",
-  "LIBVA_DRIVER_NAME"
-]
+args = ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated", "--executablePath=/usr/bin/google-chrome-stable", "--logFile=/tmp/chrome-devtools-mcp.log", "--no-usage-statistics", "--chrome-arg=--disable-gpu"]
 
-[mcp_servers.chrome-devtools.tools.new_page]
-approval_mode = "approve"
+[mcp_servers.chrome-devtools.env]
+XDG_RUNTIME_DIR = "/run/user/1000"
+DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/1000/bus"
 
 [mcp_servers.chrome-devtools.tools.click]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.evaluate_script]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.navigate_page]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.fill_form]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.resize_page]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.emulate]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.take_snapshot]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.fill]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.press_key]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.type_text]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.hover]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.upload_file]
-approval_mode = "approve"
-
-[mcp_servers.chrome-devtools.tools.get_network_request]
 approval_mode = "approve"
 
 [mcp_servers.chrome-devtools.tools.close_page]
 approval_mode = "approve"
 
-[mcp_servers.chrome-devtools.tools.take_screenshot]
+[mcp_servers.chrome-devtools.tools.emulate]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.evaluate_script]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.fill]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.fill_form]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.get_network_request]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.hover]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.navigate_page]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.new_page]
 approval_mode = "approve"
 
 [mcp_servers.chrome-devtools.tools.performance_stop_trace]
 approval_mode = "approve"
 
+[mcp_servers.chrome-devtools.tools.press_key]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.resize_page]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.take_screenshot]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.take_snapshot]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.type_text]
+approval_mode = "approve"
+
+[mcp_servers.chrome-devtools.tools.upload_file]
+approval_mode = "approve"
+
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
-http_headers = { "CONTEXT7_API_KEY" = "{{ onepasswordRead "op://Private/context7-codex-api-key/credential" }}" }
+
+[mcp_servers.context7.http_headers]
+CONTEXT7_API_KEY = "{{ onepasswordRead "op://Private/context7-codex-api-key/credential" }}"
 
 [mcp_servers.coolify]
 command = "npx"
 args = ["-y", "@masonator/coolify-mcp"]
-env = { "COOLIFY_ACCESS_TOKEN" = "{{ onepasswordRead "op://Private/coolify-codex-api-key/credential" }}", "COOLIFY_BASE_URL" = "https://coolify.leo-coletta.fr" }
+
+[mcp_servers.coolify.env]
+COOLIFY_ACCESS_TOKEN = "{{ onepasswordRead "op://Private/coolify-codex-api-key/credential" }}"
+COOLIFY_BASE_URL = "https://coolify.leo-coletta.fr"
 
 [mcp_servers.atlassian-rovo]
 url = "https://mcp.atlassian.com/v1/mcp"
 
 [mcp_servers.excalidraw]
 url = "https://mcp.excalidraw.com/mcp"
-enabled = true
-required = false
-startup_timeout_sec = 20
-tool_timeout_sec = 60
+startup_timeout_sec = 20.0
+tool_timeout_sec = 60.0
 
 [mcp_servers.excalidraw.tools.export_to_excalidraw]
 approval_mode = "approve"
 
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+
 [notice]
 hide_gpt5_1_migration_prompt = true
 hide_rate_limit_model_nudge = true
+fast_default_opt_out = true
 
 [notice.model_migrations]
 "gpt-5.1-codex-mini" = "gpt-5.2-codex"
@@ -175,4 +189,8 @@ enabled = true
 [plugins."github@openai-curated"]
 enabled = true
 
+[features]
+js_repl = true
+terminal_resize_reflow = true
+goals = true
 suppress_unstable_features_warning = true
