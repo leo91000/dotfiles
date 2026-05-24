@@ -43,3 +43,17 @@ sso_account_id = 099597654389
 sso_role_name = AdminLocalFreeLambdas
 region = us-east-1
 output = json
+
+[profile DataProd]
+sso_session = weweb
+sso_account_id = 546852814815
+sso_role_name = DataProd
+region = us-east-1
+output = json
+
+[profile weweb-prod]
+sso_session = weweb
+sso_account_id = 546852814815
+sso_role_name = ReadOnlyProd
+region = us-east-1
+output = json

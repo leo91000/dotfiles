@@ -1,4 +1,5 @@
-[{
+[
+    {
         "name": "left",
         "output": "DP-1",
         "layer": "top",
@@ -154,7 +155,7 @@
     },
     {
         "name": "main",
-        "output": ["DP-3", "eDP-2"],
+        "output": "DP-3",
         "layer": "top",
         "position": "top",
         "reload_style_on_change": true,

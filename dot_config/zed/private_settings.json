@@ -7,17 +7,31 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "git_panel": {
+    "dock": "right"
+  },
+  "agent_servers": {
+    "codex-acp": {
+      "type": "registry"
+    },
+    "cursor": {
+      "type": "registry",
+    },
+  },
   "edit_predictions": {
-    "provider": "supermaven"
+    "provider": "zed",
   },
   "tab_bar": {
-    "show": true
+    "show": true,
   },
   "agent": {
-    "always_allow_tool_actions": true,
+    "dock": "left",
+    "tool_permissions": {
+      "default": "allow",
+    },
     "default_model": {
       "provider": "zed.dev",
-      "model": "claude-3-7-sonnet-thinking"
+      "model": "claude-3-7-sonnet-thinking",
     },
   },
   "language_models": {
@@ -31,13 +45,13 @@
           "default_temperature": 1.0,
           "mode": {
             "type": "thinking",
-            "budget_tokens": 4096
-          }
-        }
+            "budget_tokens": 4096,
+          },
+        },
       ],
       "region": "us-west-2",
-      "authentication_method": "default"
-    }
+      "authentication_method": "default",
+    },
   },
   "auto_install_extensions": {
     "html": true,
@@ -47,20 +61,20 @@
     "tokyo-night": true,
     "github-theme": true,
     "sql": true,
-    "git-firefly": true
+    "git-firefly": true,
   },
   "vim": {
-    "use_system_clipboard": "on_yank"
+    "use_system_clipboard": "on_yank",
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
-  "theme": "GitHub Dark",
+  "theme": "Catppuccin Mocha",
   "experimental.theme_overrides": {
     "syntax": {
       "type": {
-        "color": "#e0af68"
-      }
-    }
+        "color": "#e0af68",
+      },
+    },
   },
   "buffer_font_family": "JetBrainsMono Nerd Font",
   "buffer_font_size": 16,
@@ -69,64 +83,64 @@
   "format_on_save": "on",
   "git": {
     "inline_blame": {
-      "enabled": false
-    }
+      "enabled": false,
+    },
   },
   "relative_line_numbers": "enabled",
   "languages": {
     "JavaScript": {
       "format_on_save": "on",
       "code_actions_on_format": {
-        "source.fixAll.eslint": true
-      }
+        "source.fixAll.eslint": true,
+      },
     },
     "TypeScript": {
       "format_on_save": "on",
       "code_actions_on_format": {
-        "source.fixAll.eslint": true
-      }
+        "source.fixAll.eslint": true,
+      },
     },
     "Vue.js": {
       "format_on_save": "on",
       "code_actions_on_format": {
-        "source.fixAll.eslint": true
-      }
-    }
+        "source.fixAll.eslint": true,
+      },
+    },
   },
   "lsp": {
     "rust-analyzer": {
       "initialization_options": {
         "check": {
-          "command": "clippy" // rust-analyzer.check.command (default: "check")
-        }
-      }
-    }
+          "command": "clippy", // rust-analyzer.check.command (default: "check")
+        },
+      },
+    },
   },
   "terminal": {
     "default_height": 800,
     "env": {
-      "EDITOR": "zed --wait"
-    }
+      "EDITOR": "zed --wait",
+    },
   },
   "project_panel": {
     "button": true,
     "dock": "right",
     "git_status": true,
-    "default_width": 400
+    "default_width": 400,
   },
   "outline_panel": {
-    "dock": "right"
+    "dock": "right",
   },
   "collaboration_panel": {
-    "dock": "left"
+    "dock": "right",
   },
   "notification_panel": {
-    "dock": "left"
+    "dock": "left",
   },
   "chat_panel": {
-    "dock": "left"
+    "dock": "left",
   },
   "tabs": {
-    "file_icons": true
-  }
+    "file_icons": true,
+  },
 }

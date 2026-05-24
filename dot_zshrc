@@ -192,6 +192,57 @@ alias cmem="chezmoi edit --apply ~/.config/mise/config.toml"
 alias cmam="chezmoi add --apply ~/.config/mise/config.toml"
 alias cmu="chezmoi update"
 alias cmcd="cd ~/.local/share/chezmoi"
+_codex_daemon_ready() {
+  command codex app-server daemon version >/dev/null 2>&1
+}
+
+_codex_ensure_daemon() {
+  if _codex_daemon_ready; then
+    return 0
+  fi
+
+  command codex app-server daemon start --enable goals >/dev/null || return $?
+  for _ in {1..20}; do
+    if _codex_daemon_ready; then
+      return 0
+    fi
+    sleep 0.1
+  done
+
+  echo "codex app-server daemon did not become ready" >&2
+  return 1
+}
+
+_codex_should_use_remote() {
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      -h|--help|-V|--version|help)
+        return 1
+        ;;
+      --remote|--remote=*|--remote-auth-token-env|--remote-auth-token-env=*)
+        return 1
+        ;;
+      exec|review|login|logout|mcp|plugin|mcp-server|app-server|remote-control|completion|update|doctor|sandbox|debug|apply|cloud|exec-server|features)
+        return 1
+        ;;
+      resume|fork)
+        return 0
+        ;;
+    esac
+  done
+  return 0
+}
+
+codex() {
+  if _codex_should_use_remote "$@"; then
+    _codex_ensure_daemon || return $?
+    command codex --remote unix:// "$@"
+    return $?
+  fi
+
+  command codex "$@"
+}
 edit_prompt() {
   $EDITOR ~/.local/share/chezmoi/.chezmoitemplates/agents.md && \
   chezmoi apply && \
@@ -214,7 +265,6 @@ alias dce='docker compose -p eliah'
 alias cc='claude'
 alias ralphy='~/projects/contribs/michaelshimeles/ralphy/ralphy.sh'
 alias ralphyu='cd ~/projects/contribs/michaelshimeles/ralphy && git pull && chmod +x ralphy.sh cd -'
-alias hx='helix'
 
 # WeWeb helpers
 if [ -f "$HOME/.config/zsh/weweb.zsh" ]; then
@@ -222,7 +272,7 @@ if [ -f "$HOME/.config/zsh/weweb.zsh" ]; then
 fi
 
 # Make sure to use nvim as the default editor
-export EDITOR=helix
+export EDITOR=nvim
 
 # Named Directory Hashes
 ZSH_HIGHLIGHT_HIGHLIGHTERS+=()

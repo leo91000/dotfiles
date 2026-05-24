@@ -14,8 +14,9 @@
     "deny": []
   },
   "enabledPlugins": {
-    "rust-analyzer-lsp@claude-plugins-official": true
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
-  "model": "opus"
+  "effortLevel": "high"
 }

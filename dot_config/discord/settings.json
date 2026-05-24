@@ -12,5 +12,7 @@
     "width": 2560,
     "height": 1440
   },
-  "asyncVideoInputDeviceInit": false
+  "asyncVideoInputDeviceInit": false,
+  "enableLibOpenH264Electron": true,
+  "openH264Enabled": true
 }
