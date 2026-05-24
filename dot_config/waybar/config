@@ -21,10 +21,18 @@
         "clock": {
             "format": "{:%H:%M} ",
             "interval": 60,
-            "tooltip-format": "<tt>{calendar}</tt>",
+            "tooltip-format": "<tt><small>{calendar}</small></tt>",
             "calendar": {
+                "mode": "month",
+                "weeks-pos": "right",
+                "on-scroll": 1,
+                "iso8601": true,
                 "format": {
-                    "today": "<span color='#fAfBfC'><b>{}</b></span>"
+                    "months": "<span color='#f7f9ff'><b>{}</b></span>",
+                    "weekdays": "<span color='#9aa6cb'><b>{}</b></span>",
+                    "days": "<span color='#dbe2f4'>{}</span>",
+                    "weeks": "<span color='#6f7897'><b>{:%V}</b></span>",
+                    "today": "<span color='#eef9ff' underline='single' underline_color='#7ad7ff'><b>{}</b></span>"
                 }
             },
             "actions": {
@@ -167,10 +175,18 @@
         "clock": {
             "format": "{:%H:%M} ",
             "interval": 60,
-            "tooltip-format": "<tt>{calendar}</tt>",
+            "tooltip-format": "<tt><small>{calendar}</small></tt>",
             "calendar": {
+                "mode": "month",
+                "weeks-pos": "right",
+                "on-scroll": 1,
+                "iso8601": true,
                 "format": {
-                    "today": "<span color='#fAfBfC'><b>{}</b></span>"
+                    "months": "<span color='#f7f9ff'><b>{}</b></span>",
+                    "weekdays": "<span color='#9aa6cb'><b>{}</b></span>",
+                    "days": "<span color='#dbe2f4'>{}</span>",
+                    "weeks": "<span color='#6f7897'><b>{:%V}</b></span>",
+                    "today": "<span color='#eef9ff' underline='single' underline_color='#7ad7ff'><b>{}</b></span>"
                 }
             },
             "actions": {
@@ -313,10 +329,18 @@
         "clock": {
             "format": "{:%H:%M} ",
             "interval": 60,
-            "tooltip-format": "<tt>{calendar}</tt>",
+            "tooltip-format": "<tt><small>{calendar}</small></tt>",
             "calendar": {
+                "mode": "month",
+                "weeks-pos": "right",
+                "on-scroll": 1,
+                "iso8601": true,
                 "format": {
-                    "today": "<span color='#fAfBfC'><b>{}</b></span>"
+                    "months": "<span color='#f7f9ff'><b>{}</b></span>",
+                    "weekdays": "<span color='#9aa6cb'><b>{}</b></span>",
+                    "days": "<span color='#dbe2f4'>{}</span>",
+                    "weeks": "<span color='#6f7897'><b>{:%V}</b></span>",
+                    "today": "<span color='#eef9ff' underline='single' underline_color='#7ad7ff'><b>{}</b></span>"
                 }
             },
             "actions": {
