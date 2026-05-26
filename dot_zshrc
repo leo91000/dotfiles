@@ -234,10 +234,26 @@ _codex_should_use_remote() {
   return 0
 }
 
-codex() {
+_codex_has_cd_arg() {
+  local arg
+  for arg in "$@"; do
+    case "$arg" in
+      -C|-C?*|--cd|--cd=*)
+        return 0
+        ;;
+    esac
+  done
+  return 1
+}
+
+codexd() {
   if _codex_should_use_remote "$@"; then
     _codex_ensure_daemon || return $?
-    command codex --remote unix:// "$@"
+    if _codex_has_cd_arg "$@"; then
+      command codex --remote unix:// "$@"
+    else
+      command codex --remote unix:// -C "$PWD" "$@"
+    fi
     return $?
   fi
 
