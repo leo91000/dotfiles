@@ -1,0 +1,253 @@
+auth_type: basic
+board:
+    id: 26
+    name: Big Release
+    type: kanban
+epic:
+    name: customfield_10011
+    link: customfield_10014
+installation: Cloud
+issue:
+    fields:
+        custom:
+            - name: Dev Video
+              key: customfield_10072
+              schema:
+                datatype: string
+            - name: Report Video
+              key: customfield_10073
+              schema:
+                datatype: string
+            - name: QA Rejected
+              key: customfield_10195
+              schema:
+                datatype: number
+            - name: Reported by
+              key: customfield_10074
+              schema:
+                datatype: string
+            - name: Ticket Slack Link
+              key: customfield_10076
+              schema:
+                datatype: string
+            - name: Story Points
+              key: customfield_10036
+              schema:
+                datatype: number
+            - name: Approbations
+              key: customfield_10228
+              schema:
+                datatype: sd-approvals
+            - name: Opportunity Type
+              key: customfield_10061
+              schema:
+                datatype: option
+            - name: User emails
+              key: customfield_10063
+              schema:
+                datatype: array
+                items: string
+            - name: Open forms
+              key: customfield_10064
+              schema:
+                datatype: number
+            - name: Sprint
+              key: customfield_10020
+              schema:
+                datatype: array
+                items: json
+            - name: Submitted forms
+              key: customfield_10065
+              schema:
+                datatype: number
+            - name: Flagged
+              key: customfield_10021
+              schema:
+                datatype: array
+                items: option
+            - name: Locked forms
+              key: customfield_10066
+              schema:
+                datatype: number
+            - name: Target start
+              key: customfield_10022
+              schema:
+                datatype: date
+            - name: Total forms
+              key: customfield_10067
+              schema:
+                datatype: number
+            - name: Target end
+              key: customfield_10023
+              schema:
+                datatype: date
+            - name: Category
+              key: customfield_10069
+              schema:
+                datatype: option
+            - name: Story point estimate
+              key: customfield_10016
+              schema:
+                datatype: number
+            - name: Issue color
+              key: customfield_10017
+              schema:
+                datatype: string
+            - name: Parent Link
+              key: customfield_10018
+              schema:
+                datatype: any
+            - name: Rank
+              key: customfield_10019
+              schema:
+                datatype: any
+            - name: Design
+              key: customfield_10091
+              schema:
+                datatype: array
+                items: design.field.name
+            - name: Vulnerability
+              key: customfield_10092
+              schema:
+                datatype: any
+            - name: Satisfaction date
+              key: customfield_10050
+              schema:
+                datatype: datetime
+            - name: Sentiment
+              key: customfield_10094
+              schema:
+                datatype: array
+                items: sd-sentiment
+            - name: Request language
+              key: customfield_10051
+              schema:
+                datatype: sd-request-lang
+            - name: Objectifs
+              key: customfield_10095
+              schema:
+                datatype: array
+                items: Objectifs
+            - name: Affected services
+              key: customfield_10052
+              schema:
+                datatype: array
+                items: service-entity-field
+            - name: Request Type
+              key: customfield_10010
+              schema:
+                datatype: sd-customerrequesttype
+            - name: Release Branch
+              key: customfield_10131
+              schema:
+                datatype: string
+            - name: Reviewer
+              key: customfield_10132
+              schema:
+                datatype: user
+            - name: Target Env
+              key: customfield_10133
+              schema:
+                datatype: string
+            - name: Epic Status
+              key: customfield_10012
+              schema:
+                datatype: option
+            - name: QA
+              key: customfield_10134
+              schema:
+                datatype: user
+            - name: Epic Color
+              key: customfield_10013
+              schema:
+                datatype: string
+            - name: Start date
+              key: customfield_10015
+              schema:
+                datatype: date
+            - name: Satisfaction
+              key: customfield_10049
+              schema:
+                datatype: sd-feedback
+            - name: Original assignee
+              key: customfield_10129
+              schema:
+                datatype: user
+            - name: Airtable Ticket
+              key: customfield_10082
+              schema:
+                datatype: string
+            - name: airtableRecordId
+              key: customfield_10083
+              schema:
+                datatype: string
+            - name: Project Link
+              key: customfield_10084
+              schema:
+                datatype: string
+            - name: Request participants
+              key: customfield_10041
+              schema:
+                datatype: array
+                items: user
+            - name: Domaines prioritaires
+              key: customfield_10162
+              schema:
+                datatype: array
+                items: Domaines prioritaires
+            - name: Project overview key
+              key: customfield_10087
+              schema:
+                datatype: string
+            - name: development
+              key: customfield_10000
+              schema:
+                datatype: any
+            - name: Project overview status
+              key: customfield_10088
+              schema:
+                datatype: string
+            - name: Team
+              key: customfield_10001
+              schema:
+                datatype: team
+            - name: Organizations
+              key: customfield_10002
+              schema:
+                datatype: array
+                items: sd-customerorganization
+    types:
+        - id: "10005"
+          name: Tâche
+          handle: Task
+          subtask: false
+        - id: "10006"
+          name: Sous-tâche
+          handle: Sub-task
+          subtask: true
+        - id: "10007"
+          name: Bug
+          handle: Bug
+          subtask: false
+        - id: "10015"
+          name: big-release
+          handle: big-release
+          subtask: false
+        - id: "10016"
+          name: Infra
+          handle: Infra
+          subtask: false
+        - id: "10010"
+          name: Workshop
+          handle: Workshop
+          subtask: false
+        - id: "10000"
+          name: Epic
+          handle: Epic
+          subtask: false
+login: leo@weweb.io
+project:
+    key: WW
+    type: classic
+server: https://weweb.atlassian.net
+timezone: Europe/Paris

@@ -1,1 +1,6 @@
 {{ template "agents.md" }}
+## Browser Testing
+
+- Use Chrome DevTools MCP tools for browser automation and inspection.
+- Chrome DevTools tools are discovered lazily: before using them in a turn, call `tool_search` with a query such as `chrome-devtools browser page evaluate navigate screenshot console network` to load the available tool schemas.
+- After discovery, use the `mcp__chrome_devtools` tools for page navigation, accessibility snapshots, console/network inspection, screenshots, and in-browser JavaScript evaluation.

@@ -1,0 +1,9 @@
+tunnel: weweb-back
+credentials-file: /home/leoc/.cloudflared/f0f22c6e-9894-4a2f-8260-7ecfe10187d5.json
+
+ingress:
+  - hostname: weweb-back.cairn.build
+    service: http://localhost:3000
+  - hostname: back.weweb-local.cairn.build
+    service: http://localhost:3000
+  - service: http_status:404

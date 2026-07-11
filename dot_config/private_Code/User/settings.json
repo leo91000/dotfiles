@@ -1,0 +1,5 @@
+{
+    "builder.serverUrl": "http://localhost:4040",
+    "builder.command": "npm run serve:staging-ignis",
+    "github.copilot.nextEditSuggestions.enabled": true
+}

@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--executablePath=/usr/bin/google-chrome-stable",
+        "--chrome-arg=--ozone-platform=wayland",
+        "--chrome-arg=--enable-features=UseOzonePlatform"
+      ],
+      "env": {
+        "XDG_SESSION_TYPE": "wayland",
+        "WAYLAND_DISPLAY": "wayland-1",
+        "XDG_RUNTIME_DIR": "/run/user/1000",
+        "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus",
+        "__GLX_VENDOR_LIBRARY_NAME": "nvidia",
+        "LIBVA_DRIVER_NAME": "nvidia"
+      }
+    }
+  }
+}

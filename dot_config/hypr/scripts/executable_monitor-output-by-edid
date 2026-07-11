@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+set -eu
+
+if [ "$#" -ne 2 ]; then
+  printf 'usage: %s <model> <serial>\n' "$0" >&2
+  exit 2
+fi
+
+model="$1"
+serial="$2"
+
+hyprctl monitors all -j | jq -er --arg model "$model" --arg serial "$serial" '
+  ([.[] | select(.disabled != true and .model == $model and .serial == $serial) | .name][0]) // empty
+'

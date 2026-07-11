@@ -1,0 +1,63 @@
+#!/usr/bin/env sh
+set -eu
+
+direction="${1:-}"
+threshold=24
+
+case "$direction" in
+  l|r|u|d) ;;
+  *) exit 1 ;;
+esac
+
+before="$(hyprctl -j activewindow)"
+address="$(printf '%s' "$before" | jq -r '.address')"
+
+[ "$address" != "null" ] || exit 0
+
+monitor_id="$(printf '%s' "$before" | jq -r '.monitor')"
+window_x="$(printf '%s' "$before" | jq -r '.at[0]')"
+window_y="$(printf '%s' "$before" | jq -r '.at[1]')"
+window_width="$(printf '%s' "$before" | jq -r '.size[0]')"
+window_height="$(printf '%s' "$before" | jq -r '.size[1]')"
+
+monitor="$(hyprctl -j monitors | jq -c --argjson id "$monitor_id" 'map(select(.id == $id)) | first')"
+[ "$monitor" != "null" ] || exit 0
+
+monitor_x="$(printf '%s' "$monitor" | jq -r '.x')"
+monitor_y="$(printf '%s' "$monitor" | jq -r '.y')"
+monitor_width="$(printf '%s' "$monitor" | jq -r '.width')"
+monitor_height="$(printf '%s' "$monitor" | jq -r '.height')"
+
+left_edge=$((window_x - monitor_x))
+right_edge=$((monitor_x + monitor_width - (window_x + window_width)))
+top_edge=$((window_y - monitor_y))
+bottom_edge=$((monitor_y + monitor_height - (window_y + window_height)))
+
+case "$direction" in
+  l)
+    [ "$left_edge" -le "$threshold" ] && {
+      hyprctl dispatch movewindow "mon:l" >/dev/null
+      exit 0
+    }
+    ;;
+  r)
+    [ "$right_edge" -le "$threshold" ] && {
+      hyprctl dispatch movewindow "mon:r" >/dev/null
+      exit 0
+    }
+    ;;
+  u)
+    [ "$top_edge" -le "$threshold" ] && {
+      hyprctl dispatch movewindow "mon:u" >/dev/null
+      exit 0
+    }
+    ;;
+  d)
+    [ "$bottom_edge" -le "$threshold" ] && {
+      hyprctl dispatch movewindow "mon:d" >/dev/null
+      exit 0
+    }
+    ;;
+esac
+
+hyprctl dispatch movewindow "$direction" >/dev/null

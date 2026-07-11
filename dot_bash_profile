@@ -1,0 +1,7 @@
+#
+# ~/.bash_profile
+#
+
+[[ -f ~/.bashrc ]] && . ~/.bashrc
+. "/home/leoc/.deno/env"
+. "$HOME/.cargo/env"

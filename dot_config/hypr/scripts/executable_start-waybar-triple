@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+set -eu
+
+runtime_dir="${XDG_RUNTIME_DIR:-/tmp}"
+source_config="/home/leoc/.config/waybar/config"
+runtime_config="$runtime_dir/waybar-triple-config.json"
+resolve_output="/home/leoc/.config/hypr/scripts/monitor-output-by-edid"
+
+left_monitor="$("$resolve_output" "ROG PG279Q" "#ASN4JVmqxLLd" || true)"
+main_monitor="$("$resolve_output" "AG274QG" "#GjMYMxgwABkB" || true)"
+right_monitor="$("$resolve_output" "Dell AW2721D" "#GrMYMxgwABcY" || true)"
+
+if [ -n "$left_monitor$main_monitor$right_monitor" ]; then
+  jq \
+    --arg left "$left_monitor" \
+    --arg main "$main_monitor" \
+    --arg right "$right_monitor" \
+    '. as $bars | [
+      (if $left != "" then $bars[0] | .output = $left else empty end),
+      (if $main != "" then $bars[1] | .output = $main else empty end),
+      (if $right != "" then $bars[2] | .output = $right else empty end)
+    ]' \
+    "$source_config" > "$runtime_config"
+else
+  jq '.[0] | del(.name, .output)' "$source_config" > "$runtime_config"
+fi
+
+exec waybar -c "$runtime_config" -s /home/leoc/.config/waybar/style.css

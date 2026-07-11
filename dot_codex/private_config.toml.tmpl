@@ -1,10 +1,19 @@
 approval_policy = "never"
 model_reasoning_effort = "xhigh"
 sandbox_mode = "danger-full-access"
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 web_search_request = true
 personality = "pragmatic"
 plan_mode_reasoning_effort = "xhigh"
+service_tier = "default"
+mcp_oauth_credentials_store = "file"
+
+[model_providers.chatgpt_http]
+name = "ChatGPT HTTP"
+base_url = "https://chatgpt.com/backend-api/codex"
+wire_api = "responses"
+requires_openai_auth = true
+supports_websockets = false
 
 [projects."/home/leoc"]
 trust_level = "trusted"
@@ -78,6 +87,12 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/leo91000/yama-code"]
 trust_level = "trusted"
 
+[projects."/home/leoc/projects/weweb-mono"]
+trust_level = "trusted"
+
+[projects."/"]
+trust_level = "trusted"
+
 [tui]
 notifications = ["agent-turn-complete", "approval-requested"]
 notification_method = "osc9"
@@ -87,7 +102,7 @@ notification_method = "osc9"
 
 [mcp_servers.chrome-devtools]
 command = "npx"
-args = ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated", "--executablePath=/usr/bin/google-chrome-stable", "--logFile=/tmp/chrome-devtools-mcp.log", "--no-usage-statistics", "--chrome-arg=--disable-gpu"]
+args = ["-y", "chrome-devtools-mcp@latest", "--isolated", "--executablePath=/usr/bin/google-chrome-stable", "--logFile=/tmp/chrome-devtools-mcp.log", "--no-usage-statistics", "--chrome-arg=--disable-gpu"]
 
 [mcp_servers.chrome-devtools.env]
 XDG_RUNTIME_DIR = "/run/user/1000"
@@ -181,16 +196,17 @@ fast_default_opt_out = true
 "gpt-5.1-codex-mini" = "gpt-5.2-codex"
 
 [plugins."google-calendar@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."gmail@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."github@openai-curated"]
-enabled = true
+enabled = false
 
 [features]
 js_repl = true
 terminal_resize_reflow = true
 goals = true
 suppress_unstable_features_warning = true
+memories = true

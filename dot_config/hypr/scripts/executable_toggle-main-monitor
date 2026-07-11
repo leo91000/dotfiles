@@ -1,0 +1,76 @@
+#!/usr/bin/env sh
+set -eu
+
+left_model="ROG PG279Q"
+left_serial="#ASN4JVmqxLLd"
+main_model="AG274QG"
+main_serial="#GjMYMxgwABkB"
+right_model="Dell AW2721D"
+right_serial="#GrMYMxgwABcY"
+
+left_rule="desc:Ancor Communications Inc ROG PG279Q,2560x1440@144,0x0,1"
+main_rule="desc:AOC AG274QG,2560x1440@240,2560x0,1"
+right_rule="desc:Dell Inc. Dell AW2721D,2560x1440@144,5120x0,1"
+main_single_rule="desc:AOC AG274QG,2560x1440@240,0x0,1"
+
+resolve_output="/home/leoc/.config/hypr/scripts/monitor-output-by-edid"
+start_waybar="/home/leoc/.config/hypr/scripts/start-waybar-triple"
+start_hyprpaper="/home/leoc/.config/hypr/scripts/start-hyprpaper-triple"
+
+notify() {
+  command -v notify-send >/dev/null 2>&1 || return 0
+  notify-send "Hyprland monitors" "$1"
+}
+
+restart_surfaces() {
+  pkill -x waybar >/dev/null 2>&1 || true
+  pkill -x hyprpaper >/dev/null 2>&1 || true
+  setsid "$start_waybar" >/tmp/waybar.log 2>&1 </dev/null &
+  setsid "$start_hyprpaper" >/tmp/hyprpaper.log 2>&1 </dev/null &
+}
+
+active_setup_monitors_count() {
+  hyprctl monitors -j | jq -r \
+    --arg left_model "$left_model" \
+    --arg left_serial "$left_serial" \
+    --arg main_model "$main_model" \
+    --arg main_serial "$main_serial" \
+    --arg right_model "$right_model" \
+    --arg right_serial "$right_serial" '
+      [
+        .[]
+        | select(
+            (.model == $left_model and .serial == $left_serial)
+            or (.model == $main_model and .serial == $main_serial)
+            or (.model == $right_model and .serial == $right_serial)
+          )
+      ]
+      | length
+    '
+}
+
+disable_if_active() {
+  output="$("$resolve_output" "$1" "$2" || true)"
+  [ -n "$output" ] || return 0
+  hyprctl keyword monitor "$output,disable" >/dev/null
+}
+
+if [ "$(active_setup_monitors_count)" -le 1 ]; then
+  hyprctl keyword monitor "$main_rule" >/dev/null
+  hyprctl keyword monitor "$left_rule" >/dev/null
+  hyprctl keyword monitor "$right_rule" >/dev/null
+  sleep 0.3
+  hyprctl dispatch focusmonitor "desc:AOC AG274QG" >/dev/null 2>&1 || true
+  restart_surfaces
+  notify "Restored triple monitor setup"
+  exit 0
+fi
+
+disable_if_active "$left_model" "$left_serial"
+disable_if_active "$right_model" "$right_serial"
+sleep 0.2
+hyprctl keyword monitor "$main_single_rule" >/dev/null
+sleep 0.3
+hyprctl dispatch focusmonitor "desc:AOC AG274QG" >/dev/null 2>&1 || true
+restart_surfaces
+notify "Using only the main monitor"

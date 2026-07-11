@@ -1,0 +1,11 @@
+{
+  "version": "1",
+  "environments": {
+    "prod": {
+      "eb20b676-7f01-4aae-999d-5bbd86502e6a": {
+        "id": "eb20b676-7f01-4aae-999d-5bbd86502e6a",
+        "name": "Léo Coletta's Notion"
+      }
+    }
+  }
+}
