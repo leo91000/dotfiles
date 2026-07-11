@@ -7,10 +7,15 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "cli_default_open_behavior": "existing_window",
+  "diff_view_style": "unified",
   "git_panel": {
     "dock": "right"
   },
   "agent_servers": {
+    "claude-acp": {
+      "type": "registry"
+    },
     "codex-acp": {
       "type": "registry"
     },
@@ -20,6 +25,10 @@
   },
   "edit_predictions": {
     "provider": "zed",
+  },
+  "which_key": {
+    "enabled": true,
+    "delay_ms": 200,
   },
   "tab_bar": {
     "show": true,
@@ -64,6 +73,8 @@
     "git-firefly": true,
   },
   "vim": {
+    "toggle_relative_line_numbers": true,
+    "use_smartcase_find": true,
     "use_system_clipboard": "on_yank",
   },
   "base_keymap": "VSCode",

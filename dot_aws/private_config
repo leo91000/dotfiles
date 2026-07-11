@@ -57,3 +57,10 @@ sso_account_id = 546852814815
 sso_role_name = ReadOnlyProd
 region = us-east-1
 output = json
+
+[profile weweb-beta]
+sso_session = weweb
+sso_account_id = 132772905449
+sso_role_name = ReadOnlyBeta
+region = us-east-1
+output = json

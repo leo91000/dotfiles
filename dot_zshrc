@@ -82,7 +82,17 @@ bindkey '^[[1;3C' forward-word                  # Key Alt + Right
 bindkey '^[[H' beginning-of-line                # Key Home
 bindkey '^[[F' end-of-line                      # Key End
 bindkey '^H' backward-delete-word
-stty susp undef                                 # Disable Ctrl+Z suspend
+
+# Disable Ctrl+Z suspend and make it a no-op in zsh line editing.
+if [[ -t 0 ]]; then
+  stty susp undef
+fi
+_ctrl_z_noop() {}
+zle -N _ctrl_z_noop
+for _zsh_keymap in emacs viins vicmd; do
+  bindkey -M "$_zsh_keymap" '^Z' _ctrl_z_noop 2>/dev/null
+done
+unset _zsh_keymap
 # #neofetch
 # export TERM='screen-256color'
 if [ -f $HOME/.zshrc-personal ]; then
