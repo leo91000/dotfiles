@@ -1,6 +1,6 @@
 ---
 name: weweb-psql-env-executor
-description: Execute SQL on WeWeb PostgreSQL databases by environment (`staging`, `staging-ignis`, `prod`, `local`) and service (`back`, `preview`, `plugins`). Use when a user asks to run `psql` queries, inspect data, or apply updates directly in DB, with automatic 1Password credential retrieval plus SSH or AWS SSM bastion tunneling for private remote hosts, and Docker Compose access for local.
+description: Execute SQL on WeWeb PostgreSQL databases by environment (`beta`, `staging`, `staging-ignis`, `prod`, `local`) and service (`back`, `preview`, `plugins`). Use when a user asks to run `psql` queries, inspect data, or apply updates directly in DB, with automatic AWS SSM or 1Password credential retrieval plus tunneling for private remote hosts, and Docker Compose access for local.
 ---
 
 # WeWeb Psql Env Executor
@@ -15,6 +15,16 @@ Run inline SQL:
  /home/leoc/.codex/skills/weweb-psql-env-executor/scripts/exec_psql_env.sh \
   --env staging \
   --service back \
+  --sql 'SELECT 1;'
+```
+
+Run SQL against a local stack with an auto-published Postgres port:
+
+```bash
+ /home/leoc/.codex/skills/weweb-psql-env-executor/scripts/exec_psql_env.sh \
+  --env local \
+  --service back \
+  --postgres-port 4917 \
   --sql 'SELECT 1;'
 ```
 
@@ -50,26 +60,28 @@ Production read-only via AWS SSO + SSM:
 
 ## Inputs
 
-- `--env`: `staging` | `staging-ignis` | `prod` | `production` | `local`
+- `--env`: `beta` | `staging` | `staging-ignis` | `prod` | `production` | `local`
 - `--service`: `back` | `preview` | `plugins` | `localhost`
 - `--sql`: Inline SQL
 - `--file`: Path to SQL file
+- `--postgres-port`: For `--env local` only, connect directly to `127.0.0.1:<port>` instead of using Docker Compose exec. Use this when the local stack publishes Postgres on a dynamic host port.
 - `--op-cache-ttl-seconds`: How long remote 1Password DB config should be cached locally, defaults to `300`. Use `0` to disable.
 
 If `--service` is omitted:
 
-- `staging`, `staging-ignis`, and `prod` default to `back`
+- `beta`, `staging`, `staging-ignis`, and `prod` default to `back`
 - `local` defaults to `localhost`
 
 ## Notes
 
-- The script uses 1Password item IDs already mapped for WeWeb DB entries, including prod `back`, `preview`, and `plugins`.
+- Beta database credentials are read from encrypted AWS SSM parameters with the `weweb-beta` read-only profile, while the private network tunnel uses `DataBeta`; the credentials are not stored in 1Password.
+- The script uses 1Password item IDs already mapped for staging and production `back`, `preview`, and `plugins` databases.
 - Remote 1Password DB config is cached for five minutes under `/tmp/weweb-psql-env-executor/op-cache` to avoid repeated authorization prompts during multi-query work.
-- For local, the script does not use 1Password. It runs `docker compose exec -T postgres psql` from `/home/leoc/projects/weweb/weweb-docker` by default.
+- For local, the script does not use 1Password. It runs `docker compose exec -T postgres psql` from `/home/leoc/projects/weweb/weweb-docker` by default. Pass `--postgres-port` to use a local published Postgres port instead.
 - Local service database mapping is `back`/`localhost` -> `wwdb`, `preview` -> `wwpreview`, and `plugins` -> `wwplugins`.
-- For staging envs, it creates an SSH tunnel through the bastion host.
-- For prod, it keeps a shared AWS SSM tunnel open to the bastion SSH port using the `DataProd` profile and the default target `i-0221cb5e6f25851d0`.
-- Prod `back`, `preview`, and `plugins` reuse that shared bastion tunnel and open a short-lived DB forward per command over the same hop.
+- For staging AWS envs, it creates an AWS SSM `AWS-StartPortForwardingSessionToRemoteHost` tunnel from the bastion instance directly to the database host.
+- For prod, it keeps the compatible AWS SSM tunnel to the bastion SSH port, then opens a short-lived SSH DB forward over that local hop.
+- Bastion instances are discovered from EC2 tags, with `--ssm-target` available for manual override.
 - Prod credentials are stored directly in the `WeWeb` vault and resolved automatically by the script.
-- For prod, the script auto-runs `aws sso login` when the AWS SSO session is missing.
+- For AWS profiles, the script auto-runs `aws sso login` when the AWS SSO session is missing.
 - For repeated operations, run multiple commands in the same shell after one `op signin`.

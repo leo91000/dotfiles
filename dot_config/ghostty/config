@@ -29,6 +29,7 @@ window-padding-y = 18
 
 # Behavior
 confirm-close-surface = false
+mouse-scroll-multiplier = precision:1,discrete:1
 
 # Config syntax crash course
 # ==========================

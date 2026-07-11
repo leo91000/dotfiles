@@ -57,7 +57,7 @@ tooltip label {
 #custom-notification:hover,
 #bluetooth:hover,
 #network:hover,
-#battery:hover,
+#custom-hidpp-battery:hover,
 #cpu:hover,
 #memory:hover,
 #temperature:hover,
@@ -77,7 +77,7 @@ tooltip label {
 #custom-pacman,
 #bluetooth,
 #network,
-#battery,
+#custom-hidpp-battery,
 #group-expand,
 #cpu,
 #memory,
@@ -87,6 +87,24 @@ tooltip label {
     padding: 0 5px;
     transition: all .3s ease;
     color: @color7;
+}
+
+#custom-notification {
+    min-width: 24px;
+    padding: 0 8px 0 16px;
+    font-family: "CodeNewRoman Nerd Font Mono";
+}
+
+#custom-notification.notification,
+#custom-notification.dnd-notification,
+#custom-notification:hover {
+    color: @color9;
+    background: transparent;
+    box-shadow: none;
+}
+
+#custom-notification.dnd-none {
+    color: alpha(@color7, .5);
 }
 
 #workspaces {
@@ -123,15 +141,11 @@ tooltip label {
     box-shadow: 0 8px 20px alpha(@color9, .25);
 }
 
-#battery.charging {
-    color: #26A65B;
-}
-
-#battery.warning:not(.charging) {
+#custom-hidpp-battery.warning {
     color: #ffbe61;
 }
 
-#battery.critical:not(.charging) {
+#custom-hidpp-battery.critical {
     color: #f53c3c;
     animation-name: blink;
     animation-duration: 0.5s;

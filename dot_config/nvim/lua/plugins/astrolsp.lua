@@ -53,6 +53,12 @@ return {
           },
         },
       },
+      unocss = {
+        on_attach = function(client)
+          client.server_capabilities.colorProvider = false
+          if vim.lsp.document_color then vim.lsp.document_color.enable(false, { client_id = client.id }) end
+        end,
+      },
       tailwindcss = {
         on_attach = function(client)
           if
@@ -85,7 +91,9 @@ return {
         ["<Leader>uY"] = {
           function() require("astrolsp.toggles").buffer_semantic_tokens() end,
           desc = "Toggle LSP semantic highlight (buffer)",
-          cond = function(client) return client:supports_method "textDocument/semanticTokens/full" and vim.lsp.semantic_tokens ~= nil end,
+          cond = function(client)
+            return client:supports_method "textDocument/semanticTokens/full" and vim.lsp.semantic_tokens ~= nil
+          end,
         },
       },
     },

@@ -37,6 +37,8 @@ const OP_CACHE_TTL_SECS: i64 = 300;
 const TOUCH_INTERVAL_SECS: u64 = 30;
 const TUNNEL_READY_TIMEOUT_SECS: u64 = 12;
 const DEFAULT_LOCAL_DOCKER_DIR: &str = "/home/leoc/projects/weweb/weweb-docker";
+const DEFAULT_PROD_SSM_TARGET: &str = "i-00128b669966cf841";
+const DEFAULT_PROD_SSM_SSH_LOCAL_PORT: u16 = 8022;
 static TEMPFILE_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Parser, Debug)]
@@ -55,10 +57,12 @@ struct PublicCli {
     #[arg(long, default_value_t = 15432)]
     local_port: u16,
     #[arg(long)]
+    postgres_port: Option<u16>,
+    #[arg(long)]
     aws_profile: Option<String>,
     #[arg(long)]
     ssm_target: Option<String>,
-    #[arg(long, default_value_t = 8022)]
+    #[arg(long, default_value_t = DEFAULT_PROD_SSM_SSH_LOCAL_PORT)]
     ssm_port: u16,
     #[arg(long, default_value_t = OP_CACHE_TTL_SECS)]
     op_cache_ttl_seconds: i64,
@@ -76,6 +80,7 @@ struct WatchCli {
 
 #[derive(Clone, Copy, Debug, Serialize)]
 enum EnvName {
+    Beta,
     Staging,
     StagingIgnis,
     Prod,
@@ -85,6 +90,7 @@ enum EnvName {
 impl EnvName {
     fn parse(value: &str) -> Result<Self> {
         match value {
+            "beta" => Ok(Self::Beta),
             "staging" => Ok(Self::Staging),
             "staging-ignis" => Ok(Self::StagingIgnis),
             "prod" | "production" => Ok(Self::Prod),
@@ -95,6 +101,7 @@ impl EnvName {
 
     fn as_str(self) -> &'static str {
         match self {
+            Self::Beta => "beta",
             Self::Staging => "staging",
             Self::StagingIgnis => "staging-ignis",
             Self::Prod => "prod",
@@ -139,6 +146,7 @@ struct RuntimeConfig {
     sql_payload: String,
     op_account: String,
     local_port: u16,
+    postgres_port: Option<u16>,
     ssm_port: u16,
     item_id: Option<String>,
     aws_profile_override: Option<String>,
@@ -167,7 +175,6 @@ struct TunnelSpec {
     env: &'static str,
     service: &'static str,
     local_port: u16,
-    ssm_port: u16,
     remote_host: String,
     remote_port: u16,
     transport: &'static str,
@@ -246,6 +253,16 @@ fn run_public_mode() -> Result<i32> {
     let runtime = build_runtime_config(cli)?;
     let db = match runtime.env {
         EnvName::Local => local_db_config(runtime.service),
+        EnvName::Beta => {
+            let tunnel_aws_profile = runtime
+                .aws_profile_override
+                .clone()
+                .unwrap_or_else(|| "DataBeta".to_owned());
+            let credentials_aws_profile = "weweb-beta";
+            ensure_aws_profile_login(credentials_aws_profile)?;
+            ensure_aws_profile_login(&tunnel_aws_profile)?;
+            load_beta_db_config(runtime.service, credentials_aws_profile, &tunnel_aws_profile)?
+        }
         _ => {
             let item_id = runtime
                 .item_id
@@ -256,13 +273,18 @@ fn run_public_mode() -> Result<i32> {
     };
 
     let lease = match runtime.env {
-        _ if db.requires_tunnel => {
+        EnvName::Prod if db.requires_tunnel => {
             ensure_aws_login(&runtime, &db)?;
-            let spec = build_prod_bastion_tunnel_spec(&runtime, &db)?;
+            let spec = build_prod_bastion_ssh_tunnel_spec(&runtime, &db)?;
+            Some(ensure_tunnel(&spec)?)
+        }
+        _ if should_use_aws_ssm_tunnel(&runtime, &db) => {
+            ensure_aws_login(&runtime, &db)?;
+            let spec = build_aws_ssm_tunnel_spec(&runtime, &db)?;
             Some(ensure_tunnel(&spec)?)
         }
         EnvName::Local => None,
-        _ if db.ssh_enabled => {
+        _ if db.ssh_enabled || db.requires_tunnel => {
             let spec = build_ssh_tunnel_spec(&runtime, &db)?;
             Some(ensure_tunnel(&spec)?)
         }
@@ -279,8 +301,8 @@ fn run_public_mode() -> Result<i32> {
     };
 
     let status_code = match runtime.env {
-        EnvName::Local => run_local_psql(&runtime.sql_payload, &db)?,
-        _ if db.requires_tunnel => run_prod_psql(&runtime.sql_payload, &db, &runtime)?,
+        EnvName::Local => run_local_psql(&runtime.sql_payload, &db, runtime.postgres_port)?,
+        EnvName::Prod if db.requires_tunnel => run_prod_psql(&runtime.sql_payload, &db, &runtime)?,
         _ => run_remote_psql(&runtime.sql_payload, &db, runtime.local_port)?,
     };
 
@@ -304,9 +326,12 @@ fn build_runtime_config(cli: PublicCli) -> Result<RuntimeConfig> {
         Some(value) => ServiceName::parse(value)?,
         None => default_service_for_env(env),
     };
+    if cli.postgres_port.is_some() && !matches!(env, EnvName::Local) {
+        bail!("--postgres-port is only supported with --env local");
+    }
     let sql_payload = read_sql_payload(cli.sql, cli.file)?;
     let item_id = match env {
-        EnvName::Local => None,
+        EnvName::Beta | EnvName::Local => None,
         _ => Some(resolve_item_id(env, service)?),
     };
 
@@ -316,6 +341,7 @@ fn build_runtime_config(cli: PublicCli) -> Result<RuntimeConfig> {
         sql_payload,
         op_account: cli.op_account,
         local_port: cli.local_port,
+        postgres_port: cli.postgres_port,
         ssm_port: cli.ssm_port,
         item_id,
         aws_profile_override: cli.aws_profile,
@@ -327,7 +353,7 @@ fn build_runtime_config(cli: PublicCli) -> Result<RuntimeConfig> {
 fn default_service_for_env(env: EnvName) -> ServiceName {
     match env {
         EnvName::Local => ServiceName::Localhost,
-        EnvName::Staging | EnvName::StagingIgnis | EnvName::Prod => ServiceName::Back,
+        EnvName::Beta | EnvName::Staging | EnvName::StagingIgnis | EnvName::Prod => ServiceName::Back,
     }
 }
 
@@ -371,6 +397,76 @@ fn local_db_config(service: ServiceName) -> DbConfig {
         ssh_user: None,
         requires_tunnel: false,
     }
+}
+
+fn load_beta_db_config(service: ServiceName, credentials_aws_profile: &str, tunnel_aws_profile: &str) -> Result<DbConfig> {
+    let service_name = match service {
+        ServiceName::Back => "weweb-back",
+        ServiceName::Preview => "weweb-preview",
+        ServiceName::Plugins => "weweb-plugins",
+        ServiceName::Localhost => bail!("Service localhost is only supported with --env local"),
+    };
+    let parameter_prefix = format!("/beta/{service_name}");
+    let parameter_names = [
+        "rds_hostname",
+        "rds_port",
+        "rds_db_name",
+        "rds_username",
+        "rds_password",
+    ]
+    .map(|name| format!("{parameter_prefix}/{name}"));
+
+    let output = Command::new("aws")
+        .args([
+            "ssm",
+            "get-parameters",
+            "--with-decryption",
+            "--profile",
+            credentials_aws_profile,
+            "--output",
+            "json",
+            "--names",
+        ])
+        .args(&parameter_names)
+        .output()
+        .context("Failed to read beta database parameters from AWS SSM")?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr).trim().to_owned();
+        bail!("Failed to read beta database parameters from AWS SSM: {stderr}");
+    }
+
+    let payload: serde_json::Value = serde_json::from_slice(&output.stdout)
+        .context("Failed to parse beta database parameters from AWS SSM")?;
+    let parameters = payload["Parameters"]
+        .as_array()
+        .context("AWS SSM response is missing Parameters")?;
+    let read_parameter = |name: &str| -> Result<String> {
+        let full_name = format!("{parameter_prefix}/{name}");
+        parameters
+            .iter()
+            .find(|parameter| parameter["Name"].as_str() == Some(&full_name))
+            .and_then(|parameter| parameter["Value"].as_str())
+            .map(str::to_owned)
+            .with_context(|| format!("Missing beta database parameter {full_name}"))
+    };
+
+    Ok(DbConfig {
+        db_host: read_parameter("rds_hostname")?,
+        db_port: read_parameter("rds_port")?
+            .parse()
+            .context("Invalid beta database port")?,
+        db_name: read_parameter("rds_db_name")?,
+        db_user: read_parameter("rds_username")?,
+        db_pass: read_parameter("rds_password")?,
+        ssh_enabled: false,
+        ssh_key: None,
+        aws_profile: Some(tunnel_aws_profile.to_owned()),
+        bastion_instance_id: None,
+        bastion_host: None,
+        ssh_user: None,
+        requires_tunnel: true,
+    })
 }
 
 fn read_sql_payload(sql: Option<String>, file: Option<PathBuf>) -> Result<String> {
@@ -570,6 +666,10 @@ fn ensure_aws_login(runtime: &RuntimeConfig, db: &DbConfig) -> Result<()> {
         .or_else(|| db.aws_profile.clone())
         .unwrap_or_else(|| "DataProd".to_owned());
 
+    ensure_aws_profile_login(&aws_profile)
+}
+
+fn ensure_aws_profile_login(aws_profile: &str) -> Result<()> {
     let sts_ok = Command::new("aws")
         .args(["sts", "get-caller-identity", "--profile", &aws_profile])
         .stdout(Stdio::null())
@@ -583,7 +683,7 @@ fn ensure_aws_login(runtime: &RuntimeConfig, db: &DbConfig) -> Result<()> {
     }
 
     let status = Command::new("aws")
-        .args(["sso", "login", "--profile", &aws_profile])
+        .args(["sso", "login", "--profile", aws_profile])
         .status()
         .context("Failed to execute aws sso login")?;
 
@@ -594,7 +694,13 @@ fn ensure_aws_login(runtime: &RuntimeConfig, db: &DbConfig) -> Result<()> {
     Ok(())
 }
 
-fn build_prod_bastion_tunnel_spec(runtime: &RuntimeConfig, db: &DbConfig) -> Result<TunnelSpec> {
+fn should_use_aws_ssm_tunnel(runtime: &RuntimeConfig, db: &DbConfig) -> bool {
+    !matches!(runtime.env, EnvName::Local | EnvName::Prod)
+        && db.requires_tunnel
+        && (runtime.aws_profile_override.is_some() || db.aws_profile.is_some())
+}
+
+fn build_prod_bastion_ssh_tunnel_spec(runtime: &RuntimeConfig, db: &DbConfig) -> Result<TunnelSpec> {
     let aws_profile = runtime
         .aws_profile_override
         .clone()
@@ -604,11 +710,32 @@ fn build_prod_bastion_tunnel_spec(runtime: &RuntimeConfig, db: &DbConfig) -> Res
     let ssm_target = resolve_ssm_target(runtime, db, &aws_profile)?;
     Ok(TunnelSpec {
         env: runtime.env.as_str(),
-        service: "shared-bastion",
+        service: "shared-bastion-ssh",
         local_port: runtime.ssm_port,
-        ssm_port: runtime.ssm_port,
         remote_host: "127.0.0.1".to_owned(),
         remote_port: 22,
+        transport: "ssm-ssh",
+        bastion_reference: Some(ssm_target),
+        aws_profile: Some(aws_profile),
+        ssh_user: None,
+        ssh_key: None,
+    })
+}
+
+fn build_aws_ssm_tunnel_spec(runtime: &RuntimeConfig, db: &DbConfig) -> Result<TunnelSpec> {
+    let aws_profile = runtime
+        .aws_profile_override
+        .clone()
+        .or_else(|| db.aws_profile.clone())
+        .unwrap_or_else(|| "DataProd".to_owned());
+    ensure_session_manager_plugin_available()?;
+    let ssm_target = resolve_ssm_target(runtime, db, &aws_profile)?;
+    Ok(TunnelSpec {
+        env: runtime.env.as_str(),
+        service: runtime.service.as_str(),
+        local_port: runtime.local_port,
+        remote_host: db.db_host.clone(),
+        remote_port: db.db_port,
         transport: "ssm",
         bastion_reference: Some(ssm_target),
         aws_profile: Some(aws_profile),
@@ -638,10 +765,18 @@ fn resolve_ssm_target(runtime: &RuntimeConfig, db: &DbConfig, aws_profile: &str)
         return Ok(target.clone());
     }
 
+    if let Some(target) = discover_bastion_instance_from_ec2(runtime.env, aws_profile)? {
+        return Ok(target);
+    }
+
     if let Some(target) = &db.bastion_instance_id {
         if ssm_target_is_online(aws_profile, target)? {
             return Ok(target.clone());
         }
+    }
+
+    if matches!(runtime.env, EnvName::Prod) && !DEFAULT_PROD_SSM_TARGET.is_empty() {
+        return Ok(DEFAULT_PROD_SSM_TARGET.to_owned());
     }
 
     let output = Command::new("aws")
@@ -675,6 +810,44 @@ fn resolve_ssm_target(runtime: &RuntimeConfig, db: &DbConfig, aws_profile: &str)
     }
 
     Ok(target)
+}
+
+fn discover_bastion_instance_from_ec2(env: EnvName, aws_profile: &str) -> Result<Option<String>> {
+    let tag_name = match env {
+        EnvName::Beta => "Weweb Bastion Host on beta",
+        EnvName::Staging | EnvName::StagingIgnis => "Weweb Bastion Host on staging",
+        EnvName::Prod => "Weweb Bastion Host on prod",
+        EnvName::Local => return Ok(None),
+    };
+    let tag_filter = format!("Name=tag:Name,Values={tag_name}");
+
+    let output = Command::new("aws")
+        .args([
+            "ec2",
+            "describe-instances",
+            "--profile",
+            aws_profile,
+            "--filters",
+            "Name=instance-state-name,Values=running",
+            &tag_filter,
+            "--query",
+            "Reservations[].Instances[].InstanceId | [0]",
+            "--output",
+            "text",
+        ])
+        .output()
+        .context("Failed to discover bastion instance from EC2")?;
+
+    if !output.status.success() {
+        return Ok(None);
+    }
+
+    let target = String::from_utf8_lossy(&output.stdout).trim().to_owned();
+    if target.is_empty() || target == "None" {
+        return Ok(None);
+    }
+
+    Ok(Some(target))
 }
 
 fn ssm_target_is_online(aws_profile: &str, target: &str) -> Result<bool> {
@@ -720,7 +893,6 @@ fn build_ssh_tunnel_spec(runtime: &RuntimeConfig, db: &DbConfig) -> Result<Tunne
         env: runtime.env.as_str(),
         service: runtime.service.as_str(),
         local_port: runtime.local_port,
-        ssm_port: runtime.ssm_port,
         remote_host: db.db_host.clone(),
         remote_port: db.db_port,
         transport: "ssh",
@@ -836,20 +1008,21 @@ fn write_tunnel_state(path: &Path, state: &TunnelState) -> Result<()> {
 fn spawn_tunnel(spec: &TunnelSpec, log_path: &Path) -> Result<i32> {
     match spec.transport {
         "ssm" => spawn_detached_command(build_ssm_tunnel_command(spec)?, log_path),
+        "ssm-ssh" => spawn_detached_command(build_ssm_ssh_tunnel_command(spec)?, log_path),
         "ssh" => spawn_detached_command(build_ssh_tunnel_command(spec)?, log_path),
         _ => bail!("Unsupported tunnel transport {}", spec.transport),
     }
 }
 
-fn build_ssm_tunnel_command(spec: &TunnelSpec) -> Result<Command> {
+fn build_ssm_ssh_tunnel_command(spec: &TunnelSpec) -> Result<Command> {
     let ssm_target = spec
         .bastion_reference
         .clone()
-        .context("Missing SSM target for prod bastion tunnel")?;
+        .context("Missing SSM target for prod bastion SSH tunnel")?;
     let aws_profile = spec
         .aws_profile
         .clone()
-        .context("Missing AWS profile for prod bastion tunnel")?;
+        .context("Missing AWS profile for prod bastion SSH tunnel")?;
     let mut command = Command::new("bash");
     command.arg("-lc");
     command.arg(format!(
@@ -878,8 +1051,54 @@ fn build_ssm_tunnel_command(spec: &TunnelSpec) -> Result<Command> {
 	exit $?",
         ssm_target = shell_escape(&ssm_target),
         parameters = shell_escape(&format!(
-            "{{\"portNumber\":[\"22\"],\"localPortNumber\":[\"{}\"]}}",
-            spec.local_port
+            "{{\"portNumber\":[\"{}\"],\"localPortNumber\":[\"{}\"]}}",
+            spec.remote_port, spec.local_port
+        )),
+        aws_profile = shell_escape(&aws_profile),
+        local_port = spec.local_port,
+    ));
+    Ok(command)
+}
+
+fn build_ssm_tunnel_command(spec: &TunnelSpec) -> Result<Command> {
+    let ssm_target = spec
+        .bastion_reference
+        .clone()
+        .context("Missing SSM target for AWS tunnel")?;
+    let aws_profile = spec
+        .aws_profile
+        .clone()
+        .context("Missing AWS profile for AWS tunnel")?;
+    let mut command = Command::new("bash");
+    command.arg("-lc");
+    command.arg(format!(
+        "set -euo pipefail\n\
+	ssm_pid=''\n\
+	cleanup() {{\n\
+	  if [[ -n \"$ssm_pid\" ]]; then kill \"$ssm_pid\" 2>/dev/null || true; wait \"$ssm_pid\" 2>/dev/null || true; fi\n\
+	}}\n\
+	trap cleanup EXIT INT TERM\n\
+	aws ssm start-session --target {ssm_target} --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters {parameters} --profile {aws_profile} &\n\
+	ssm_pid=$!\n\
+	for _ in $(seq 1 60); do\n\
+	  if (echo >/dev/tcp/127.0.0.1/{local_port}) >/dev/null 2>&1; then\n\
+	    break\n\
+	  fi\n\
+	  if ! kill -0 \"$ssm_pid\" 2>/dev/null; then\n\
+	    wait \"$ssm_pid\"\n\
+	    exit $?\n\
+	  fi\n\
+	  sleep 0.25\n\
+	done\n\
+	if ! (echo >/dev/tcp/127.0.0.1/{local_port}) >/dev/null 2>&1; then\n\
+	  exit 1\n\
+	fi\n\
+	wait \"$ssm_pid\"\n\
+	exit $?",
+        ssm_target = shell_escape(&ssm_target),
+        parameters = shell_escape(&format!(
+            "{{\"host\":[\"{}\"],\"portNumber\":[\"{}\"],\"localPortNumber\":[\"{}\"]}}",
+            spec.remote_host, spec.remote_port, spec.local_port
         )),
         aws_profile = shell_escape(&aws_profile),
         local_port = spec.local_port,
@@ -906,6 +1125,10 @@ fn build_ssh_tunnel_command(spec: &TunnelSpec) -> Result<Command> {
     command.args([
         "-o",
         "BatchMode=yes",
+        "-o",
+        "IgnoreUnknown=WarnWeakCrypto",
+        "-o",
+        "WarnWeakCrypto=no-pq-kex",
         "-o",
         "ExitOnForwardFailure=yes",
         "-o",
@@ -1029,13 +1252,6 @@ fn ensure_tunnel_ports_available(spec: &TunnelSpec) -> Result<()> {
         bail!(
             "Port {} is already in use without a matching managed tunnel state. Pick another --local-port or clean up the existing listener.",
             spec.local_port
-        );
-    }
-
-    if spec.transport == "ssm-ssh" && port_is_ready(spec.ssm_port) {
-        bail!(
-            "Port {} is already in use without a matching managed tunnel state. Pick another --ssm-port or clean up the existing listener.",
-            spec.ssm_port
         );
     }
 
@@ -1170,7 +1386,12 @@ fn run_remote_psql(sql: &str, db: &DbConfig, local_port: u16) -> Result<i32> {
 }
 
 fn run_prod_psql(sql: &str, db: &DbConfig, runtime: &RuntimeConfig) -> Result<i32> {
-    ensure_local_port_available(runtime.local_port)?;
+    if port_is_ready(runtime.local_port) {
+        bail!(
+            "Port {} is already in use. Pick another --local-port or clean up the existing listener.",
+            runtime.local_port
+        );
+    }
 
     let ssh_user = db
         .ssh_user
@@ -1196,7 +1417,7 @@ fn run_prod_psql(sql: &str, db: &DbConfig, runtime: &RuntimeConfig) -> Result<i3
 	  rm -f {key_path}\n\
 	}}\n\
 	trap cleanup EXIT INT TERM\n\
-	ssh -o BatchMode=yes -o ExitOnForwardFailure=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/tmp/weweb_known_hosts -i {key_path} -p {ssm_port} -N -L {local_port}:{remote_host}:{remote_port} {ssh_user}@127.0.0.1 &\n\
+		ssh -o BatchMode=yes -o IgnoreUnknown=WarnWeakCrypto -o WarnWeakCrypto=no-pq-kex -o ExitOnForwardFailure=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/tmp/weweb_known_hosts -i {key_path} -p {ssm_port} -N -L {local_port}:{remote_host}:{remote_port} {ssh_user}@127.0.0.1 &\n\
 	ssh_pid=$!\n\
 	for _ in $(seq 1 60); do\n\
 	  if (echo >/dev/tcp/127.0.0.1/{local_port}) >/dev/null 2>&1; then\n\
@@ -1228,7 +1449,11 @@ fn run_prod_psql(sql: &str, db: &DbConfig, runtime: &RuntimeConfig) -> Result<i3
     run_sql_command(command, sql)
 }
 
-fn run_local_psql(sql: &str, db: &DbConfig) -> Result<i32> {
+fn run_local_psql(sql: &str, db: &DbConfig, postgres_port: Option<u16>) -> Result<i32> {
+    if let Some(port) = postgres_port {
+        return run_local_tcp_psql(sql, db, port);
+    }
+
     let compose_dir = resolve_weweb_docker_dir()?;
     let mut command = Command::new("docker");
     command.current_dir(compose_dir);
@@ -1247,6 +1472,23 @@ fn run_local_psql(sql: &str, db: &DbConfig) -> Result<i32> {
         "-P",
         "pager=off",
     ]);
+    command.stdin(Stdio::piped());
+    command.stdout(Stdio::inherit());
+    command.stderr(Stdio::inherit());
+
+    run_sql_command(command, sql)
+}
+
+fn run_local_tcp_psql(sql: &str, db: &DbConfig, postgres_port: u16) -> Result<i32> {
+    let connection_string = format!(
+        "host=127.0.0.1 port={} dbname={} user={} connect_timeout=10",
+        postgres_port, db.db_name, db.db_user
+    );
+
+    let mut command = Command::new("psql");
+    command.arg(connection_string);
+    command.args(["-v", "ON_ERROR_STOP=1", "-P", "pager=off"]);
+    command.env("PGPASSWORD", &db.db_pass);
     command.stdin(Stdio::piped());
     command.stdout(Stdio::inherit());
     command.stderr(Stdio::inherit());
@@ -1280,17 +1522,6 @@ fn resolve_weweb_docker_dir() -> Result<PathBuf> {
     }
 
     bail!("Unable to resolve weweb-docker directory")
-}
-
-fn ensure_local_port_available(local_port: u16) -> Result<()> {
-    if port_is_ready(local_port) {
-        bail!(
-            "Port {} is already in use. Pick another --local-port or clean up the existing listener.",
-            local_port
-        );
-    }
-
-    Ok(())
 }
 
 fn now_unix() -> i64 {

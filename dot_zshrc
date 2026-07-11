@@ -314,6 +314,7 @@ PATH="$PATH":"$HOME/scripts/"
 
 export MISE_NODE_COREPACK='true'
 export MISE_POETRY_AUTO_INSTALL='true'
+export SHARP_IGNORE_GLOBAL_LIBVIPS=1
 eval "$(mise activate zsh)"
 CFLAGS="-std=c99 -Wno-misleading-indentation" CPPFLAGS="-std=c99 -Wno-misleading-indentation" mise install 2>/dev/null
 
@@ -344,3 +345,9 @@ export PATH="$PATH:/home/leoc/.turso"
 
 # bun completions
 [ -s "/home/leoc/.bun/_bun" ] && source "/home/leoc/.bun/_bun"
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<

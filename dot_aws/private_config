@@ -51,6 +51,20 @@ sso_role_name = DataProd
 region = us-east-1
 output = json
 
+[profile DataBeta]
+sso_session = weweb
+sso_account_id = 132772905449
+sso_role_name = DataBeta
+region = us-east-1
+output = json
+
+[profile weweb-preprod]
+sso_session = weweb
+sso_account_id = 381310755420
+sso_role_name = ReadOnlyPreprod
+region = us-east-1
+output = json
+
 [profile weweb-prod]
 sso_session = weweb
 sso_account_id = 546852814815
@@ -63,4 +77,10 @@ sso_session = weweb
 sso_account_id = 132772905449
 sso_role_name = ReadOnlyBeta
 region = us-east-1
+output = json
+[profile weweb-beta-free-lambdas]
+sso_session = weweb
+sso_account_id = 059221680425
+sso_role_name = ReadOnlyBetaFreeLambdas
+region = eu-central-1
 output = json

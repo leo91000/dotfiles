@@ -1,2 +1,31 @@
 #!/usr/bin/env sh
-exec hyprpaper -c /home/leoc/.config/hypr/hyprpaper.conf
+set -eu
+
+runtime_dir="${XDG_RUNTIME_DIR:-/tmp}"
+config="$runtime_dir/hyprpaper-triple.conf"
+resolve_output="/home/leoc/.config/hypr/scripts/monitor-output-by-edid"
+
+wallpaper_entry() {
+  monitor="$1"
+  path="$2"
+
+  [ -n "$monitor" ] || return 0
+
+  printf 'wallpaper {\n'
+  printf '    monitor = %s\n' "$monitor"
+  printf '    path = %s\n' "$path"
+  printf '    fit_mode = cover\n'
+  printf '}\n\n'
+}
+
+left_monitor="$("$resolve_output" "ROG PG279Q" "#ASN4JVmqxLLd" || true)"
+center_monitor="$("$resolve_output" "AG274QG" "#GjMYMxgwABkB" || true)"
+right_monitor="$("$resolve_output" "Dell AW2721D" "#GrMYMxgwABcY" || true)"
+
+{
+  wallpaper_entry "$left_monitor" "/home/leoc/.config/wallpapers/triple/v2osk/left.jpg"
+  wallpaper_entry "$center_monitor" "/home/leoc/.config/wallpapers/triple/v2osk/center.jpg"
+  wallpaper_entry "$right_monitor" "/home/leoc/.config/wallpapers/triple/v2osk/right.jpg"
+} > "$config"
+
+exec hyprpaper -c "$config"

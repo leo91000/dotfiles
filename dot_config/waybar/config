@@ -5,19 +5,23 @@
         "layer": "top",
         "position": "top",
         "reload_style_on_change": true,
-        "modules-left": ["custom/notification", "clock", "custom/pacman", "tray"],
+        "modules-left": ["clock", "custom/pacman", "tray"],
         "modules-center": ["hyprland/workspaces"],
-        "modules-right": ["bluetooth", "network", "pulseaudio", "battery"],
+        "modules-right": ["bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
         "hyprland/workspaces": {
             "format": "{name}",
             "sort-by": "number",
             "move-to-monitor": true
         },
         "custom/notification": {
-            "tooltip": false,
-            "format": "",
+            "tooltip": true,
+            "format": "{}",
+            "return-type": "json",
+            "exec-if": "command -v swaync-client",
+            "exec": "~/.config/waybar/scripts/swaync-notification.sh",
             "on-click": "swaync-client -t -sw",
-            "escape": true
+            "on-click-right": "swaync-client -d -sw",
+            "escape": false
         },
         "clock": {
             "format": "{:%H:%M} ",
@@ -62,25 +66,12 @@
             "tooltip-format-enumerate-connected-battery": "{device_alias}\n{device_address}\n{device_battery_percentage}%",
             "on-click-right": "blueman-manager"
         },
-        "battery": {
+        "custom/hidpp-battery": {
+            "format": "{}",
+            "return-type": "json",
             "interval": 30,
-            "states": {
-                "good": 95,
-                "warning": 30,
-                "critical": 20
-            },
-            "format": "{capacity}% {icon}",
-            "format-charging": "{capacity}% 󰂄",
-            "format-plugged": "{capacity}% 󰂄 ",
-            "format-alt": "{time} {icon}",
-            "format-icons": [
-                "󰁻",
-                "󰁼",
-                "󰁾",
-                "󰂀",
-                "󰂂",
-                "󰁹"
-            ]
+            "exec": "~/.config/waybar/scripts/hidpp-battery.sh",
+            "tooltip": true
         },
         "custom/pacman": {
             "format": "󰅢  {}",
@@ -155,23 +146,27 @@
     },
     {
         "name": "main",
-        "output": "DP-3",
+        "output": "DP-2",
         "layer": "top",
         "position": "top",
         "reload_style_on_change": true,
-        "modules-left": ["custom/notification", "clock", "custom/pacman", "tray"],
+        "modules-left": ["clock", "custom/pacman", "tray"],
         "modules-center": ["hyprland/workspaces"],
-        "modules-right": ["bluetooth", "network", "pulseaudio", "battery"],
+        "modules-right": ["bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
         "hyprland/workspaces": {
             "format": "{name}",
             "sort-by": "number",
             "move-to-monitor": true
         },
         "custom/notification": {
-            "tooltip": false,
-            "format": "",
+            "tooltip": true,
+            "format": "{}",
+            "return-type": "json",
+            "exec-if": "command -v swaync-client",
+            "exec": "~/.config/waybar/scripts/swaync-notification.sh",
             "on-click": "swaync-client -t -sw",
-            "escape": true
+            "on-click-right": "swaync-client -d -sw",
+            "escape": false
         },
         "clock": {
             "format": "{:%H:%M} ",
@@ -216,25 +211,12 @@
             "tooltip-format-enumerate-connected-battery": "{device_alias}\n{device_address}\n{device_battery_percentage}%",
             "on-click-right": "blueman-manager"
         },
-        "battery": {
+        "custom/hidpp-battery": {
+            "format": "{}",
+            "return-type": "json",
             "interval": 30,
-            "states": {
-                "good": 95,
-                "warning": 30,
-                "critical": 20
-            },
-            "format": "{capacity}% {icon}",
-            "format-charging": "{capacity}% 󰂄",
-            "format-plugged": "{capacity}% 󰂄 ",
-            "format-alt": "{time} {icon}",
-            "format-icons": [
-                "󰁻",
-                "󰁼",
-                "󰁾",
-                "󰂀",
-                "󰂂",
-                "󰁹"
-            ]
+            "exec": "~/.config/waybar/scripts/hidpp-battery.sh",
+            "tooltip": true
         },
         "custom/pacman": {
             "format": "󰅢  {}",
@@ -309,23 +291,27 @@
     },
     {
         "name": "right",
-        "output": "HDMI-A-1",
+        "output": "DP-3",
         "layer": "top",
         "position": "top",
         "reload_style_on_change": true,
-        "modules-left": ["custom/notification", "clock", "custom/pacman", "tray"],
+        "modules-left": ["clock", "custom/pacman", "tray"],
         "modules-center": ["hyprland/workspaces"],
-        "modules-right": ["bluetooth", "network", "pulseaudio", "battery"],
+        "modules-right": ["bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
         "hyprland/workspaces": {
             "format": "{name}",
             "sort-by": "number",
             "move-to-monitor": true
         },
         "custom/notification": {
-            "tooltip": false,
-            "format": "",
+            "tooltip": true,
+            "format": "{}",
+            "return-type": "json",
+            "exec-if": "command -v swaync-client",
+            "exec": "~/.config/waybar/scripts/swaync-notification.sh",
             "on-click": "swaync-client -t -sw",
-            "escape": true
+            "on-click-right": "swaync-client -d -sw",
+            "escape": false
         },
         "clock": {
             "format": "{:%H:%M} ",
@@ -370,25 +356,12 @@
             "tooltip-format-enumerate-connected-battery": "{device_alias}\n{device_address}\n{device_battery_percentage}%",
             "on-click-right": "blueman-manager"
         },
-        "battery": {
+        "custom/hidpp-battery": {
+            "format": "{}",
+            "return-type": "json",
             "interval": 30,
-            "states": {
-                "good": 95,
-                "warning": 30,
-                "critical": 20
-            },
-            "format": "{capacity}% {icon}",
-            "format-charging": "{capacity}% 󰂄",
-            "format-plugged": "{capacity}% 󰂄 ",
-            "format-alt": "{time} {icon}",
-            "format-icons": [
-                "󰁻",
-                "󰁼",
-                "󰁾",
-                "󰂀",
-                "󰂂",
-                "󰁹"
-            ]
+            "exec": "~/.config/waybar/scripts/hidpp-battery.sh",
+            "tooltip": true
         },
         "custom/pacman": {
             "format": "󰅢  {}",
