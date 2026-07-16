@@ -1,0 +1,4 @@
+interface:
+  display_name: "Android Emulator Testing"
+  short_description: "Run reliable Android emulator app tests"
+  default_prompt: "Use $android-emulator-testing to launch an Android emulator and verify the app behavior."

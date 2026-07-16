@@ -73,9 +73,6 @@
       "space b q": "pane::CloseOtherItems",
 
       "space c": "pane::CloseActiveItem",
-      "space c a": "editor::ToggleCodeActions",
-      "space c f": "editor::Format",
-      "space c r": "editor::Rename",
 
       "space d a": "debugger::Start",
       "space d b": "editor::ToggleBreakpoint",
@@ -104,6 +101,7 @@
 
       "space l a": "editor::ToggleCodeActions",
       "space l d": "editor::Hover",
+      "space l f": "editor::Format",
       "space l r": "editor::Rename",
 
       "space m P": "markdown::OpenPreviewToTheSide",

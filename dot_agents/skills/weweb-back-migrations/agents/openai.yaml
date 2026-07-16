@@ -1,0 +1,4 @@
+interface:
+  display_name: "WeWeb Back Migrations"
+  short_description: "Create safe WeWeb back migrations"
+  default_prompt: "Use $weweb-back-migrations to create a production-safe weweb-back migration."
