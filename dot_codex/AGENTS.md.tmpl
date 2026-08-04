@@ -1,6 +1,8 @@
 {{ template "agents.md" }}
 ## Browser Testing
 
-- Use Chrome DevTools MCP tools for browser automation and inspection.
-- Chrome DevTools tools are discovered lazily: before using them in a turn, call `tool_search` with a query such as `chrome-devtools browser page evaluate navigate screenshot console network` to load the available tool schemas.
-- After discovery, use the `mcp__chrome_devtools` tools for page navigation, accessibility snapshots, console/network inspection, screenshots, and in-browser JavaScript evaluation.
+- Prefer Browser MCP for browser automation and inspection, especially for authenticated websites. It operates through the user's existing Chrome profile so login state, cookies, and manually completed CAPTCHA or 2FA flows remain available.
+- Browser MCP tools are discovered lazily: before using them in a turn, call `tool_search` with a query such as `browsermcp existing logged-in Chrome navigate snapshot click type screenshot console`.
+- After discovery, use the `mcp__browsermcp` tools for page navigation, accessibility snapshots, interaction, screenshots, and console inspection.
+- Do not automate authentication, CAPTCHA, or 2FA. Ask the user to complete those steps manually, then continue in the authenticated tab.
+- Chrome DevTools MCP auto-connects to the user's running stable Chrome. Use it when deeper console, network, or performance diagnostics are needed. The user must first enable remote debugging at `chrome://inspect/#remote-debugging` and approve Chrome's connection prompt.

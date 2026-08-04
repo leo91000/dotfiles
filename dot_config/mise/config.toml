@@ -3,6 +3,7 @@
 python = ["3", "2"]
 node = "24"
 usage = "latest"
+pnpm = "11.18.0"
 
 [settings]
-idiomatic_version_file_enable_tools = ["node"]
+idiomatic_version_file_enable_tools = ["node", "pnpm"]

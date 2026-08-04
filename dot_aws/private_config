@@ -58,6 +58,13 @@ sso_role_name = DataBeta
 region = us-east-1
 output = json
 
+[profile DataPreprod]
+sso_session = weweb
+sso_account_id = 381310755420
+sso_role_name = DataPreprod
+region = us-east-1
+output = json
+
 [profile weweb-preprod]
 sso_session = weweb
 sso_account_id = 381310755420
