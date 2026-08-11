@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+apply_fullscreen_when_window_appears() {
+    local target_workspace=$1
+    local address
+    local attempt
+    local clients
+
+    for ((attempt = 0; attempt < 480; attempt += 1)); do
+        clients=$(hyprctl clients -j 2>/dev/null || true)
+        address=$(
+            jq -r --argjson workspace "$target_workspace" \
+                'first(.[] | select(.workspace.id == $workspace) | .address) // empty' \
+                <<<"$clients" 2>/dev/null || true
+        )
+        if [[ $address =~ ^0x[0-9a-fA-F]+$ ]] &&
+            hyprctl eval \
+                "hl.dispatch(hl.dsp.window.fullscreen({ mode = \"fullscreen\", action = \"set\", layout_aware = false, window = \"address:$address\" }))" \
+                >/dev/null 2>&1; then
+            return
+        fi
+        sleep 0.25
+    done
+}
+
+if [[ ${1:-} == --internal-fullscreen-workspace ]]; then
+    (( $# == 2 )) || exit 2
+    [[ $2 =~ ^[0-9]+$ ]] || exit 2
+    (( $2 >= 4 )) || exit 2
+    apply_fullscreen_when_window_appears "$2"
+    exit
+fi
+
+if (( $# == 0 )); then
+    echo "usage: hyprland-background-run <command> [args...]" >&2
+    echo "       HYPRLAND_BACKGROUND_FULLSCREEN=1 requests compositor fullscreen" >&2
+    echo "       HYPRLAND_BACKGROUND_MONITOR=DP-1 selects the launch monitor" >&2
+    exit 2
+fi
+
+fullscreen_state=${HYPRLAND_BACKGROUND_FULLSCREEN:-}
+case $fullscreen_state in
+    ""|0|1) ;;
+    *)
+        echo "HYPRLAND_BACKGROUND_FULLSCREEN must be empty, 0, or 1" >&2
+        exit 2
+        ;;
+esac
+monitor=${HYPRLAND_BACKGROUND_MONITOR:-}
+if [[ -n $monitor && ! $monitor =~ ^[A-Za-z0-9._-]{1,64}$ ]]; then
+    echo "HYPRLAND_BACKGROUND_MONITOR must be a 1-64 byte monitor name" >&2
+    exit 2
+fi
+
+runtime_dir=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
+export XDG_RUNTIME_DIR=$runtime_dir
+
+if [[ -z ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
+    shopt -s nullglob
+    hyprland_instances=("$runtime_dir"/hypr/*)
+    shopt -u nullglob
+
+    if (( ${#hyprland_instances[@]} != 1 )); then
+        echo "could not identify the active Hyprland instance" >&2
+        exit 1
+    fi
+
+    export HYPRLAND_INSTANCE_SIGNATURE=${hyprland_instances[0]##*/}
+fi
+
+if [[ -z ${WAYLAND_DISPLAY:-} ]]; then
+    shopt -s nullglob
+    wayland_sockets=("$runtime_dir"/wayland-*)
+    shopt -u nullglob
+
+    for socket in "${wayland_sockets[@]}"; do
+        if [[ -S $socket ]]; then
+            export WAYLAND_DISPLAY=${socket##*/}
+            break
+        fi
+    done
+fi
+
+if [[ -z ${WAYLAND_DISPLAY:-} ]]; then
+    echo "could not identify the active Wayland display" >&2
+    exit 1
+fi
+
+original_monitor=$(hyprctl -j activeworkspace | jq -er '.monitor')
+if [[ ! $original_monitor =~ ^[A-Za-z0-9._-]{1,64}$ ]]; then
+    echo "could not identify the originally focused Hyprland monitor" >&2
+    exit 1
+fi
+
+workspace=4
+workspaces=$(hyprctl workspaces -j)
+while jq -e --argjson workspace "$workspace" \
+    'any(.[]; .id == $workspace)' <<<"$workspaces" >/dev/null; do
+    ((workspace += 1))
+done
+if [[ -n $monitor ]] &&
+    ! hyprctl monitors -j | jq -e --arg monitor "$monitor" \
+        'any(.[]; .name == $monitor)' >/dev/null; then
+    echo "Hyprland monitor is not connected: $monitor" >&2
+    exit 1
+fi
+
+printf -v workdir '%q' "$PWD"
+printf -v command '%q ' "$@"
+if [[ $fullscreen_state == 1 ]]; then
+    self_path=$(readlink -f -- "$0")
+    printf -v fullscreen_watcher '%q ' \
+        "$self_path" --internal-fullscreen-workspace "$workspace"
+    command="cd -- $workdir && { ${fullscreen_watcher% } >/dev/null 2>&1 & exec ${command% }; }"
+else
+    command="cd -- $workdir && exec ${command% }"
+fi
+lua_command=${command//\\/\\\\}
+lua_command=${lua_command//\"/\\\"}
+lua_command=${lua_command//$'\n'/\\n}
+lua_command=${lua_command//$'\r'/\\r}
+fullscreen_rule=
+if [[ -n $fullscreen_state ]]; then
+    if [[ $fullscreen_state == 1 ]]; then
+        fullscreen_rule=", fullscreen = true"
+    else
+        fullscreen_rule=", fullscreen = false"
+    fi
+fi
+monitor_rule=
+if [[ -n $monitor ]]; then
+    monitor_rule=", monitor = \"$monitor\""
+fi
+
+hyprctl eval \
+    "hl.dispatch(hl.dsp.exec_cmd(\"$lua_command\", { workspace = \"$workspace silent\"$monitor_rule$fullscreen_rule, no_initial_focus = true, focus_on_activate = false, render_unfocused = true, suppress_event = \"activate activatefocus\" }))" \
+    >/dev/null
+
+current_monitor=$(hyprctl -j activeworkspace | jq -er '.monitor')
+if [[ $current_monitor != "$original_monitor" ]]; then
+    hyprctl eval \
+        "hl.dispatch(hl.dsp.focus({ monitor = \"$original_monitor\" }))" \
+        >/dev/null
+fi
+
+echo "launched in background on Hyprland workspace $workspace"

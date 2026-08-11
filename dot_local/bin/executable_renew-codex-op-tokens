@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+usage() {
+    printf 'Usage: %s DAYS\n' "${0##*/}"
+    printf 'Renew the Dev and WeWeb 1Password service-account tokens for DAYS days.\n'
+}
+
+if [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
+    usage
+    exit 0
+fi
+
+if [[ $# -ne 1 ]]; then
+    usage >&2
+    exit 2
+fi
+
+if [[ ! $1 =~ ^[1-9][0-9]*$ ]]; then
+    usage >&2
+    exit 2
+fi
+
+for command_name in op jq; do
+    if ! command -v "$command_name" >/dev/null; then
+        printf 'Missing required command: %s\n' "$command_name" >&2
+        exit 1
+    fi
+done
+
+days=$1
+duration="${days}d"
+timestamp=$(date +%Y%m%d-%H%M%S)
+state_home=${XDG_STATE_HOME:-"$HOME/.local/state"}
+token_dir="$state_home/codex/1password-service-accounts/2026-08-10"
+dev_file="$token_dir/dev.token"
+weweb_file="$token_dir/weweb.token"
+dev_next=
+weweb_next=
+
+cleanup() {
+    if [[ -n $dev_next ]]; then
+        rm -f -- "$dev_next"
+    fi
+
+    if [[ -n $weweb_next ]]; then
+        rm -f -- "$weweb_next"
+    fi
+}
+
+trap cleanup EXIT
+
+human_op() {
+    env -u OP_SERVICE_ACCOUNT_TOKEN op "$@"
+}
+
+validate_scope() {
+    local token_file=$1
+    local expected_vault=$2
+    local actual_vault
+
+    actual_vault=$(
+        OP_SERVICE_ACCOUNT_TOKEN="$(<"$token_file")" op vault list --format=json |
+            jq -er 'if length == 1 then .[0].name else error("unexpected vault count") end'
+    )
+
+    if [[ $actual_vault != "$expected_vault" ]]; then
+        printf 'Unexpected token scope: expected %s, got %s\n' "$expected_vault" "$actual_vault" >&2
+        exit 1
+    fi
+}
+
+install -d -m 700 "$token_dir"
+umask 077
+
+dev_vault_id=$(human_op vault get Dev --format=json | jq -er '.id')
+weweb_vault_id=$(human_op vault get WeWeb --format=json | jq -er '.id')
+
+dev_next=$(mktemp "$token_dir/.dev.token.next.XXXXXX")
+weweb_next=$(mktemp "$token_dir/.weweb.token.next.XXXXXX")
+
+human_op service-account create "codex-dev-${days}d-$timestamp" \
+    --expires-in="$duration" \
+    --vault "$dev_vault_id:read_items" \
+    --raw >"$dev_next"
+
+human_op service-account create "codex-weweb-${days}d-$timestamp" \
+    --expires-in="$duration" \
+    --vault "$weweb_vault_id:read_items" \
+    --raw >"$weweb_next"
+
+chmod 600 "$dev_next" "$weweb_next"
+validate_scope "$dev_next" Dev
+validate_scope "$weweb_next" WeWeb
+
+mv -f -- "$dev_next" "$dev_file"
+dev_next=
+mv -f -- "$weweb_next" "$weweb_file"
+weweb_next=
+chmod 600 "$dev_file" "$weweb_file"
+
+printf 'Renewed Dev and WeWeb tokens for %s day(s).\n' "$days"
+printf 'Expires around: %s\n' "$(date --date="+$days days" --iso-8601=seconds)"
+printf 'Token files:\n- %s\n- %s\n' "$dev_file" "$weweb_file"
