@@ -7,3 +7,10 @@ fork_secondary_model = "grok-build"
 yolo = false
 compact_mode = false
 permission_mode = "always-approve"
+
+[marketplace]
+official_marketplace_auto_installed = true
+
+[[marketplace.sources]]
+name = "xAI Official"
+git = "https://github.com/xai-org/plugin-marketplace.git"

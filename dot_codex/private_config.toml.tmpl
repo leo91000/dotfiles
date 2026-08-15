@@ -96,6 +96,9 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/leo91000/game1"]
 trust_level = "trusted"
 
+[projects."/home/leoc/projects/leo91000/sheetom"]
+trust_level = "trusted"
+
 [tui]
 notifications = ["agent-turn-complete", "approval-requested"]
 notification_method = "osc9"
@@ -105,22 +108,26 @@ session_picker_view = "comfortable"
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
 
-[mcp_servers.playwright]
-command = "pnpx"
-args = ["@playwright/mcp@latest", "--extension"]
+[mcp_servers.browser_auth]
+command = "cargo"
+args = ["+nightly", "-Zscript", "/home/leoc/.codex/scripts/browser_auth_broker.rs"]
 
-[mcp_servers.playwright.env]
+[mcp_servers.browser_auth.env]
 DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/1000/bus"
 DISPLAY = ":0"
-PLAYWRIGHT_MCP_EXTENSION_TOKEN = "{{ onepasswordRead "op://Private/playwright-mcp-extension-token/credential" }}"
+PLAYWRIGHT_MCP_EXTENSION_TOKEN = "{{ onepasswordRead "op://Dev/playwright-mcp-extension-token/credential" }}"
 WAYLAND_DISPLAY = "wayland-1"
 XDG_RUNTIME_DIR = "/run/user/1000"
+
+[mcp_servers.browser_isolated]
+command = "pnpx"
+args = ["@playwright/mcp@latest", "--isolated", "--headless"]
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
 
 [mcp_servers.context7.http_headers]
-CONTEXT7_API_KEY = "{{ onepasswordRead "op://Private/context7-codex-api-key/credential" }}"
+CONTEXT7_API_KEY = "{{ onepasswordRead "op://Dev/context7-codex-api-key/credential" }}"
 
 [mcp_servers.atlassian-rovo]
 url = "https://mcp.atlassian.com/v1/mcp/authv2"
@@ -141,6 +148,9 @@ enabled = false
 
 [plugins."gmail@openai-curated"]
 enabled = false
+
+[plugins."slack@openai-curated"]
+enabled = true
 
 [features]
 js_repl = true

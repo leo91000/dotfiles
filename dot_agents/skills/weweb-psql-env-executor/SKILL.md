@@ -73,8 +73,9 @@ $HOME/.agents/skills/weweb-psql-env-executor/scripts/exec_psql_env.sh \
 - `--service`: `back` | `preview` | `plugins` | `localhost`
 - `--sql`: Inline SQL
 - `--file`: Path to SQL file
+- `--local-port`: Override the target-specific local tunnel port. When omitted, the script assigns a stable port from the environment and service mapping below.
 - `--postgres-port`: For `--env local` only, connect directly to `127.0.0.1:<port>` instead of using Docker Compose exec. Use this when the local stack publishes Postgres on a dynamic host port.
-- `--ssh-key`: Private key path for the preprod or production bastion SSH hop. Preprod defaults to `~/.ssh/id_ed25519`; production defaults to the key stored in 1Password.
+- `--ssh-key`: Private key path for the beta, preprod, or production bastion SSH hop. Beta and preprod default to `~/.ssh/id_ed25519`; production defaults to the key stored in 1Password.
 - `--op-cache-ttl-seconds`: How long remote 1Password DB config should be cached locally, defaults to `300`. Use `0` to disable.
 
 If `--service` is omitted:
@@ -82,16 +83,24 @@ If `--service` is omitted:
 - `beta`, `preprod`, `staging`, `staging-ignis`, and `prod` default to `back`
 - `local` defaults to `localhost`
 
+Default remote tunnel ports reserve three ports per environment for `back`, `preview`, and `plugins`, respectively:
+
+- `staging`: `15432`, `15433`, `15434`
+- `staging-ignis`: `15442`, `15443`, `15444`
+- `preprod`: `15452`, `15453`, `15454`
+- `beta`: `15462`, `15463`, `15464`
+- `prod`: `15472`, `15473`, `15474`
+
 ## Notes
 
-- Beta database credentials are read from encrypted AWS SSM parameters with the `weweb-beta` read-only profile, while the private network tunnel uses `DataBeta`; the credentials are not stored in 1Password.
+- Beta database credentials are read from encrypted AWS SSM parameters with the `weweb-beta` read-only profile. The private network path uses `DataBeta` to forward the bastion SSH port, then `~/.ssh/id_ed25519` by default to forward PostgreSQL through the bastion; the credentials are not stored in 1Password.
 - Preprod database credentials are read from the mapped `WeWeb` vault items in 1Password. The private network tunnel uses `DataPreprod` to forward the bastion SSH port, then `~/.ssh/id_ed25519` by default to forward PostgreSQL through the bastion.
 - The script uses 1Password item IDs already mapped for staging, preprod, and production `back`, `preview`, and `plugins` databases.
 - Remote 1Password DB config is cached for five minutes under `/tmp/weweb-psql-env-executor/op-cache` to avoid repeated authorization prompts during multi-query work.
 - For local, the script does not use 1Password. It runs `docker compose exec -T postgres psql` from `/home/leoc/projects/weweb/weweb-docker` by default. Pass `--postgres-port` to use a local published Postgres port instead.
 - Local service database mapping is `back`/`localhost` -> `wwdb`, `preview` -> `wwpreview`, and `plugins` -> `wwplugins`.
 - For staging AWS envs, it creates an AWS SSM `AWS-StartPortForwardingSessionToRemoteHost` tunnel from the bastion instance directly to the database host.
-- For preprod and prod, it keeps the compatible AWS SSM tunnel to the bastion SSH port, then opens a short-lived SSH DB forward over that local hop.
+- For beta, preprod, and prod, it keeps the compatible AWS SSM tunnel to the bastion SSH port, then opens a short-lived SSH DB forward over that local hop.
 - Bastion instances are discovered from EC2 tags, with `--ssm-target` available for manual override.
 - Prod credentials are stored directly in the `WeWeb` vault and resolved automatically by the script.
 - For AWS profiles, the script auto-runs `aws sso login` when the AWS SSO session is missing.

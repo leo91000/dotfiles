@@ -45,6 +45,7 @@
 
 ## Commit / PR
 
+- Name branches with conventional-commit type prefixes such as `fix/`, `feat/`, `chore/`, or `refactor/`; never use the `agent/` prefix.
 - **When adding new lines to commit message, use multiple `-m`s**. Example: `git commit -m "feat: new feature" -m "- description of the feature 1" -m "- description of the feature 2"`.
 - If user ask you once to commit / push it doesn't means that you need to commit on each change, just this once. If you are not sure, ask user.
 - In pull request, never write a body message, only a title. (with gh cli, use --body "")

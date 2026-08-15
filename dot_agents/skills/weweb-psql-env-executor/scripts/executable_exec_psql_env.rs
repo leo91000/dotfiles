@@ -39,6 +39,8 @@ const TUNNEL_READY_TIMEOUT_SECS: u64 = 12;
 const DEFAULT_LOCAL_DOCKER_DIR: &str = "/home/leoc/projects/weweb/weweb-docker";
 const DEFAULT_PROD_SSM_TARGET: &str = "i-00128b669966cf841";
 const DEFAULT_PROD_SSM_SSH_LOCAL_PORT: u16 = 8022;
+const DEFAULT_LOCAL_PORT_BASE: u16 = 15432;
+const DEFAULT_LOCAL_PORT_ENV_STRIDE: u16 = 10;
 static TEMPFILE_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Parser, Debug)]
@@ -54,8 +56,8 @@ struct PublicCli {
     file: Option<PathBuf>,
     #[arg(long, default_value = "my.1password.eu")]
     op_account: String,
-    #[arg(long, default_value_t = 15432)]
-    local_port: u16,
+    #[arg(long)]
+    local_port: Option<u16>,
     #[arg(long)]
     postgres_port: Option<u16>,
     #[arg(long)]
@@ -284,7 +286,7 @@ fn run_public_mode() -> Result<i32> {
     };
 
     let lease = match runtime.env {
-        EnvName::Preprod | EnvName::Prod if db.requires_tunnel => {
+        _ if should_use_bastion_hop(&runtime, &db) => {
             ensure_aws_login(&runtime, &db)?;
             let spec = build_bastion_ssh_tunnel_spec(&runtime, &db)?;
             Some(ensure_tunnel(&spec)?)
@@ -313,7 +315,7 @@ fn run_public_mode() -> Result<i32> {
 
     let status_code = match runtime.env {
         EnvName::Local => run_local_psql(&runtime.sql_payload, &db, runtime.postgres_port)?,
-        EnvName::Preprod | EnvName::Prod if db.requires_tunnel => {
+        _ if should_use_bastion_hop(&runtime, &db) => {
             run_bastion_hop_psql(&runtime.sql_payload, &db, &runtime)?
         }
         _ => run_remote_psql(&runtime.sql_payload, &db, runtime.local_port)?,
@@ -339,6 +341,9 @@ fn build_runtime_config(cli: PublicCli) -> Result<RuntimeConfig> {
         Some(value) => ServiceName::parse(value)?,
         None => default_service_for_env(env),
     };
+    let local_port = cli
+        .local_port
+        .unwrap_or_else(|| default_local_port_for_target(env, service));
     if cli.postgres_port.is_some() && !matches!(env, EnvName::Local) {
         bail!("--postgres-port is only supported with --env local");
     }
@@ -353,7 +358,7 @@ fn build_runtime_config(cli: PublicCli) -> Result<RuntimeConfig> {
         service,
         sql_payload,
         op_account: cli.op_account,
-        local_port: cli.local_port,
+        local_port,
         postgres_port: cli.postgres_port,
         ssm_port: cli.ssm_port,
         ssh_key_path: cli.ssh_key,
@@ -371,6 +376,23 @@ fn default_service_for_env(env: EnvName) -> ServiceName {
             ServiceName::Back
         }
     }
+}
+
+fn default_local_port_for_target(env: EnvName, service: ServiceName) -> u16 {
+    let env_offset = match env {
+        EnvName::Staging | EnvName::Local => 0,
+        EnvName::StagingIgnis => DEFAULT_LOCAL_PORT_ENV_STRIDE,
+        EnvName::Preprod => DEFAULT_LOCAL_PORT_ENV_STRIDE * 2,
+        EnvName::Beta => DEFAULT_LOCAL_PORT_ENV_STRIDE * 3,
+        EnvName::Prod => DEFAULT_LOCAL_PORT_ENV_STRIDE * 4,
+    };
+    let service_offset = match service {
+        ServiceName::Back | ServiceName::Localhost => 0,
+        ServiceName::Preview => 1,
+        ServiceName::Plugins => 2,
+    };
+
+    DEFAULT_LOCAL_PORT_BASE + env_offset + service_offset
 }
 
 fn resolve_item_id(env: EnvName, service: ServiceName) -> Result<String> {
@@ -722,9 +744,18 @@ fn ensure_aws_profile_login(aws_profile: &str) -> Result<()> {
     Ok(())
 }
 
+fn should_use_bastion_hop(runtime: &RuntimeConfig, db: &DbConfig) -> bool {
+    matches!(
+        runtime.env,
+        EnvName::Beta | EnvName::Preprod | EnvName::Prod
+    ) && db.requires_tunnel
+}
+
 fn should_use_aws_ssm_tunnel(runtime: &RuntimeConfig, db: &DbConfig) -> bool {
-    !matches!(runtime.env, EnvName::Local | EnvName::Preprod | EnvName::Prod)
-        && db.requires_tunnel
+    !matches!(
+        runtime.env,
+        EnvName::Beta | EnvName::Preprod | EnvName::Prod | EnvName::Local
+    ) && db.requires_tunnel
         && (runtime.aws_profile_override.is_some() || db.aws_profile.is_some())
 }
 
@@ -1447,7 +1478,7 @@ fn run_bastion_hop_psql(sql: &str, db: &DbConfig, runtime: &RuntimeConfig) -> Re
 	  {cleanup_key_command}\n\
 	}}\n\
 	trap cleanup EXIT INT TERM\n\
-		ssh -o BatchMode=yes -o IgnoreUnknown=WarnWeakCrypto -o WarnWeakCrypto=no-pq-kex -o ExitOnForwardFailure=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/tmp/weweb_known_hosts -i {key_path} -p {ssm_port} -N -L {local_port}:{remote_host}:{remote_port} {ssh_user}@127.0.0.1 &\n\
+		ssh -o BatchMode=yes -o IgnoreUnknown=WarnWeakCrypto -o WarnWeakCrypto=no-pq-kex -o ExitOnForwardFailure=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {key_path} -p {ssm_port} -N -L {local_port}:{remote_host}:{remote_port} {ssh_user}@127.0.0.1 &\n\
 	ssh_pid=$!\n\
 	for _ in $(seq 1 60); do\n\
 	  if (echo >/dev/tcp/127.0.0.1/{local_port}) >/dev/null 2>&1; then\n\
@@ -1490,7 +1521,7 @@ fn resolve_bastion_ssh_key(runtime: &RuntimeConfig, db: &DbConfig) -> Result<(Pa
         return Ok((write_ssh_key_tempfile(ssh_key)?, true));
     }
 
-    if matches!(runtime.env, EnvName::Preprod) {
+    if matches!(runtime.env, EnvName::Beta | EnvName::Preprod) {
         let home = std::env::var_os("HOME").context("HOME is not set; pass --ssh-key explicitly")?;
         let key_path = PathBuf::from(home).join(".ssh/id_ed25519");
         ensure_ssh_key_exists(&key_path)?;

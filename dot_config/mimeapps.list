@@ -1,0 +1,36 @@
+[Default Applications]
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+x-scheme-handler/t3code=t3code-url-handler.desktop
+x-scheme-handler/t3code-dev=t3code.desktop
+x-scheme-handler/chrome=firefox.desktop
+text/html=google-chrome.desktop
+application/x-extension-htm=firefox.desktop
+application/x-extension-html=firefox.desktop
+application/x-extension-shtml=firefox.desktop
+application/xhtml+xml=firefox.desktop
+application/x-extension-xhtml=firefox.desktop
+application/x-extension-xht=firefox.desktop
+x-scheme-handler/figma=figma-linux.desktop
+x-scheme-handler/jetbrains=jetbrainsd.desktop
+video/x-matroska=vlc.desktop
+x-scheme-handler/claude-cli=claude-code-url-handler.desktop
+x-scheme-handler/slack=slack.desktop
+application/json=dev.zed.Zed.desktop
+inode/directory=org.kde.dolphin.desktop
+
+[Added Associations]
+x-scheme-handler/http=firefox.desktop;zen.desktop;
+x-scheme-handler/https=firefox.desktop;zen.desktop;
+x-scheme-handler/t3code=t3code.desktop;
+x-scheme-handler/t3code-dev=t3code.desktop;
+x-scheme-handler/chrome=firefox.desktop;zen.desktop;
+text/html=zen.desktop;
+application/x-extension-htm=zen.desktop;
+application/x-extension-html=zen.desktop;
+application/x-extension-shtml=zen.desktop;
+application/xhtml+xml=com.google.Chrome.desktop;zen.desktop;
+application/x-extension-xhtml=zen.desktop;
+application/x-extension-xht=zen.desktop;
+video/x-matroska=vlc.desktop;
+application/json=dev.zed.Zed.desktop;
