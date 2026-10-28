@@ -17,11 +17,12 @@ use anyhow::{bail, Context, Result};
 use clap::Parser;
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::ffi::OsString;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, IsTerminal, Read, Write};
 use std::net::{TcpStream, ToSocketAddrs};
-use std::os::unix::fs::PermissionsExt;
+use std::os::unix::fs::{MetadataExt, PermissionsExt};
 use std::os::unix::process::CommandExt;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
@@ -36,7 +37,7 @@ const IDLE_TTL_SECS: i64 = 300;
 const OP_CACHE_TTL_SECS: i64 = 300;
 const TOUCH_INTERVAL_SECS: u64 = 30;
 const TUNNEL_READY_TIMEOUT_SECS: u64 = 12;
-const DEFAULT_LOCAL_DOCKER_DIR: &str = "/home/leoc/projects/weweb/weweb-docker";
+const DEFAULT_LOCAL_DOCKER_DIR: &str = "/home/leoc/projects/weweb/weweb-team/weweb/jobs";
 const DEFAULT_PROD_SSM_TARGET: &str = "i-00128b669966cf841";
 const DEFAULT_PROD_SSM_SSH_LOCAL_PORT: u16 = 8022;
 const DEFAULT_LOCAL_PORT_BASE: u16 = 15432;
@@ -84,10 +85,8 @@ struct WatchCli {
 
 #[derive(Clone, Copy, Debug, Serialize)]
 enum EnvName {
-    Beta,
     Preprod,
     Staging,
-    StagingIgnis,
     Prod,
     Local,
 }
@@ -95,10 +94,8 @@ enum EnvName {
 impl EnvName {
     fn parse(value: &str) -> Result<Self> {
         match value {
-            "beta" => Ok(Self::Beta),
             "preprod" => Ok(Self::Preprod),
             "staging" => Ok(Self::Staging),
-            "staging-ignis" => Ok(Self::StagingIgnis),
             "prod" | "production" => Ok(Self::Prod),
             "local" => Ok(Self::Local),
             _ => bail!("Unsupported env: {value}"),
@@ -107,10 +104,8 @@ impl EnvName {
 
     fn as_str(self) -> &'static str {
         match self {
-            Self::Beta => "beta",
             Self::Preprod => "preprod",
             Self::Staging => "staging",
-            Self::StagingIgnis => "staging-ignis",
             Self::Prod => "prod",
             Self::Local => "local",
         }
@@ -251,7 +246,8 @@ fn is_watch_mode() -> bool {
 
 fn run_watch_mode() -> Result<i32> {
     let args: Vec<OsString> = std::env::args_os().collect();
-    let cli = WatchCli::parse_from(std::iter::once(args[0].clone()).chain(args.into_iter().skip(2)));
+    let cli =
+        WatchCli::parse_from(std::iter::once(args[0].clone()).chain(args.into_iter().skip(2)));
     run_tunnel_watcher(cli.state, cli.lock, cli.idle_seconds)?;
     Ok(0)
 }
@@ -261,21 +257,6 @@ fn run_public_mode() -> Result<i32> {
     let runtime = build_runtime_config(cli)?;
     let db = match runtime.env {
         EnvName::Local => local_db_config(runtime.service),
-        EnvName::Beta => {
-            let tunnel_aws_profile = runtime
-                .aws_profile_override
-                .clone()
-                .unwrap_or_else(|| "DataBeta".to_owned());
-            let credentials_aws_profile = "weweb-beta";
-            ensure_aws_profile_login(credentials_aws_profile)?;
-            ensure_aws_profile_login(&tunnel_aws_profile)?;
-            load_aws_ssm_db_config(
-                runtime.env,
-                runtime.service,
-                credentials_aws_profile,
-                &tunnel_aws_profile,
-            )?
-        }
         _ => {
             let item_id = runtime
                 .item_id
@@ -349,7 +330,7 @@ fn build_runtime_config(cli: PublicCli) -> Result<RuntimeConfig> {
     }
     let sql_payload = read_sql_payload(cli.sql, cli.file)?;
     let item_id = match env {
-        EnvName::Beta | EnvName::Local => None,
+        EnvName::Local => None,
         _ => Some(resolve_item_id(env, service)?),
     };
 
@@ -372,18 +353,14 @@ fn build_runtime_config(cli: PublicCli) -> Result<RuntimeConfig> {
 fn default_service_for_env(env: EnvName) -> ServiceName {
     match env {
         EnvName::Local => ServiceName::Localhost,
-        EnvName::Beta | EnvName::Preprod | EnvName::Staging | EnvName::StagingIgnis | EnvName::Prod => {
-            ServiceName::Back
-        }
+        EnvName::Preprod | EnvName::Staging | EnvName::Prod => ServiceName::Back,
     }
 }
 
 fn default_local_port_for_target(env: EnvName, service: ServiceName) -> u16 {
     let env_offset = match env {
         EnvName::Staging | EnvName::Local => 0,
-        EnvName::StagingIgnis => DEFAULT_LOCAL_PORT_ENV_STRIDE,
         EnvName::Preprod => DEFAULT_LOCAL_PORT_ENV_STRIDE * 2,
-        EnvName::Beta => DEFAULT_LOCAL_PORT_ENV_STRIDE * 3,
         EnvName::Prod => DEFAULT_LOCAL_PORT_ENV_STRIDE * 4,
     };
     let service_offset = match service {
@@ -400,9 +377,6 @@ fn resolve_item_id(env: EnvName, service: ServiceName) -> Result<String> {
         (EnvName::Staging, ServiceName::Back) => Some("k7i2nla3wxsvy7zmn5buqouan4"),
         (EnvName::Staging, ServiceName::Preview) => Some("n3ntvnicjwg3np2hyapqfnh57a"),
         (EnvName::Staging, ServiceName::Plugins) => Some("7ujhrwvjz6tee5ld6swvj7w4nm"),
-        (EnvName::StagingIgnis, ServiceName::Back) => Some("yoyuvrpxyh66xgsgi5voawstpm"),
-        (EnvName::StagingIgnis, ServiceName::Preview) => Some("yuzyrkgv6yovwa4yoz6y6gr76a"),
-        (EnvName::StagingIgnis, ServiceName::Plugins) => Some("dn6zxuytzn4yqhrd2fvw23hjm4"),
         (EnvName::Preprod, ServiceName::Back) => Some("z5sgwxgrig3ddcxjrhjmyygtsa"),
         (EnvName::Preprod, ServiceName::Preview) => Some("3sjwjws4ahlxe7qfwm4orx3xpq"),
         (EnvName::Preprod, ServiceName::Plugins) => Some("dw5h7flbijrf6safezzn3lhgoi"),
@@ -412,23 +386,27 @@ fn resolve_item_id(env: EnvName, service: ServiceName) -> Result<String> {
         _ => None,
     };
 
-    item_id
-        .map(str::to_owned)
-        .ok_or_else(|| anyhow::anyhow!("Missing 1Password item id for {}:{}", env.as_str(), service.as_str()))
+    item_id.map(str::to_owned).ok_or_else(|| {
+        anyhow::anyhow!(
+            "Missing 1Password item id for {}:{}",
+            env.as_str(),
+            service.as_str()
+        )
+    })
 }
 
 fn local_db_config(service: ServiceName) -> DbConfig {
-    let db_name = match service {
-        ServiceName::Localhost | ServiceName::Back => "wwdb",
-        ServiceName::Preview => "wwpreview",
-        ServiceName::Plugins => "wwplugins",
+    let db_host = match service {
+        ServiceName::Localhost | ServiceName::Back => "postgres-back",
+        ServiceName::Preview => "postgres-preview",
+        ServiceName::Plugins => "postgres-plugins",
     };
 
     DbConfig {
-        db_host: "postgres".to_owned(),
+        db_host: db_host.to_owned(),
         db_port: 5432,
-        db_name: db_name.to_owned(),
-        db_user: db_name.to_owned(),
+        db_name: "ebdb".to_owned(),
+        db_user: "wwdb".to_owned(),
         db_pass: "wwpassword".to_owned(),
         ssh_enabled: false,
         ssh_key: None,
@@ -438,85 +416,6 @@ fn local_db_config(service: ServiceName) -> DbConfig {
         ssh_user: None,
         requires_tunnel: false,
     }
-}
-
-fn load_aws_ssm_db_config(
-    env: EnvName,
-    service: ServiceName,
-    credentials_aws_profile: &str,
-    tunnel_aws_profile: &str,
-) -> Result<DbConfig> {
-    if !matches!(env, EnvName::Beta | EnvName::Preprod) {
-        bail!("AWS SSM database parameters are not configured for {}", env.as_str());
-    }
-    let service_name = match service {
-        ServiceName::Back => "weweb-back",
-        ServiceName::Preview => "weweb-preview",
-        ServiceName::Plugins => "weweb-plugins",
-        ServiceName::Localhost => bail!("Service localhost is only supported with --env local"),
-    };
-    let env_name = env.as_str();
-    let parameter_prefix = format!("/{env_name}/{service_name}");
-    let parameter_names = [
-        "rds_hostname",
-        "rds_port",
-        "rds_db_name",
-        "rds_username",
-        "rds_password",
-    ]
-    .map(|name| format!("{parameter_prefix}/{name}"));
-
-    let output = Command::new("aws")
-        .args([
-            "ssm",
-            "get-parameters",
-            "--with-decryption",
-            "--profile",
-            credentials_aws_profile,
-            "--output",
-            "json",
-            "--names",
-        ])
-        .args(&parameter_names)
-        .output()
-        .with_context(|| format!("Failed to read {env_name} database parameters from AWS SSM"))?;
-
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr).trim().to_owned();
-        bail!("Failed to read {env_name} database parameters from AWS SSM: {stderr}");
-    }
-
-    let payload: serde_json::Value = serde_json::from_slice(&output.stdout)
-        .with_context(|| format!("Failed to parse {env_name} database parameters from AWS SSM"))?;
-    let parameters = payload["Parameters"]
-        .as_array()
-        .context("AWS SSM response is missing Parameters")?;
-    let read_parameter = |name: &str| -> Result<String> {
-        let full_name = format!("{parameter_prefix}/{name}");
-        parameters
-            .iter()
-            .find(|parameter| parameter["Name"].as_str() == Some(&full_name))
-            .and_then(|parameter| parameter["Value"].as_str())
-            .map(str::to_owned)
-            .with_context(|| format!("Missing {env_name} database parameter {full_name}"))
-    };
-
-    Ok(DbConfig {
-        db_host: read_parameter("rds_hostname")?,
-        db_port: read_parameter("rds_port")?
-            .parse()
-            .with_context(|| format!("Invalid {env_name} database port"))?,
-        db_name: read_parameter("rds_db_name")?,
-        db_user: read_parameter("rds_username")?,
-        db_pass: read_parameter("rds_password")?,
-        ssh_enabled: false,
-        ssh_key: None,
-        aws_profile: Some(tunnel_aws_profile.to_owned()),
-        bastion_instance_id: None,
-        bastion_host: None,
-        ssh_user: None,
-        requires_tunnel: true,
-    })
 }
 
 fn read_sql_payload(sql: Option<String>, file: Option<PathBuf>) -> Result<String> {
@@ -553,6 +452,7 @@ fn read_sql_payload(sql: Option<String>, file: Option<PathBuf>) -> Result<String
 fn ensure_op_signin(account: &str) -> Result<()> {
     let signed_in = Command::new("op")
         .arg("whoami")
+        .env_remove("OP_SERVICE_ACCOUNT_TOKEN")
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .status()
@@ -565,6 +465,7 @@ fn ensure_op_signin(account: &str) -> Result<()> {
 
     let status = Command::new("op")
         .args(["signin", "--account", account])
+        .env_remove("OP_SERVICE_ACCOUNT_TOKEN")
         .status()
         .context("Failed to execute op signin")?;
 
@@ -577,8 +478,7 @@ fn ensure_op_signin(account: &str) -> Result<()> {
 
 fn load_db_config_cached(item_id: &str, account: &str, ttl_seconds: i64) -> Result<DbConfig> {
     if ttl_seconds <= 0 {
-        ensure_op_signin(account)?;
-        return load_db_config(item_id);
+        return load_db_config_authenticated(item_id, account);
     }
 
     let cache_dir = ensure_db_config_cache_dir()?;
@@ -595,8 +495,7 @@ fn load_db_config_cached(item_id: &str, account: &str, ttl_seconds: i64) -> Resu
         return Ok(db);
     }
 
-    ensure_op_signin(account)?;
-    let db = load_db_config(item_id)?;
+    let db = load_db_config_authenticated(item_id, account)?;
     write_db_config_cache(&cache_path, item_id, &db)?;
     drop(lock_file);
     Ok(db)
@@ -644,7 +543,8 @@ fn write_db_config_cache(path: &Path, item_id: &str, db: &DbConfig) -> Result<()
         cached_at_unix: now_unix(),
         db: db.clone(),
     };
-    let serialized = serde_json::to_string(&cache).context("Failed to serialize DB config cache")?;
+    let serialized =
+        serde_json::to_string(&cache).context("Failed to serialize DB config cache")?;
     let temp_path = path.with_extension(format!("json.{}.tmp", std::process::id()));
     fs::write(&temp_path, format!("{serialized}\n"))
         .with_context(|| format!("Failed to write DB config cache {}", temp_path.display()))?;
@@ -655,9 +555,71 @@ fn write_db_config_cache(path: &Path, item_id: &str, db: &DbConfig) -> Result<()
     Ok(())
 }
 
-fn load_db_config(item_id: &str) -> Result<DbConfig> {
-    let output = Command::new("op")
-        .args(["item", "get", item_id, "--vault", VAULT, "--format", "json"])
+fn service_account_token_path() -> Option<PathBuf> {
+    let state_home = std::env::var_os("XDG_STATE_HOME")
+        .filter(|value| !value.is_empty())
+        .map(PathBuf::from)
+        .or_else(|| {
+            std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".local/state"))
+        })?;
+    Some(state_home.join("1password/service-account.token"))
+}
+
+fn load_db_config_authenticated(item_id: &str, account: &str) -> Result<DbConfig> {
+    let mut tried_tokens = HashSet::new();
+
+    if let Ok(token) = std::env::var("OP_SERVICE_ACCOUNT_TOKEN") {
+        if !token.trim().is_empty() {
+            tried_tokens.insert(blake3::hash(token.as_bytes()).to_hex().to_string());
+            if let Ok(db) = load_db_config(item_id, Some(&token)) {
+                return Ok(db);
+            }
+        }
+    }
+
+    if let Some(token_path) = service_account_token_path()
+        && let Some(token) = read_protected_service_account_token(&token_path)
+    {
+        let fingerprint = blake3::hash(token.as_bytes()).to_hex().to_string();
+        if tried_tokens.insert(fingerprint) {
+            if let Ok(db) = load_db_config(item_id, Some(&token)) {
+                return Ok(db);
+            }
+        }
+    }
+
+    ensure_op_signin(account)?;
+    load_db_config(item_id, None)
+}
+
+fn read_protected_service_account_token(path: &Path) -> Option<String> {
+    let metadata = fs::metadata(path).ok()?;
+    if !metadata.is_file()
+        || metadata.uid() != unsafe { libc::geteuid() }
+        || metadata.mode() & 0o077 != 0
+    {
+        return None;
+    }
+
+    let token = fs::read_to_string(path).ok()?;
+    let token = token.trim();
+    if token.is_empty() {
+        return None;
+    }
+
+    Some(token.to_owned())
+}
+
+fn load_db_config(item_id: &str, service_account_token: Option<&str>) -> Result<DbConfig> {
+    let mut command = Command::new("op");
+    command.args(["item", "get", item_id, "--vault", VAULT, "--format", "json"]);
+    if let Some(token) = service_account_token {
+        command.env("OP_SERVICE_ACCOUNT_TOKEN", token);
+    } else {
+        command.env_remove("OP_SERVICE_ACCOUNT_TOKEN");
+    }
+
+    let output = command
         .output()
         .with_context(|| format!("Failed to execute op item get {item_id}"))?;
 
@@ -679,7 +641,8 @@ fn load_db_config(item_id: &str) -> Result<DbConfig> {
         .context("Invalid DB port in 1Password item")?;
     let db_name = field_value(&item, "database").context("Missing DB name in 1Password item")?;
     let db_user = field_value(&item, "username").context("Missing DB user in 1Password item")?;
-    let db_pass = field_value(&item, "password").context("Missing DB password in 1Password item")?;
+    let db_pass =
+        field_value(&item, "password").context("Missing DB password in 1Password item")?;
 
     Ok(DbConfig {
         db_host,
@@ -747,14 +710,14 @@ fn ensure_aws_profile_login(aws_profile: &str) -> Result<()> {
 fn should_use_bastion_hop(runtime: &RuntimeConfig, db: &DbConfig) -> bool {
     matches!(
         runtime.env,
-        EnvName::Beta | EnvName::Preprod | EnvName::Prod
+        EnvName::Preprod | EnvName::Prod
     ) && db.requires_tunnel
 }
 
 fn should_use_aws_ssm_tunnel(runtime: &RuntimeConfig, db: &DbConfig) -> bool {
     !matches!(
         runtime.env,
-        EnvName::Beta | EnvName::Preprod | EnvName::Prod | EnvName::Local
+        EnvName::Preprod | EnvName::Prod | EnvName::Local
     ) && db.requires_tunnel
         && (runtime.aws_profile_override.is_some() || db.aws_profile.is_some())
 }
@@ -873,9 +836,8 @@ fn resolve_ssm_target(runtime: &RuntimeConfig, db: &DbConfig, aws_profile: &str)
 
 fn discover_bastion_instance_from_ec2(env: EnvName, aws_profile: &str) -> Result<Option<String>> {
     let tag_name = match env {
-        EnvName::Beta => "Weweb Bastion Host on beta",
         EnvName::Preprod => "Weweb Bastion Host on preprod",
-        EnvName::Staging | EnvName::StagingIgnis => "Weweb Bastion Host on staging",
+        EnvName::Staging => "Weweb Bastion Host on staging",
         EnvName::Prod => "Weweb Bastion Host on prod",
         EnvName::Local => return Ok(None),
     };
@@ -944,10 +906,7 @@ fn build_ssh_tunnel_spec(runtime: &RuntimeConfig, db: &DbConfig) -> Result<Tunne
         .bastion_host
         .clone()
         .context("Missing bastion host in 1Password item")?;
-    let ssh_user = db
-        .ssh_user
-        .clone()
-        .unwrap_or_else(|| "ec2-user".to_owned());
+    let ssh_user = db.ssh_user.clone().unwrap_or_else(|| "ec2-user".to_owned());
 
     Ok(TunnelSpec {
         env: runtime.env.as_str(),
@@ -975,7 +934,10 @@ fn ensure_tunnel(spec: &TunnelSpec) -> Result<TunnelLease> {
         .context("Failed to acquire tunnel state lock")?;
 
     if let Some(existing) = read_tunnel_state(&state_path)? {
-        if existing.fingerprint == fingerprint && process_exists(existing.pid) && port_is_ready(existing.local_port) {
+        if existing.fingerprint == fingerprint
+            && process_exists(existing.pid)
+            && port_is_ready(existing.local_port)
+        {
             let watcher_pid = match existing.watcher_pid {
                 Some(pid) if process_exists(pid) => Some(pid),
                 _ => Some(spawn_tunnel_watcher(&state_path, &lock_path)?),
@@ -987,7 +949,10 @@ fn ensure_tunnel(spec: &TunnelSpec) -> Result<TunnelLease> {
             };
             write_tunnel_state(&state_path, &updated)?;
             drop(lock_file);
-            return Ok(TunnelLease { state_path, lock_path });
+            return Ok(TunnelLease {
+                state_path,
+                lock_path,
+            });
         }
 
         stop_process_group(existing.pid);
@@ -1022,7 +987,10 @@ fn ensure_tunnel(spec: &TunnelSpec) -> Result<TunnelLease> {
 
     drop(lock_file);
 
-    Ok(TunnelLease { state_path, lock_path })
+    Ok(TunnelLease {
+        state_path,
+        lock_path,
+    })
 }
 
 fn open_lock_file(path: &Path) -> Result<File> {
@@ -1060,7 +1028,8 @@ fn read_tunnel_state(path: &Path) -> Result<Option<TunnelState>> {
 }
 
 fn write_tunnel_state(path: &Path, state: &TunnelState) -> Result<()> {
-    let serialized = serde_json::to_string_pretty(state).context("Failed to serialize tunnel state")?;
+    let serialized =
+        serde_json::to_string_pretty(state).context("Failed to serialize tunnel state")?;
     fs::write(path, format!("{serialized}\n"))
         .with_context(|| format!("Failed to write tunnel state {}", path.display()))
 }
@@ -1199,7 +1168,10 @@ fn build_ssh_tunnel_command(spec: &TunnelSpec) -> Result<Command> {
         key_path.to_string_lossy().as_ref(),
         "-N",
         "-L",
-        &format!("{}:{}:{}", spec.local_port, spec.remote_host, spec.remote_port),
+        &format!(
+            "{}:{}:{}",
+            spec.local_port, spec.remote_host, spec.remote_port
+        ),
         &format!("{ssh_user}@{bastion_host}"),
     ]);
     Ok(command)
@@ -1213,11 +1185,16 @@ fn write_ssh_key_tempfile(ssh_key: &str) -> Result<PathBuf> {
             now_unix_nanos(),
             TEMPFILE_COUNTER.fetch_add(1, Ordering::Relaxed)
         ));
-        let mut file = match OpenOptions::new().write(true).create_new(true).open(&key_path) {
+        let mut file = match OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&key_path)
+        {
             Ok(file) => file,
             Err(error) if error.kind() == io::ErrorKind::AlreadyExists => continue,
             Err(error) => {
-                return Err(error).with_context(|| format!("Failed to create SSH key {}", key_path.display()));
+                return Err(error)
+                    .with_context(|| format!("Failed to create SSH key {}", key_path.display()));
             }
         };
         file.write_all(format!("{ssh_key}\n").as_bytes())
@@ -1261,7 +1238,9 @@ fn spawn_detached_command(mut command: Command, log_path: &Path) -> Result<i32> 
         });
     }
 
-    let child = command.spawn().context("Failed to spawn detached command")?;
+    let child = command
+        .spawn()
+        .context("Failed to spawn detached command")?;
     Ok(child.id() as i32)
 }
 
@@ -1295,7 +1274,10 @@ fn log_excerpt(path: &Path) -> Option<String> {
         return None;
     }
     let lines: Vec<&str> = trimmed.lines().rev().take(10).collect();
-    Some(format!("Log tail:\n{}", lines.into_iter().rev().collect::<Vec<_>>().join("\n")))
+    Some(format!(
+        "Log tail:\n{}",
+        lines.into_iter().rev().collect::<Vec<_>>().join("\n")
+    ))
 }
 
 fn port_is_ready(port: u16) -> bool {
@@ -1387,14 +1369,12 @@ fn touch_tunnel_state(lease: &TunnelLease) -> Result<()> {
 }
 
 fn spawn_tunnel_heartbeat(lease: TunnelLease, stop: mpsc::Receiver<()>) -> thread::JoinHandle<()> {
-    thread::spawn(move || {
-        loop {
-            match stop.recv_timeout(Duration::from_secs(TOUCH_INTERVAL_SECS)) {
-                Ok(_) | Err(mpsc::RecvTimeoutError::Disconnected) => break,
-                Err(mpsc::RecvTimeoutError::Timeout) => {}
-            }
-            let _ = touch_tunnel_state(&lease);
+    thread::spawn(move || loop {
+        match stop.recv_timeout(Duration::from_secs(TOUCH_INTERVAL_SECS)) {
+            Ok(_) | Err(mpsc::RecvTimeoutError::Disconnected) => break,
+            Err(mpsc::RecvTimeoutError::Timeout) => {}
         }
+        let _ = touch_tunnel_state(&lease);
     })
 }
 
@@ -1453,13 +1433,13 @@ fn run_bastion_hop_psql(sql: &str, db: &DbConfig, runtime: &RuntimeConfig) -> Re
         );
     }
 
-    let ssh_user = db
-        .ssh_user
-        .clone()
-        .unwrap_or_else(|| "ec2-user".to_owned());
+    let ssh_user = db.ssh_user.clone().unwrap_or_else(|| "ec2-user".to_owned());
     let (key_path, remove_key_after) = resolve_bastion_ssh_key(runtime, db)?;
     let cleanup_key_command = if remove_key_after {
-        format!("rm -f {}", shell_escape(key_path.to_string_lossy().as_ref()))
+        format!(
+            "rm -f {}",
+            shell_escape(key_path.to_string_lossy().as_ref())
+        )
     } else {
         ":".to_owned()
     };
@@ -1521,8 +1501,9 @@ fn resolve_bastion_ssh_key(runtime: &RuntimeConfig, db: &DbConfig) -> Result<(Pa
         return Ok((write_ssh_key_tempfile(ssh_key)?, true));
     }
 
-    if matches!(runtime.env, EnvName::Beta | EnvName::Preprod) {
-        let home = std::env::var_os("HOME").context("HOME is not set; pass --ssh-key explicitly")?;
+    if matches!(runtime.env, EnvName::Preprod) {
+        let home =
+            std::env::var_os("HOME").context("HOME is not set; pass --ssh-key explicitly")?;
         let key_path = PathBuf::from(home).join(".ssh/id_ed25519");
         ensure_ssh_key_exists(&key_path)?;
         return Ok((key_path, false));
@@ -1554,7 +1535,7 @@ fn run_local_psql(sql: &str, db: &DbConfig, postgres_port: Option<u16>) -> Resul
         "compose",
         "exec",
         "-T",
-        "postgres",
+        &db.db_host,
         "psql",
         "-U",
         &db.db_user,
@@ -1602,6 +1583,12 @@ fn run_sql_command(mut command: Command, sql: &str) -> Result<i32> {
 }
 
 fn resolve_weweb_docker_dir() -> Result<PathBuf> {
+    if let Ok(value) = std::env::var("WW_MONOREPO_ROOT") {
+        let path = PathBuf::from(value);
+        if path.join("docker-compose.yml").is_file() {
+            return Ok(path);
+        }
+    }
     if let Ok(value) = std::env::var("WEWEB_DOCKER_DIR") {
         let path = PathBuf::from(value);
         if path.exists() {

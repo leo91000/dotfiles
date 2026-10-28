@@ -91,3 +91,8 @@ sso_account_id = 059221680425
 sso_role_name = ReadOnlyBetaFreeLambdas
 region = eu-central-1
 output = json
+[profile weweb-preprod-free-lambdas]
+sso_session = weweb
+sso_account_id = 862344888392
+sso_role_name = ReadOnlyPreprod
+region = us-east-1

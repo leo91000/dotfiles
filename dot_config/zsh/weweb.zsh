@@ -1,15 +1,66 @@
-# WeWeb aliases
-alias wwcd='cd ~/projects/weweb'
-alias wwcde='cd ~/projects/weweb/weweb-editor'
-alias wwcdd='cd ~/projects/weweb/weweb-dashboard'
-alias wwcddo='cd ~/projects/weweb/weweb-docker'
-alias wwcdb='cd ~/projects/weweb/weweb-docker/weweb-back'
-alias wwcdbp='cd ~/projects/weweb/weweb-docker/weweb-lambda-back-publisher'
-alias wwcdbs='cd ~/projects/weweb/weweb-docker/weweb-lambda-back-s3-proxy'
-alias wwcdbai='cd ~/projects/weweb/weweb-docker/weweb-lambda-back-publisher/ai-proxy'
-alias wwcdai='cd ~/projects/weweb/weweb-docker/weweb-ai'
-alias wwcdp='cd ~/projects/weweb/weweb-docker/weweb-publisher'
-alias wwcda='cd ~/projects/weweb/weweb-assets'
+# WeWeb workspace and service navigation.
+# wwcd: workspace; wwcd NAME: an existing checkout folder.
+# Service shortcuts accept a checkout name/path, or --repo NAME_OR_PATH.
+unalias wwcd wwcda wwcde wwcdd wwcddo wwcdb wwcdbp wwcdbs wwcdbai wwcdai wwcdp dcw wws wwstop wwdevcc 2>/dev/null || true
+_ww_cd_service() {
+  local service="$1" checkout
+  shift
+  if [[ "$1" == --repo ]]; then
+    shift
+    if (( $# != 1 )); then
+      print -u2 -- 'Usage: wwcd* [CHECKOUT|--repo NAME_OR_PATH]'
+      return 2
+    fi
+  elif (( $# > 1 )); then
+    print -u2 -- 'Usage: wwcd* [CHECKOUT|--repo NAME_OR_PATH]'
+    return 2
+  fi
+  checkout=$(_ww_monorepo_root "$1") || return
+  if [[ -n "$service" ]]; then
+    cd -- "$checkout/services/$service"
+  else
+    cd -- "$checkout"
+  fi
+}
+wwcd() {
+  if (( $# )); then
+    _ww_cd_service '' "$@"
+  else
+    cd -- "$HOME/projects/weweb/weweb-team/weweb"
+  fi
+}
+wwcda() {
+  if (( $# > 1 )); then
+    print -u2 -- 'Usage: wwcda [asset-directory]'
+    return 2
+  fi
+  cd -- "$HOME/projects/weweb/weweb-assets/$1"
+}
+wwcde() { _ww_cd_service weweb-editor "$@"; }
+wwcdd() { _ww_cd_service weweb-dashboard "$@"; }
+wwcdb() { _ww_cd_service weweb-back "$@"; }
+wwcdbp() { _ww_cd_service weweb-lambda-back-publisher "$@"; }
+wwcdbs() { _ww_cd_service weweb-lambda-back-publisher/s3-proxy "$@"; }
+wwcdbai() { _ww_cd_service weweb-lambda-back-publisher/ai-proxy "$@"; }
+wwcdai() { _ww_cd_service weweb-ai "$@"; }
+wwcdp() { _ww_cd_service weweb-lambda-publisher "$@"; }
+# Legacy Docker shortcut now opens the selected monorepo checkout.
+wwcddo() { _ww_cd_service '' "$@"; }
+dcw() {
+  local selector='' checkout
+  case "$1" in
+    --repo)
+      if (( $# < 2 )) || [[ "$2" == --* ]]; then
+        print -u2 -- 'Usage: dcw [--repo NAME_OR_PATH] [compose arguments]'
+        return 2
+      fi
+      selector="$2"
+      shift 2
+      ;;
+  esac
+  checkout=$(_ww_monorepo_root "$selector") || return
+  (cd -- "$checkout" && docker compose "$@")
+}
 
 # Function to check for `staging` branch and pull changes
 check_and_pull() {
@@ -54,112 +105,134 @@ check_and_pull_all() {
   npx -y concurrently --names "$names_str" "${concurrently_commands[@]}"
 }
 
-# Common function to handle WeWeb server startup
+# Resolve a monorepo checkout without changing its branch.
+_ww_monorepo_root() {
+  local checkout="$1" base="$HOME/projects/weweb/weweb-team/weweb"
+  if [[ -z "$checkout" ]]; then
+    checkout="${WW_MONOREPO_ROOT:-}"
+    if [[ -z "$checkout" ]]; then
+      local current_root
+      current_root=$(git rev-parse --show-toplevel 2>/dev/null)
+      if [[ -f "$current_root/services/weweb-editor/package.json" && -f "$current_root/docker-compose.yml" ]]; then
+        checkout="$current_root"
+      else
+        checkout="$base/main"
+      fi
+    fi
+  fi
+  if [[ "$checkout" == --* ]]; then
+    print -u2 -- 'Use a checkout folder name or --repo NAME_OR_PATH; feature-specific flags are not supported.'
+    return 2
+  fi
+  # Resolve bare names at call time; no feature branches are encoded here.
+  if [[ "$checkout" != */* ]]; then
+    checkout="$base/$checkout"
+  fi
+  if [[ ! -f "$checkout/services/weweb-editor/package.json" || ! -f "$checkout/docker-compose.yml" ]]; then
+    print -u2 -- "Not a WeWeb monorepo checkout: $checkout"
+    return 1
+  fi
+  print -r -- "${checkout:A}"
+}
+
+# Common function to handle WeWeb server startup.
 _ww_serve() {
-  local environment="$1"
-  local config="$2"
-  shift 2
-
-  local dev_mode=false
-  local skip_check=false
+  local environment="$1" config="$2" checkout="$3"
+  shift 3
+  local dev_mode='' skip_check=false arg
   local mprocs_args=()
-
   for arg in "$@"; do
     case "$arg" in
-      --dev)
-        dev_mode=true
-        ;;
-      --skip-check|--no-check)
-        skip_check=true
-        ;;
-      *)
-        mprocs_args+=("$arg")
-        ;;
+      --dev) dev_mode=true ;;
+      --skip-check|--no-check) skip_check=true ;;
+      *) mprocs_args+=("$arg") ;;
     esac
   done
 
-  local editor_script="serve"
-  if [[ "$dev_mode" == true ]]; then
-    if [[ "$environment" == "local" ]]; then
-      editor_script="serve:dev"
-    else
-      editor_script="serve:dev:$environment"
-    fi
-    echo "Starting servers with auto-restart (DEV MODE)..."
-  else
-    if [[ "$environment" != "local" ]]; then
-      editor_script="serve:$environment"
-    fi
-    echo "Starting servers with auto-restart..."
+  local editor_mode=development dashboard_mode=development
+  if [[ "$environment" == prod ]]; then
+    editor_mode=prod
+    dashboard_mode=production
+  elif [[ "$environment" != local ]]; then
+    editor_mode="development.$environment"
+    dashboard_mode="local.$environment"
   fi
 
-  local dashboard_script="serve"
-  if [[ "$environment" != "local" ]]; then
-    dashboard_script="serve:$environment"
+  local node_root
+  node_root=$(mise where node@24) || return
+  if [[ ! -x "$node_root/bin/node" ]]; then
+    print -u2 -- 'Node 24 is required. Install it with: mise install node@24'
+    return 1
   fi
 
   if [[ "$skip_check" != true ]]; then
-    local projects=(
-      "$HOME/projects/weweb/weweb-dashboard"
-      "$HOME/projects/weweb/weweb-editor"
-      $(find "$HOME/projects/weweb/weweb-docker" -maxdepth 1 -type d -exec test -d {}/.git \; -print)
-    )
-
-    echo "Starting parallel pre-checks for staging branches..."
-    check_and_pull_all "${projects[@]}"
+    if [[ -n "$(git -C "$checkout" status --porcelain)" ]]; then
+      print -- 'Local changes detected; skipping pull.'
+    elif git -C "$checkout" rev-parse --verify '@{upstream}' >/dev/null 2>&1; then
+      git -C "$checkout" pull --ff-only || return
+    else
+      print -- 'No upstream configured; skipping pull.'
+    fi
   fi
 
-  WW_EDITOR_SCRIPT="$editor_script" WW_DASHBOARD_SCRIPT="$dashboard_script" \
-    mprocs --config "$config" "${mprocs_args[@]}"
+  print -- "Starting WeWeb ($environment) from $checkout"
+  WW_MONOREPO_ROOT="$checkout" WW_EDITOR_MODE="$editor_mode" \
+    WW_DASHBOARD_MODE="$dashboard_mode" WW_EDITOR_DEV="$dev_mode" \
+    PATH="$node_root/bin:$PATH" mprocs --config "$config" "${mprocs_args[@]}"
 }
 
 wws() {
-  local environment="local"
-  local config="$HOME/.config/mprocs/weweb-local.yaml"
-  local tunnel=false
+  local environment=local config="$HOME/.config/mprocs/weweb-local.yaml"
+  local tunnel=false checkout='' arg
   local args=()
-
-  for arg in "$@"; do
+  while (( $# )); do
+    arg="$1"
+    shift
     case "$arg" in
-      --staging)
-        environment="staging"
+      --staging|--staging-ignis|--preprod|--prod|--beta)
+        environment="${arg#--}"
         config="$HOME/.config/mprocs/weweb-remote.yaml"
         ;;
-      --staging-ignis)
-        environment="staging-ignis"
-        config="$HOME/.config/mprocs/weweb-remote.yaml"
+      --tunnel) tunnel=true ;;
+      --repo)
+        if (( ! $# )) || [[ "$1" == --* ]]; then
+          print -u2 -- 'Usage: wws --repo NAME_OR_PATH'
+          return 2
+        fi
+        checkout="$1"
+        shift
         ;;
-      --preprod)
-        environment="preprod"
-        config="$HOME/.config/mprocs/weweb-remote.yaml"
+      --help|-h)
+        print -- 'Usage: wws [--repo NAME_OR_PATH] [--dev] [--skip-check] [--staging|--staging-ignis|--preprod|--prod|--beta] [--tunnel] [mprocs options]'
+        print -- 'Checkout: explicit name/path, WW_MONOREPO_ROOT, current monorepo, then main.'
+        return
         ;;
-      --prod)
-        environment="prod"
-        config="$HOME/.config/mprocs/weweb-remote.yaml"
-        ;;
-      --tunnel)
-        tunnel=true
-        ;;
-      *)
-        args+=("$arg")
-        ;;
+      *) args+=("$arg") ;;
     esac
   done
-
-  # Use tunnel config for local environment if --tunnel is specified
-  if [[ "$tunnel" == true && "$environment" == "local" ]]; then
+  checkout=$(_ww_monorepo_root "$checkout") || return
+  if [[ "$tunnel" == true && "$environment" == local ]]; then
     config="$HOME/.config/mprocs/weweb-local-tunnel.yaml"
-    echo "Starting with Cloudflare tunnel to weweb-back:3000..."
+    print -- 'Starting with Cloudflare tunnel to weweb-back:3000...'
   fi
-
-  _ww_serve "$environment" "$config" "${args[@]}"
+  _ww_serve "$environment" "$config" "$checkout" "${args[@]}"
 }
 
 wwstop() {
-  echo "Stopping servers..."
-  cd ~/projects/weweb/weweb-docker
-  docker compose down
-  cd -
+  local checkout
+  if [[ "$1" == --repo ]]; then
+    shift
+    if (( $# != 1 )); then
+      print -u2 -- 'Usage: wwstop [CHECKOUT|--repo NAME_OR_PATH]'
+      return 2
+    fi
+  elif (( $# > 1 )); then
+    print -u2 -- 'Usage: wwstop [CHECKOUT|--repo NAME_OR_PATH]'
+    return 2
+  fi
+  checkout=$(_ww_monorepo_root "$1") || return
+  print -- "Stopping monorepo Docker services from $checkout..."
+  (cd "$checkout" && docker compose stop)
 }
 
 function wwdevcc() {

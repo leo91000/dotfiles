@@ -11,12 +11,45 @@
       "Bash(chmod:*)",
       "Bash(git:*)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "bypassPermissions"
   },
   "enabledPlugins": {
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true
+    "frontend-design@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: OVHcloud S3-compatible object storage (optional, via STORAGE_S3_* env vars in .env.example) — not configured with a concrete bucket/endpoint in this repo",
+      "**Repository visibility**: PUBLIC — leo91000/leo-agent-manager (github.com) — confirmed via gh; any push or commit here is publishing",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: 1Password (service account tokens, per docs/ONEPASSWORD.md) — used for agent-granted read access, not a repo secret store",
+      "**Default / protected branches**: Default branch `main`; no branch protection rules or rulesets listed via gh (leo91000/leo-agent-manager) — treat `main` as unprotected",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine with open internet",
+      "**Source control**: The trusted repo (leo91000/leo-agent-manager) and its origin remote (github.com:leo91000/leo-agent-manager.git) only — public repo, see Repository visibility",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: .env and .env.example (local env config, may hold S3/Claude credentials per .env.example); any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (Leo Agent Manager — Vue + Rust control room for Codex/Claude Code agents)",
+      "**Trusted repo**: /home/leoc/projects/leo91000/leo-agent-manager (origin: github.com:leo91000/leo-agent-manager.git) — PUBLIC, only this repo's own work should be pushed here",
+      "**Org-specific CLIs**: None configured",
+      "**Routine under leo91000/ prefix**: commits, branches (fix/, feat/, chore/, refactor/ — never agent/), and PRs against leo91000/leo-agent-manager follow CLAUDE.md conventions (no tool attribution/co-author lines, multi -m commits, no PR body except multi-PR ticket links)"
+    ]
+  }
 }

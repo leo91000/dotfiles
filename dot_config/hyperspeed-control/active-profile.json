@@ -1,0 +1,112 @@
+{
+  "schema_version": 10,
+  "active_profile_id": 1,
+  "profiles": [
+    {
+      "id": 1,
+      "name": "Default",
+      "settings": {
+        "anc": "On",
+        "anc_level": "One",
+        "playback_preset": "Game",
+        "output_mode": "Stereo",
+        "playback_eq": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "game_chat_balance": 8,
+        "microphone_preset": "SlotOne",
+        "microphone_gain": 72,
+        "sidetone": 5,
+        "mic_enhancements": {
+          "volume_normalization": {
+            "enabled": false,
+            "level": 50
+          },
+          "vocal_clarity": {
+            "enabled": false,
+            "level": 50
+          },
+          "noise_cancellation": {
+            "enabled": false,
+            "level": 50
+          },
+          "voice_gate": {
+            "enabled": true,
+            "level": 50
+          }
+        },
+        "sleep_timer": "ThirtyMinutes",
+        "dongle_led_mode": "BatteryStatus",
+        "dial_action": "GameChat",
+        "ultra_low_latency": true,
+        "in_call_audio_mix": "Combine",
+        "audio_enhancement_enabled": false,
+        "audio_enhancement": "SoundNormalization",
+        "audio_enhancement_level": 50
+      },
+      "applications": []
+    },
+    {
+      "id": 2,
+      "name": "Profile 2",
+      "settings": {
+        "anc": "On",
+        "anc_level": "One",
+        "playback_preset": "Game",
+        "output_mode": "Stereo",
+        "playback_eq": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "game_chat_balance": 8,
+        "microphone_preset": "SlotOne",
+        "microphone_gain": 72,
+        "sidetone": 5,
+        "mic_enhancements": {
+          "volume_normalization": {
+            "enabled": false,
+            "level": 50
+          },
+          "vocal_clarity": {
+            "enabled": false,
+            "level": 50
+          },
+          "noise_cancellation": {
+            "enabled": false,
+            "level": 50
+          },
+          "voice_gate": {
+            "enabled": true,
+            "level": 50
+          }
+        },
+        "sleep_timer": "ThirtyMinutes",
+        "dongle_led_mode": "BatteryStatus",
+        "dial_action": "GameChat",
+        "ultra_low_latency": true,
+        "in_call_audio_mix": "Combine",
+        "audio_enhancement_enabled": false,
+        "audio_enhancement": "SoundNormalization",
+        "audio_enhancement_level": 50
+      },
+      "applications": []
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+#!/usr/bin/env -S cargo +nightly -Zscript
+---
+[package]
+edition = "2024"
+---
+use std::env;
+use std::io;
+use std::net::UdpSocket;
+use std::process::{Command, ExitCode, Stdio};
+use std::thread;
+use std::time::{Duration, Instant};
+
+const MAC: [u8; 6] = [0x90, 0x82, 0xc3, 0x7d, 0xb4, 0xf1];
+const DESTINATION: &str = "192.168.1.255:9";
+
+fn wake(send_only: bool) -> io::Result<bool> {
+    let socket = UdpSocket::bind("0.0.0.0:0")?;
+    socket.set_broadcast(true)?;
+    let mut packet = [0xff; 102];
+    for destination in packet[6..].chunks_exact_mut(MAC.len()) {
+        destination.copy_from_slice(&MAC);
+    }
+    for attempt in 0..3 {
+        if attempt > 0 {
+            thread::sleep(Duration::from_millis(150));
+        }
+        let sent = socket.send_to(&packet, DESTINATION)?;
+        if sent != packet.len() {
+            return Err(io::Error::new(io::ErrorKind::WriteZero, "Paquet incomplet"));
+        }
+    }
+    println!("Trois paquets Wake-on-LAN envoyés à la Steam Machine.");
+    if send_only {
+        return Ok(true);
+    }
+
+    let deadline = Instant::now() + Duration::from_secs(40);
+    while Instant::now() < deadline {
+        let status = Command::new("ssh")
+            .args([
+                "-o", "BatchMode=yes",
+                "-o", "ConnectTimeout=3",
+                "-o", "ConnectionAttempts=1",
+                "steam-machine", "true",
+            ])
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()?;
+        if status.success() {
+            println!("La Steam Machine répond en SSH.");
+            return Ok(true);
+        }
+        thread::sleep(Duration::from_secs(1));
+    }
+    eprintln!("La Steam Machine ne répond pas encore. L'envoi seul ne confirme pas son réveil.");
+    Ok(false)
+}
+
+fn main() -> ExitCode {
+    let arguments: Vec<_> = env::args().skip(1).collect();
+    if arguments.len() > 1 {
+        eprintln!("Usage : steam-machine-wake [--send-only]");
+        return ExitCode::from(2);
+    }
+    let send_only = match arguments.first().map(|argument| argument.as_str()) {
+        None => false,
+        Some("--send-only") => true,
+        Some("--help" | "-h") => {
+            println!("Usage : steam-machine-wake [--send-only]\nEnvoie un paquet magique Ethernet, puis attend SSH pendant environ 40 secondes.\n--send-only : envoie les paquets sans attendre SSH.");
+            return ExitCode::SUCCESS;
+        }
+        Some(_) => {
+            eprintln!("Usage : steam-machine-wake [--send-only]");
+            return ExitCode::from(2);
+        }
+    };
+    match wake(send_only) {
+        Ok(true) => ExitCode::SUCCESS,
+        Ok(false) => ExitCode::from(1),
+        Err(error) => {
+            eprintln!("Wake-on-LAN : {error}");
+            ExitCode::from(1)
+        }
+    }
+}

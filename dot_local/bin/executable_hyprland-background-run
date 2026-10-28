@@ -4,11 +4,21 @@ set -euo pipefail
 
 apply_fullscreen_when_window_appears() {
     local target_workspace=$1
+    local guarded_process_id=${2:-}
     local address
     local attempt
     local clients
+    local maximum_attempts=480
 
-    for ((attempt = 0; attempt < 480; attempt += 1)); do
+    if [[ -n $guarded_process_id ]]; then
+        maximum_attempts=7200
+    fi
+
+    for ((attempt = 0; attempt < maximum_attempts; attempt += 1)); do
+        if [[ -n $guarded_process_id ]] &&
+            ! kill -0 "$guarded_process_id" 2>/dev/null; then
+            return
+        fi
         clients=$(hyprctl clients -j 2>/dev/null || true)
         address=$(
             jq -r --argjson workspace "$target_workspace" \
@@ -26,10 +36,13 @@ apply_fullscreen_when_window_appears() {
 }
 
 if [[ ${1:-} == --internal-fullscreen-workspace ]]; then
-    (( $# == 2 )) || exit 2
+    (( $# == 2 || $# == 3 )) || exit 2
     [[ $2 =~ ^[0-9]+$ ]] || exit 2
     (( $2 >= 4 )) || exit 2
-    apply_fullscreen_when_window_appears "$2"
+    if (( $# == 3 )); then
+        [[ $3 =~ ^[0-9]+$ ]] || exit 2
+    fi
+    apply_fullscreen_when_window_appears "$2" "${3:-}"
     exit
 fi
 
@@ -109,13 +122,14 @@ fi
 
 printf -v workdir '%q' "$PWD"
 printf -v command '%q ' "$@"
+presentation_binding="export GAME1_PRESENTATION_INFRASTRUCTURE_PID=\"\$PPID\""
 if [[ $fullscreen_state == 1 ]]; then
     self_path=$(readlink -f -- "$0")
     printf -v fullscreen_watcher '%q ' \
         "$self_path" --internal-fullscreen-workspace "$workspace"
-    command="cd -- $workdir && { ${fullscreen_watcher% } >/dev/null 2>&1 & exec ${command% }; }"
+    command="cd -- $workdir && $presentation_binding && { ${fullscreen_watcher% } \"\$\$\" >/dev/null 2>&1 & exec ${command% }; }"
 else
-    command="cd -- $workdir && exec ${command% }"
+    command="cd -- $workdir && $presentation_binding && exec ${command% }"
 fi
 lua_command=${command//\\/\\\\}
 lua_command=${lua_command//\"/\\\"}

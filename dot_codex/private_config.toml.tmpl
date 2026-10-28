@@ -1,7 +1,7 @@
 approval_policy = "never"
 model_reasoning_effort = "high"
 sandbox_mode = "danger-full-access"
-model = "gpt-5.6-sol"
+model = "gpt-6.1-sol"
 web_search_request = true
 personality = "pragmatic"
 plan_mode_reasoning_effort = "xhigh"
@@ -27,16 +27,16 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/weweb/weweb-assets/ww-chat"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb/weweb-plugin-figma"]
+[projects."/home/leoc/projects/__old_weweb/weweb-plugin-figma"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb/weweb-editor"]
+[projects."/home/leoc/projects/__old_weweb/weweb-editor"]
 trust_level = "trusted"
 
 [projects."/home/leoc/projects/leo91000/vue-tiptap-renderer"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb"]
+[projects."/home/leoc/projects/__old_weweb"]
 trust_level = "trusted"
 
 [projects."/home/leoc/projects/weweb/weweb-assets/ww-chat-ai"]
@@ -48,13 +48,13 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/leo91000/cairn"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb/weweb-docker/weweb-back"]
+[projects."/home/leoc/projects/__old_weweb/weweb-docker/weweb-back"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb/weweb-docker/weweb-lambda-publisher"]
+[projects."/home/leoc/projects/__old_weweb/weweb-docker/weweb-lambda-publisher"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb/weweb-docker/weweb-lambda-back-publisher"]
+[projects."/home/leoc/projects/__old_weweb/weweb-docker/weweb-lambda-back-publisher"]
 trust_level = "trusted"
 
 [projects."/home/leoc/projects"]
@@ -63,19 +63,19 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/leo91000"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb/weweb-docker/weweb-preview"]
+[projects."/home/leoc/projects/__old_weweb/weweb-docker/weweb-preview"]
 trust_level = "trusted"
 
 [projects."/home/leoc/projects/leo91000/querymon"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb/weweb-docker"]
+[projects."/home/leoc/projects/__old_weweb/weweb-docker"]
 trust_level = "trusted"
 
 [projects."/home/leoc/projects/weweb/weweb-assets/ww-stack"]
 trust_level = "trusted"
 
-[projects."/home/leoc/projects/weweb/weweb-docker/weweb-ai"]
+[projects."/home/leoc/projects/__old_weweb/weweb-docker/weweb-ai"]
 trust_level = "trusted"
 
 [projects."/home/leoc/projects/leo91000/crimson-duo"]
@@ -99,29 +99,52 @@ trust_level = "trusted"
 [projects."/home/leoc/projects/leo91000/sheetom"]
 trust_level = "trusted"
 
+[projects."/home/leoc/services/media-center"]
+trust_level = "trusted"
+
+[projects."/home/leoc/Documents/Codex/2026-08-18/realtime-voice-chat"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/esprit-dog"]
+trust_level = "trusted"
+
+[projects."/home/leoc/Documents/Codex/2026-08-20/in-p"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/philips-air"]
+trust_level = "trusted"
+
+[projects."/home/leoc/Documents/Codex/2026-08-22/la"]
+trust_level = "trusted"
+
+[projects."/home/leoc/Documents/Codex/2026-08-24/can"]
+trust_level = "trusted"
+
+[projects."/home/leoc/Documents/Codex/2026-08-24/realtime-voice-chat"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/razor-hyperspeed-wireless"]
+trust_level = "trusted"
+
+[projects."/tmp"]
+trust_level = "trusted"
+
 [tui]
+whimsy = false
 notifications = ["agent-turn-complete", "approval-requested"]
 notification_method = "osc9"
 session_picker_view = "comfortable"
+screen_reader_detection_done = true
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
 "gpt-5.6-sol" = 4
-
-[mcp_servers.browser_auth]
-command = "cargo"
-args = ["+nightly", "-Zscript", "/home/leoc/.codex/scripts/browser_auth_broker.rs"]
-
-[mcp_servers.browser_auth.env]
-DBUS_SESSION_BUS_ADDRESS = "unix:path=/run/user/1000/bus"
-DISPLAY = ":0"
-PLAYWRIGHT_MCP_EXTENSION_TOKEN = "{{ onepasswordRead "op://Dev/playwright-mcp-extension-token/credential" }}"
-WAYLAND_DISPLAY = "wayland-1"
-XDG_RUNTIME_DIR = "/run/user/1000"
+gpt-6-astra = 4
+"gpt-6.1-sol" = 4
 
 [mcp_servers.browser_isolated]
 command = "pnpx"
-args = ["@playwright/mcp@latest", "--isolated", "--headless"]
+args = ["@playwright/mcp@0.0.79", "--isolated", "--headless"]
 
 [mcp_servers.context7]
 url = "https://mcp.context7.com/mcp"
@@ -129,11 +152,33 @@ url = "https://mcp.context7.com/mcp"
 [mcp_servers.context7.http_headers]
 CONTEXT7_API_KEY = "{{ onepasswordRead "op://Dev/context7-codex-api-key/credential" }}"
 
-[mcp_servers.atlassian-rovo]
-url = "https://mcp.atlassian.com/v1/mcp/authv2"
-
 [mcp_servers.openaiDeveloperDocs]
 url = "https://developers.openai.com/mcp"
+
+[mcp_servers.node_repl]
+args = []
+command = "/usr/lib/chatgpt/resources/cua_node/bin/node_repl"
+env_vars = ["BROWSER_USE_ACCESS_EXECUTOR_ID", "BROWSER_USE_ACCESS_PIPE_PATH", "BROWSER_USE_ACCESS_VERIFYING_IDENTITY"]
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/usr/lib/chatgpt/resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/usr/lib/chatgpt/resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "/home/leoc/.codex:/usr/lib/chatgpt/resources/cua_node/lib/node_modules"
+CODEX_HOME = "/home/leoc/.codex"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab,mcpapps"
+BROWSER_USE_TINYSKY_ENABLED = "1"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.1021.22027"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/home/leoc/.codex/plugins/cache/openai-bundled/browser/26.1021.22027/scripts/browser-service.mjs"}'
+CODEX_CLI_PATH = "/usr/lib/chatgpt/resources/codex"
+
+[mcp_servers.cairn]
+url = "https://cairn.build/mcp"
+oauth_resource = "https://cairn.build/mcp"
 
 [notice]
 hide_gpt5_1_migration_prompt = true
@@ -152,9 +197,101 @@ enabled = false
 [plugins."slack@openai-curated"]
 enabled = true
 
+[plugins."browser@openai-bundled"]
+enabled = false
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."codex-app-tools@openai-bundled"]
+enabled = true
+
+[plugins."unified-computer-use@openai-bundled"]
+enabled = true
+
 [features]
-js_repl = true
+js_repl = false
 terminal_resize_reflow = true
 goals = true
 suppress_unstable_features_warning = true
 memories = true
+
+[marketplaces.openai-bundled]
+source_type = "local"
+source = "/home/leoc/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+source_type = "local"
+source = "/home/leoc/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[shell_environment_policy.set]
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "9230e2bd8b24b7ac7a0ba6774c64bf0d78ecdabbdd91d0ed627b02a587bae2df"
+
+[desktop]
+conversationDetailMode = "STEPS_COMMANDS"
+ambient-suggestions-enabled = true
+followUpQueueMode = "queue"
+open-link-in-target-preference = "external-browser"
+open-local-url-in-target-preference = "external-browser"
+
+[desktop.open-in-target-preferences]
+global = "zed"
+
+[desktop.open-in-target-preferences.perPath]
+"/home/leoc/projects/__old_weweb/weweb-editor" = "zed"
+
+[hooks.state]
+
+[hooks.state."/home/leoc/.codex/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:471cdc25af37deaeaf9034db4266c95c6d02dba82c6f6026f210c22d4ec86ca2"
+
+[hooks.state."/home/leoc/.codex/hooks.json:pre_tool_use:1:0"]
+trusted_hash = "sha256:d8989d1c4edeb09e5b1dde1f005f77c33a44af8e3191ade773793a1d3ecc4879"
+
+[projects."/home/leoc/projects/weweb"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-team/weweb/main"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-team/weweb/group-by"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-team/weweb/gantt"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-team/weweb/jobs"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/leo91000/leo-agent-manager"]
+trust_level = "trusted"
+
+[projects."/home/leoc/projects/weweb/weweb-team/weweb"]
+trust_level = "trusted"
+
+[projects."/var/tmp/cairn-agent-benchmark-20261015/local-codex-1"]
+trust_level = "trusted"
+
+[projects."/var/tmp/cairn-agent-benchmark-20261015/local-codex-2"]
+trust_level = "trusted"
+
+[projects."/var/tmp/cairn-agent-benchmark-20261015/local-codex-3"]
+trust_level = "trusted"

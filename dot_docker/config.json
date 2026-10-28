@@ -1,0 +1,25 @@
+{
+	"auths": {
+		"721330005198.dkr.ecr.us-east-1.amazonaws.com": {},
+		"ghcr.io": {}
+	},
+	"credsStore": "desktop",
+	"currentContext": "desktop-linux",
+	"plugins": {
+		"-x-cli-hints": {
+			"enabled": "true"
+		},
+		"ai": {
+			"hooks": "build,buildx build,run,compose"
+		},
+		"compose": {
+			"hooks": "logs,compose logs,compose attach,compose up"
+		},
+		"debug": {
+			"hooks": "exec"
+		}
+	},
+	"features": {
+		"hooks": "true"
+	}
+}

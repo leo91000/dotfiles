@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch for Ulauncher package updates
+
+[Path]
+PathChanged=/usr/bin/ulauncher
+Unit=ulauncher-restart.service
+
+[Install]
+WantedBy=graphical-session.target

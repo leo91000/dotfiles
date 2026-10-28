@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
+set +x
 set -Eeuo pipefail
 
 usage() {
     printf 'Usage: %s DAYS\n' "${0##*/}"
-    printf 'Renew the Dev and WeWeb 1Password service-account tokens for DAYS days.\n'
+    printf 'Create one 1Password token for DAYS days with read/write access to all eligible vaults.\n'
+    printf 'Stored at ${XDG_STATE_HOME:-$HOME/.local/state}/1password/service-account.token\n'
+    printf 'Built-in Personal, Private, Employee and Team/Shared vaults cannot be included.\n'
 }
 
 if [[ ${1:-} == "-h" || ${1:-} == "--help" ]]; then
@@ -33,19 +36,13 @@ days=$1
 duration="${days}d"
 timestamp=$(date +%Y%m%d-%H%M%S)
 state_home=${XDG_STATE_HOME:-"$HOME/.local/state"}
-token_dir="$state_home/codex/1password-service-accounts/2026-08-10"
-dev_file="$token_dir/dev.token"
-weweb_file="$token_dir/weweb.token"
-dev_next=
-weweb_next=
+token_dir="$state_home/1password"
+token_file="$token_dir/service-account.token"
+token_next=
 
 cleanup() {
-    if [[ -n $dev_next ]]; then
-        rm -f -- "$dev_next"
-    fi
-
-    if [[ -n $weweb_next ]]; then
-        rm -f -- "$weweb_next"
+    if [[ -n $token_next ]]; then
+        rm -f -- "$token_next"
     fi
 }
 
@@ -57,16 +54,16 @@ human_op() {
 
 validate_scope() {
     local token_file=$1
-    local expected_vault=$2
-    local actual_vault
+    local expected_vault_ids=$2
+    local actual_vault_ids
 
-    actual_vault=$(
+    actual_vault_ids=$(
         OP_SERVICE_ACCOUNT_TOKEN="$(<"$token_file")" op vault list --format=json |
-            jq -er 'if length == 1 then .[0].name else error("unexpected vault count") end'
+            jq -cer 'map(.id) | sort'
     )
 
-    if [[ $actual_vault != "$expected_vault" ]]; then
-        printf 'Unexpected token scope: expected %s, got %s\n' "$expected_vault" "$actual_vault" >&2
+    if [[ $actual_vault_ids != "$expected_vault_ids" ]]; then
+        printf 'Unexpected token vault scope; keeping the existing token file.\n' >&2
         exit 1
     fi
 }
@@ -74,32 +71,44 @@ validate_scope() {
 install -d -m 700 "$token_dir"
 umask 077
 
-dev_vault_id=$(human_op vault get Dev --format=json | jq -er '.id')
-weweb_vault_id=$(human_op vault get WeWeb --format=json | jq -er '.id')
+vaults=$(
+    human_op vault list --format=json |
+        human_op vault get - --format=json |
+        jq -s 'map({id, name, type})'
+)
+eligible_vaults=$(jq -c '[.[] | select(.type == "USER_CREATED")]' <<<"$vaults")
+vault_count=$(jq 'length' <<<"$eligible_vaults")
+if [[ $vault_count -eq 0 ]]; then
+    printf 'No vaults eligible for service-account access were found.\n' >&2
+    exit 1
+fi
 
-dev_next=$(mktemp "$token_dir/.dev.token.next.XXXXXX")
-weweb_next=$(mktemp "$token_dir/.weweb.token.next.XXXXXX")
+while IFS= read -r vault_name; do
+    printf 'Excluded vault (unsupported by service accounts): %s\n' "$vault_name" >&2
+done < <(jq -r '.[] | select(.type != "USER_CREATED") | .name' <<<"$vaults")
 
-human_op service-account create "codex-dev-${days}d-$timestamp" \
+vault_args=()
+while IFS= read -r vault_id; do
+    vault_args+=(--vault "$vault_id:read_items,write_items")
+done < <(jq -r '.[].id' <<<"$eligible_vaults")
+expected_vault_ids=$(jq -c 'map(.id) | sort' <<<"$eligible_vaults")
+
+token_next=$(mktemp "$token_dir/.service-account.token.next.XXXXXX")
+human_op service-account create "cli-${days}d-$timestamp" \
     --expires-in="$duration" \
-    --vault "$dev_vault_id:read_items" \
-    --raw >"$dev_next"
+    "${vault_args[@]}" \
+    --raw >"$token_next"
 
-human_op service-account create "codex-weweb-${days}d-$timestamp" \
-    --expires-in="$duration" \
-    --vault "$weweb_vault_id:read_items" \
-    --raw >"$weweb_next"
+if [[ ! -s $token_next ]]; then
+    printf '1Password returned an empty token; keeping the existing token file.\n' >&2
+    exit 1
+fi
+chmod 600 "$token_next"
+validate_scope "$token_next" "$expected_vault_ids"
 
-chmod 600 "$dev_next" "$weweb_next"
-validate_scope "$dev_next" Dev
-validate_scope "$weweb_next" WeWeb
+mv -f -- "$token_next" "$token_file"
+token_next=
 
-mv -f -- "$dev_next" "$dev_file"
-dev_next=
-mv -f -- "$weweb_next" "$weweb_file"
-weweb_next=
-chmod 600 "$dev_file" "$weweb_file"
-
-printf 'Renewed Dev and WeWeb tokens for %s day(s).\n' "$days"
+printf 'Renewed one token for %s day(s), with read/write access to %s vault(s).\n' "$days" "$vault_count"
 printf 'Expires around: %s\n' "$(date --date="+$days days" --iso-8601=seconds)"
-printf 'Token files:\n- %s\n- %s\n' "$dev_file" "$weweb_file"
+printf 'Token file: %s\n' "$token_file"

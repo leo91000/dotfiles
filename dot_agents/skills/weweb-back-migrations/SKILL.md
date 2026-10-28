@@ -11,7 +11,7 @@ Create `weweb-back` migrations that can survive rolling production deploys.
 
 The migration task can run before all old ECS service tasks are replaced. Old app code may keep writing the old schema while a migration is running or immediately after it commits. Design migrations so old and new app versions can coexist, or explicitly call out when a coordinated write pause is required.
 
-Default repo path: `/home/leoc/projects/weweb/weweb-docker/weweb-back`.
+Default repo path: `/home/leoc/projects/weweb/weweb-team/weweb/jobs/services/weweb-back`.
 
 ## Creation Workflow
 

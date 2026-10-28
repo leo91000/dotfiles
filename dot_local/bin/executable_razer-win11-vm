@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+connection=qemu:///system
+domain=razer-win11
+
+show_console() {
+    /home/leoc/.local/bin/hyprland-background-run \
+        env PATH=/usr/bin:/bin \
+        virt-manager --connect "$connection" --show-domain-console "$domain"
+}
+
+case ${1:-open} in
+    open)
+        if [[ $(virsh -c "$connection" domstate "$domain") != running ]]; then
+            virsh -c "$connection" start "$domain"
+        fi
+        show_console
+        ;;
+    console)
+        show_console
+        ;;
+    start)
+        virsh -c "$connection" start "$domain"
+        ;;
+    stop)
+        virsh -c "$connection" shutdown "$domain"
+        ;;
+    status)
+        virsh -c "$connection" domstate "$domain"
+        ;;
+    *)
+        printf 'usage: %s {open|console|start|stop|status}\n' "${0##*/}" >&2
+        exit 2
+        ;;
+esac

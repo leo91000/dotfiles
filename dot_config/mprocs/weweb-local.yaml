@@ -1,15 +1,12 @@
 procs:
   ww:editor:
-    shell: "npm run $WW_EDITOR_SCRIPT"
-    cwd: "/home/leoc/projects/weweb/weweb-editor"
+    shell: 'cd "$WW_MONOREPO_ROOT/services/weweb-editor" && VITE_APP_IS_EDITOR_DEV="$WW_EDITOR_DEV" exec npm exec -- vite --mode "$WW_EDITOR_MODE"'
+    autorestart: true
+  ww:front:
+    shell: 'cd "$WW_MONOREPO_ROOT/services/weweb-editor" && VITE_APP_IS_EDITOR_DEV="$WW_EDITOR_DEV" FRONT=true exec npm exec -- vite --mode "$WW_EDITOR_MODE"'
     autorestart: true
   ww:dashboard:
-    shell: "npm run $WW_DASHBOARD_SCRIPT"
-    cwd: "/home/leoc/projects/weweb/weweb-dashboard"
+    shell: 'cd "$WW_MONOREPO_ROOT/services/weweb-dashboard" && exec npm exec -- vue-cli-service serve --mode "$WW_DASHBOARD_MODE" --port=4042'
     autorestart: true
-  ww:lambda:
-    shell: "npm run start:dev"
-    cwd: "/home/leoc/projects/weweb/weweb-docker/weweb-lambda-back-publisher/server"
   ww:docker:
-    shell: "COMPOSE_MENU=0 docker compose up"
-    cwd: "/home/leoc/projects/weweb/weweb-docker"
+    shell: 'cd "$WW_MONOREPO_ROOT" && COMPOSE_MENU=0 exec docker compose up'

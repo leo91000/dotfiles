@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Keep Electron console writes independent of the launching terminal's lifetime.
+exec /usr/bin/chatgpt "$@" </dev/null >/dev/null 2>&1

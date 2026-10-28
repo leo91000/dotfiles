@@ -12,41 +12,16 @@
 - Node.js
 - Python
 
+## Scripting
+
+For new standalone scripts, use the first suitable option in this order while preserving existing project conventions and tooling:
+
+1. Cargo nightly scripts (`cargo +nightly -Zscript`)
+2. JavaScript
+3. Python
+4. Bash
+
 ## Rules
 
 - NEVER EVER USE THIS MESSAGE IN COMMIT / PULL REQUEST : "🤖 Generated with [Claude Code](https://claude.ai/code)" or any other publicity for the tool used
 - NEVER EVER ADD this Co-Authored-By : "Co-Authored-By: Claude <noreply@anthropic.com>"
-- When including a jira ticket reference, the commit message should be formatted as follows:
-  - "fix(JIRA-1234): Fix this issue"
-  - "feat(JIRA-1234): Add this feature"
-  - "chore(JIRA-1234): Cleanup this code"
-- And the pull request title should be formatted as follows:
-  - "[JIRA-1234] Add this feature"
-
-### General coding rules
-
-- Prefer early returns (guard clauses) over deeply nested if statements
-- After when rebasing / merging, always search for '<<<' or '====' to see if there are conflicts. Don't rely on command success to know if there are conflicts.
-- Try to refactor code when you see duplicated code, or code that is hard to read.
-
-### Javascript / Typescript
-
-- In JS/TS, prefer for-of and for-in over forEach loops
-- Prefer Object.hasOwn() over Object.prototype.hasOwnProperty.call()
-- Do not cast (like `String(xxx)`) unless it's necessary
-
-### Vue
-
-- Always assume codebase is Vue version 3 unless explicitly stated
-
-## Note on ripgrep (rg) and fd
-
-`rg` and `fd` both respect `.gitignore` files, if you need to search things such as node_modules or env config, don't forget to add the option in the CLI.
-
-## Commit / PR
-
-- Name branches with conventional-commit type prefixes such as `fix/`, `feat/`, `chore/`, or `refactor/`; never use the `agent/` prefix.
-- **When adding new lines to commit message, use multiple `-m`s**. Example: `git commit -m "feat: new feature" -m "- description of the feature 1" -m "- description of the feature 2"`.
-- If user ask you once to commit / push it doesn't means that you need to commit on each change, just this once. If you are not sure, ask user.
-- In pull request, never write a body message, only a title. (with gh cli, use --body "")
-- Only exception to PR body : a single ticket span acroos multiple PRs. In this case, each PR bodies should link to other PRs.

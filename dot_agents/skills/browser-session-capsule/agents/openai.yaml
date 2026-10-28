@@ -1,0 +1,4 @@
+interface:
+  display_name: "Browser Session Capsule"
+  short_description: "Reuse Chrome sessions in an isolated browser"
+  default_prompt: "Use $browser-session-capsule to restore the required authenticated session in browser_isolated."

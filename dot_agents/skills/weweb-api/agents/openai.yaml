@@ -1,0 +1,4 @@
+interface:
+  display_name: "WeWeb API"
+  short_description: "Call WeWeb workspace-key public APIs safely"
+  default_prompt: "Use $weweb-api to call a WeWeb public API endpoint on a specific environment."

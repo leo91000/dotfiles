@@ -7,7 +7,7 @@
         "reload_style_on_change": true,
         "modules-left": ["clock", "custom/pacman", "tray"],
         "modules-center": ["hyprland/workspaces"],
-        "modules-right": ["bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
+        "modules-right": ["cpu", "memory", "bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
         "hyprland/workspaces": {
             "format": "{name}",
             "sort-by": "number",
@@ -111,11 +111,22 @@
             "signal": 1
         },
         "cpu": {
-            "format": "󰻠",
-            "tooltip": true
+            "interval": 1,
+            "format": "<span size=\"14000\" rise=\"-1800\">󰻠</span> {usage:2}%",
+            "tooltip": false,
+            "states": {"warning": 65, "critical": 90},
+            "on-click": "systemctl --user start waybar-cpu-panel.service && ~/.config/waybar/cpu-panel/panel.js"
         },
         "memory": {
-            "format": ""
+            "interval": 2,
+            "format": "<span font_family=\"JetBrainsMono Nerd Font Propo\" size=\"10000\" rise=\"-500\"></span> {percentage:2}%",
+            "tooltip": true,
+            "tooltip-format": "RAM · Click for history\n{used:.1f} / {total:.1f} GiB used\n{avail:.1f} GiB available\n\nSwap: {swapUsed:.1f} / {swapTotal:.1f} GiB",
+            "states": {
+                "warning": 80,
+                "critical": 95
+            },
+            "on-click": "systemctl --user start waybar-cpu-panel.service && ~/.config/waybar/cpu-panel/panel.js --memory"
         },
         "temperature": {
             "critical-threshold": 80,
@@ -146,13 +157,13 @@
     },
     {
         "name": "main",
-        "output": "DP-2",
+        "output": "DP-3",
         "layer": "top",
         "position": "top",
         "reload_style_on_change": true,
         "modules-left": ["clock", "custom/pacman", "tray"],
         "modules-center": ["hyprland/workspaces"],
-        "modules-right": ["bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
+        "modules-right": ["cpu", "memory", "bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
         "hyprland/workspaces": {
             "format": "{name}",
             "sort-by": "number",
@@ -256,11 +267,22 @@
             "signal": 1
         },
         "cpu": {
-            "format": "󰻠",
-            "tooltip": true
+            "interval": 1,
+            "format": "<span size=\"14000\" rise=\"-1800\">󰻠</span> {usage:2}%",
+            "tooltip": false,
+            "states": {"warning": 65, "critical": 90},
+            "on-click": "systemctl --user start waybar-cpu-panel.service && ~/.config/waybar/cpu-panel/panel.js"
         },
         "memory": {
-            "format": ""
+            "interval": 2,
+            "format": "<span font_family=\"JetBrainsMono Nerd Font Propo\" size=\"10000\" rise=\"-500\"></span> {percentage:2}%",
+            "tooltip": true,
+            "tooltip-format": "RAM · Click for history\n{used:.1f} / {total:.1f} GiB used\n{avail:.1f} GiB available\n\nSwap: {swapUsed:.1f} / {swapTotal:.1f} GiB",
+            "states": {
+                "warning": 80,
+                "critical": 95
+            },
+            "on-click": "systemctl --user start waybar-cpu-panel.service && ~/.config/waybar/cpu-panel/panel.js --memory"
         },
         "temperature": {
             "critical-threshold": 80,
@@ -291,13 +313,13 @@
     },
     {
         "name": "right",
-        "output": "DP-3",
+        "output": "DP-2",
         "layer": "top",
         "position": "top",
         "reload_style_on_change": true,
         "modules-left": ["clock", "custom/pacman", "tray"],
         "modules-center": ["hyprland/workspaces"],
-        "modules-right": ["bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
+        "modules-right": ["cpu", "memory", "bluetooth", "network", "pulseaudio", "custom/hidpp-battery", "custom/notification"],
         "hyprland/workspaces": {
             "format": "{name}",
             "sort-by": "number",
@@ -401,11 +423,22 @@
             "signal": 1
         },
         "cpu": {
-            "format": "󰻠",
-            "tooltip": true
+            "interval": 1,
+            "format": "<span size=\"14000\" rise=\"-1800\">󰻠</span> {usage:2}%",
+            "tooltip": false,
+            "states": {"warning": 65, "critical": 90},
+            "on-click": "systemctl --user start waybar-cpu-panel.service && ~/.config/waybar/cpu-panel/panel.js"
         },
         "memory": {
-            "format": ""
+            "interval": 2,
+            "format": "<span font_family=\"JetBrainsMono Nerd Font Propo\" size=\"10000\" rise=\"-500\"></span> {percentage:2}%",
+            "tooltip": true,
+            "tooltip-format": "RAM · Click for history\n{used:.1f} / {total:.1f} GiB used\n{avail:.1f} GiB available\n\nSwap: {swapUsed:.1f} / {swapTotal:.1f} GiB",
+            "states": {
+                "warning": 80,
+                "critical": 95
+            },
+            "on-click": "systemctl --user start waybar-cpu-panel.service && ~/.config/waybar/cpu-panel/panel.js --memory"
         },
         "temperature": {
             "critical-threshold": 80,

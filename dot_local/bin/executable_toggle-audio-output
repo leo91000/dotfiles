@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+speaker_sink="alsa_output.usb-Generic_USB_Audio-00.HiFi__Speaker__sink"
+wired_headset_sink="alsa_output.usb-Razer_Inc_BlackShark_V3_Pro_USB_0000000000000000-00.analog-stereo"
+dongle_sink="alsa_output.usb-Razer_Inc_BlackShark_V3_Pro_0000000000000000-00.pro-output-1"
+current_sink="$(pactl get-default-sink)"
+
+move_active_streams() {
+    local target_sink="$1"
+
+    while read -r stream_id _; do
+        pactl move-sink-input "$stream_id" "$target_sink"
+    done < <(pactl list short sink-inputs)
+}
+
+if [[ "$current_sink" == "$speaker_sink" ]]; then
+    # Removing the explicit speaker choice lets WirePlumber's Razer priority
+    # rule select wired USB when connected, or the wireless dongle otherwise.
+    wpctl clear-default @DEFAULT_AUDIO_SINK@
+
+    if lsusb -d 1532:0576 | rg -q "1532:0576"; then
+        target_sink="$wired_headset_sink"
+        target_label="Razer headset (USB)"
+    else
+        target_sink="$dongle_sink"
+        target_label="Razer headset (dongle)"
+    fi
+else
+    target_sink="$speaker_sink"
+    target_label="Speakers"
+    pactl set-default-sink "$target_sink"
+fi
+
+move_active_streams "$target_sink"
+notify-send --app-name="Audio" "Audio output" "$target_label"

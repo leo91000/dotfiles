@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Hyprshot calls this hook after saving the image and copying it to the clipboard.
+if [[ $# -ne 1 || ! -f "$1" ]]; then
+    printf 'Usage: screenshot-notify <saved-image>\n' >&2
+    exit 1
+fi
+
+image_path="$1"
+escaped_path="${image_path//&/\&amp;}"
+escaped_path="${escaped_path//</\&lt;}"
+escaped_path="${escaped_path//>/\&gt;}"
+
+action=$(notify-send --app-name=Hyprshot --icon="$image_path" \
+    --expire-time=20000 --action='default=Show in folder' \
+    --action='show=Show in folder' \
+    'Screenshot saved' \
+    "Image saved in <i>${escaped_path}</i> and copied to the clipboard. Click to show in folder.")
+
+if [[ "$action" != default && "$action" != show ]]; then
+    exit 0
+fi
+
+exec dolphin --select "$image_path"

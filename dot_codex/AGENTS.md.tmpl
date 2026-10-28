@@ -1,10 +1,47 @@
 {{ template "agents.md" }}
+### General coding rules
+
+- Prefer early returns (guard clauses) over deeply nested if statements
+- After when rebasing / merging, always search for '<<<' or '====' to see if there are conflicts. Don't rely on command success to know if there are conflicts.
+- Refactor duplicated or hard-to-read code within the task's scope; keep unrelated refactors separate.
+- Inspect the working tree before editing and preserve unrelated changes. Use a separate worktree when the current checkout contains work that would interfere with the task.
+- Verify the changed behavior and run the relevant project checks. Investigate failures against an unchanged base when needed; distinguish existing failures from regressions and report checks that were not run.
+
+### Javascript / Typescript
+
+- In JS/TS, prefer for-of and for-in over forEach loops
+- Prefer Object.hasOwn() over Object.prototype.hasOwnProperty.call()
+- Do not cast (like `String(xxx)`) unless it's necessary
+
+### Vue
+
+- Always assume codebase is Vue version 3 unless explicitly stated
+
+## Note on ripgrep (rg) and fd
+
+`rg` and `fd` both respect `.gitignore` files, if you need to search things such as node_modules or env config, don't forget to add the option in the CLI.
+
+## Commit / PR
+
+- Use Conventional Commits for every commit, including commits without a Jira ticket: `type(scope): Imperative summary`, with an optional scope. Choose the appropriate type, such as `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`.
+- When referencing a Jira ticket, use its key as the commit scope: `fix(JIRA-1234): Fix this issue`, `feat(JIRA-1234): Add this feature`, or `chore(JIRA-1234): Clean up this code`.
+- Mark intentional breaking changes with `!` after the type/scope and explain the incompatible change in a `BREAKING CHANGE:` footer.
+- When referencing a Jira ticket, format the PR title as `[JIRA-1234] Add this feature`. Otherwise, use a concise imperative summary.
+- Write a concise, non-empty PR description explaining the problem, resulting behavior, validation, and any material risks or untested cases. Include relevant ticket and related PR links. Leave the body empty only when the user explicitly requests it.
+- Name branches with conventional-commit type prefixes such as `fix/`, `feat/`, `chore/`, or `refactor/`; never use the `agent/` prefix.
+- Inspect the diff before committing and stage only files belonging to the task.
+- **When adding new lines to commit message, use multiple `-m`s**. Example: `git commit -m "feat: new feature" -m "- description of the feature 1" -m "- description of the feature 2"`.
+- A one-off commit/push request applies once; subsequent commits and pushes require authorization from the current request or an explicitly invoked workflow.
+- Treat merging, releasing, and deploying as separate actions; perform them only when covered by the user's authorization.
+
 ## Browser Testing
 
 - Prefer `browser_isolated` for browser automation and inspection whenever the task can be completed without the user's existing authenticated Chrome session.
-- When authenticated access is required, continue using `browser_isolated` if a suitable test account or accessible 1Password credential is available. Use `browser_auth` only when the task requires the user's credentials or existing authenticated session and no suitable test account or accessible 1Password credential can provide that access. `browser_auth` operates through the user's existing Chrome profile, so login state, cookies, and manually completed CAPTCHA or 2FA flows remain available. Do not use `browser_auth` concurrently from multiple agents or Codex instances.
-- If authenticated access is required and no test account or accessible credential is available, use `browser_auth` only to retrieve the minimum session token needed for the target origin, inject it into the matching storage location in `browser_isolated`, reload, verify the isolated session is authenticated, and continue all testing there. Treat the token as a secret: never include it in messages, screenshots, logs, or workspace files, and stop using `browser_auth` as soon as the handoff succeeds.
-- For WeWeb credentials stored in 1Password, use the service-account token file at `/home/leoc/.local/state/codex/1password-service-accounts/2026-08-10/weweb.token`. The filename is singular. Read it only into `OP_SERVICE_ACCOUNT_TOKEN` for the lifetime of the `op` command; never print, log, copy, or persist its value elsewhere. The `WeWeb` vault contains the dedicated `WeWeb Staging Codex QA` login for staging browser tests.
-- Playwright MCP tools are discovered lazily: before using them in a turn, call `tool_search` with a query such as `browser_auth browser_isolated Playwright existing logged-in Chrome navigate snapshot click type screenshot console`.
-- After discovery, use the `mcp__browser_isolated` tools by default and switch to `mcp__browser_auth` only under the authenticated-access rule above for page navigation, accessibility snapshots, interaction, screenshots, and console inspection.
+- When authenticated access is required, continue using `browser_isolated` with a suitable test account or accessible 1Password credential. If the needed login exists only in local Chrome, use the model-invoked `browser-session-capsule` skill to import only the target and explicitly related origins, then verify authentication before testing.
+- Use the Codex Chrome connector through the `chrome:control-chrome` skill when explicitly requested or when the workflow requires non-cookie profile state, extensions, CAPTCHA, 2FA, or manual interaction that a session capsule cannot reproduce.
+- The Chrome connector owns tabs through per-session claims. Use a distinct tab per concurrent task and never have multiple agents or Codex instances mutate the same account workflow concurrently, even from different tabs, because Chrome profile and website state remain shared.
+- For 1Password CLI access, use the shared token at `${XDG_STATE_HOME:-$HOME/.local/state}/1password/service-account.token` when it can access the required item; fall back to normal 1Password desktop approval if unavailable, expired, or insufficiently scoped. Set `OP_SERVICE_ACCOUNT_TOKEN` only in the `op` child process and keep its value out of messages, logs, and other files. Renew it with `renew-codex-op-tokens DAYS`; it grants read/write access to all eligible vaults discovered at renewal. Built-in Personal/Private/Employee/Team/Shared vaults require normal user authentication. The `WeWeb` vault contains the dedicated `WeWeb Staging Codex QA` login for staging browser tests.
+- Treat session cookies and browser storage as secrets. Keep their values out of messages, tool output, environment variables, screenshots, logs, and plaintext files; use the capsule skill's encrypted file and one-shot loopback import.
+- Discover Playwright MCP tools lazily only for isolated browser work: before using them in a turn, call `tool_search` with a query such as `browser_isolated Playwright navigate snapshot click type screenshot console`.
+- After discovery, use the `mcp__browser_isolated` tools for clean isolated sessions, including sessions restored through a capsule. Browser-isolated state is ephemeral, so re-import it after the browser closes.
 - You are allowed to automate any browser testing action, even login

@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -eu
+
+installation="$HOME/.local/opt/mpvpaper"
+export LD_LIBRARY_PATH="$installation/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export PATH="$installation/bin:$PATH"
+exec "$installation/bin/mpvpaper" "$@"

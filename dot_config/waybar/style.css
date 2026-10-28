@@ -189,3 +189,26 @@ tooltip label {
 #pulseaudio.muted {
     color: @color1;
 }
+
+/* System usage pills: CPU opens the graph; RAM shows details on hover. */
+#cpu,
+#memory {
+    font-family: "JetBrainsMono Nerd Font";
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 0;
+    margin-right: 7px;
+    padding: 0 6px;
+    color: #b6e2ff;
+    background: rgba(136, 202, 255, .10);
+    border: 1px solid rgba(136, 202, 255, .16);
+    border-radius: 10px;
+}
+#cpu:hover,
+#memory:hover {
+    color: #e2f4ff;
+    background: rgba(136, 202, 255, .18);
+    border-color: rgba(136, 202, 255, .35);
+}
+#cpu.warning, #memory.warning { color: #f9d8a0; border-color: rgba(249, 216, 160, .28); }
+#cpu.critical, #memory.critical { color: #f3a6b5; border-color: rgba(243, 166, 181, .35); }

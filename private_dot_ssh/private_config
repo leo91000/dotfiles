@@ -1,0 +1,15 @@
+Host steam-machine 192.168.1.184
+    HostName 192.168.1.184
+    User deck
+    IdentityFile ~/.ssh/id_ed25519_steam_machine
+    IdentityAgent ~/.1password/agent.sock
+    IdentitiesOnly yes
+
+Host portable laptop leo-titan18hxa14vhg
+    HostName 192.168.1.153
+    User leoc
+    IdentityFile ~/.ssh/id_ed25519_portable
+    IdentityAgent none
+    IdentitiesOnly yes
+    ServerAliveInterval 30
+    ServerAliveCountMax 3

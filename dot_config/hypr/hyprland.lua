@@ -57,10 +57,9 @@ end
 
 -- Startup
 local startupCommands = {
-    "/home/leoc/.config/hypr/scripts/start-hyprpaper-triple",
+    "/home/leoc/.config/hypr/scripts/start-wallpapers-triple",
     "/home/leoc/.config/hypr/scripts/start-waybar-triple",
     "swaync",
-    "ulauncher",
     "wl-paste --type text --watch cliphist store",
     "wl-paste --type image --watch cliphist store",
     "/usr/lib/hyprpolkitagent/hyprpolkitagent",
@@ -131,6 +130,12 @@ hl.animation({ leaf = "fade", enabled = true, speed = 3, bezier = "easeinout" })
 hl.animation({ leaf = "border", enabled = true, speed = 3, bezier = "easeinout" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 2, bezier = "easeinout" })
 
+-- Do not blur the background behind floating windows.
+hl.window_rule({
+    match = { float = true },
+    no_blur = true,
+})
+
 -- Keybinds
 local mainMod = "SUPER"
 local moveWindowEdgeThreshold = 24
@@ -142,9 +147,8 @@ local desktopMonitorSerials = {
 
 local function restartMonitorSurfaces()
     hl.exec_cmd("pkill -x waybar || true")
-    hl.exec_cmd("pkill -x hyprpaper || true")
     hl.exec_cmd("/home/leoc/.config/hypr/scripts/start-waybar-triple")
-    hl.exec_cmd("/home/leoc/.config/hypr/scripts/start-hyprpaper-triple")
+    hl.exec_cmd("/home/leoc/.config/hypr/scripts/start-wallpapers-triple")
 end
 
 local function finishMonitorToggle(message)
@@ -253,10 +257,11 @@ local execBinds = {
     { mainMod .. " + S", "steam" },
     { mainMod .. " + D", "discord" },
     { mainMod .. " + O", "obsidian" },
+    { mainMod .. " + A", "/home/leoc/.local/bin/toggle-audio-output" },
     { "CTRL + SHIFT + space", "1password --quick-access" },
-    { mainMod .. " + SHIFT + S", "hyprshot -m region" },
-    { mainMod .. " + SHIFT + M", "hyprshot -m output -m active" },
-    { mainMod .. " + SHIFT + W", "hyprshot -m window -m active" },
+    { mainMod .. " + SHIFT + S", "hyprshot -m region --silent -- ~/.local/bin/screenshot-notify" },
+    { mainMod .. " + SHIFT + M", "hyprshot -m output -m active --silent -- ~/.local/bin/screenshot-notify" },
+    { mainMod .. " + SHIFT + W", "hyprshot -m window -m active --silent -- ~/.local/bin/screenshot-notify" },
     { "XF86AudioRaiseVolume", "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+" },
     { "XF86AudioLowerVolume", "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-" },
     { "XF86AudioMute", "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle" },
@@ -272,7 +277,6 @@ for _, bind in ipairs(execBinds) do
 end
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
-hl.bind(mainMod .. " + M", hl.dsp.exit())
 
 local focusDirections = {
     H = "l",

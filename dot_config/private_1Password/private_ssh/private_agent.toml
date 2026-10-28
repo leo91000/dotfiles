@@ -1,0 +1,14 @@
+# Steam Machine dedicated SSH key
+[[ssh-keys]]
+item = "lqrsxwsxj2lqfxno3ujlr4ko7a"
+vault = "3d2wxksakom5uvnntnlqkm5ree"
+
+# Preserve the standard built-in vault selection
+[[ssh-keys]]
+vault = "Personal"
+
+[[ssh-keys]]
+vault = "Private"
+
+[[ssh-keys]]
+vault = "Employee"

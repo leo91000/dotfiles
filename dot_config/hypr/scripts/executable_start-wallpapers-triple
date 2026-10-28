@@ -1,0 +1,85 @@
+#!/usr/bin/env sh
+set -eu
+
+runtime_dir="${XDG_RUNTIME_DIR:?}/wallpapers-triple"
+wallpaper_dir="$HOME/.local/share/wallpapers/animated/nature"
+mode_file="$HOME/.config/wallpapers/mode"
+resolve_output="$HOME/.config/hypr/scripts/monitor-output-by-edid"
+player="$HOME/.local/bin/mpvpaper"
+mkdir -p "$runtime_dir"
+exec 9>"$runtime_dir/launcher.lock"
+flock 9
+systemctl --user import-environment WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_RUNTIME_DIR
+
+mode="$(cat "$mode_file" 2>/dev/null || printf animated)"
+if [ "$#" -gt 0 ]; then
+    case "$1" in
+        animated|static) mode="$1" ;;
+        *) printf 'usage: %s [animated|static]\n' "$0" >&2; exit 2 ;;
+    esac
+    mkdir -p "$(dirname "$mode_file")"
+    printf '%s\n' "$mode" > "$mode_file"
+fi
+
+stop_wallpapers() {
+    systemctl --user stop wallpaper-triple-pause.service wallpaper-triple-static.service \
+        wallpaper-triple-aurora-lake.service wallpaper-triple-tranquil-japan-lake-view.service \
+        wallpaper-triple-blue-mountain-horizons.service 2>/dev/null || true
+    pkill -u "$(id -u)" -x mpvpaper || true
+    pkill -u "$(id -u)" -x hyprpaper || true
+    attempts=0
+    while pgrep -u "$(id -u)" -x 'mpvpaper|hyprpaper' >/dev/null; do
+        attempts=$((attempts + 1))
+        [ "$attempts" -lt 50 ] || return 1
+        sleep 0.1
+    done
+}
+
+start_static() {
+    stop_wallpapers
+    systemd-run --user --quiet --collect --unit=wallpaper-triple-static \
+        "$HOME/.config/hypr/scripts/start-hyprpaper-triple" 9>&-
+}
+
+if [ "$mode" = static ]; then
+    start_static
+    exit 0
+fi
+
+for scene in aurora-lake tranquil-japan-lake-view blue-mountain-horizons; do
+    if [ ! -s "$wallpaper_dir/$scene.mp4" ] || [ ! -x "$player" ]; then
+        printf 'Animated wallpapers unavailable; using the original static wallpapers.\n' >&2
+        start_static
+        exit 0
+    fi
+done
+
+left_monitor="$("$resolve_output" "ROG PG279Q" "#ASN4JVmqxLLd" || true)"
+center_monitor="$("$resolve_output" "AG274QG" "#GjMYMxgwABkB" || true)"
+right_monitor="$("$resolve_output" "Dell AW2721D" "#GrMYMxgwABcY" || true)"
+stop_wallpapers
+
+start_video() {
+    output="$1"
+    scene="$2"
+    [ -n "$output" ] || return 0
+    systemd-run --user --quiet --collect --unit="wallpaper-triple-$scene" \
+        --property=Restart=on-failure --property=RestartSec=3 --property=Nice=10 \
+        "$player" \
+        -o "no-config no-audio terminal=no loop-file=inf hwdec=auto video-sync=display-resample panscan=1 input-ipc-server=$runtime_dir/$scene.sock" \
+        "$output" "$wallpaper_dir/$scene.mp4" 9>&-
+    sleep 1
+    systemctl --user is-active --quiet "wallpaper-triple-$scene.service"
+}
+
+if ! start_video "$left_monitor" aurora-lake ||
+   ! start_video "$center_monitor" tranquil-japan-lake-view ||
+   ! start_video "$right_monitor" blue-mountain-horizons; then
+    printf 'Video wallpaper startup failed; using the original static wallpapers. See %s\n' "$runtime_dir" >&2
+    start_static
+    exit 1
+fi
+
+systemd-run --user --quiet --collect --unit=wallpaper-triple-pause \
+    --property=Restart=on-failure --property=RestartSec=3 \
+    "$HOME/.config/hypr/scripts/pause-wallpapers.rs" 9>&-
